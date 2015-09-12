@@ -643,8 +643,8 @@ in
 
     services.gitit = {
       haskellPackages = mkDefault pkgs.haskellPackages;
-      staticDir = gititShared + "/data/static";
-      templatesDir = gititShared + "/data/templates";
+      staticDir    = mkDefault (gititShared + "/data/static");
+      templatesDir = mkDefault (gititShared + "/data/templates");
       plugins = [ ];
     };
 
