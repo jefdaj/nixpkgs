@@ -3,15 +3,14 @@
 , withGui }:
 
 with stdenv.lib;
-stdenv.mkDerivation rec{
+stdenv.mkDerivation rec {
 
   name = "bitcoin" + (toString (optional (!withGui) "d")) + "-xt-" + version;
-  xt_version = "0.11A";
-  version = xt_version;
+  version = "0.11B";
 
   src = fetchurl {
-    url = "https://github.com/bitcoinxt/bitcoinxt/archive/v0.11A.tar.gz";
-    sha256 = "129cbqf6bln6rhdk70c6nfwdjk6afvsaaw4xdyp0pnfand8idz7n";
+    url = "https://github.com/bitcoinxt/bitcoinxt/archive/v${version}.tar.gz";
+    sha256 = "0fc1sgp82bnq1hjp6jqj0z4lvn338ixhhxqdn978p2vdk6h3bypr";
   };
 
   buildInputs = [ pkgconfig autoreconfHook openssl db48 boost zlib
