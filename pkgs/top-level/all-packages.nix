@@ -1301,6 +1301,8 @@ let
 
   dnscrypt-proxy = callPackage ../tools/networking/dnscrypt-proxy { };
 
+  dnscrypt-wrapper = callPackage ../tools/networking/dnscrypt-wrapper { };
+
   dnsmasq = callPackage ../tools/networking/dnsmasq { };
 
   dnstop = callPackage ../tools/networking/dnstop { };
@@ -1449,8 +1451,6 @@ let
 
   exercism = callPackage ../development/tools/exercism { };
 
-  exfat-utils = callPackage ../tools/filesystems/exfat-utils { };
-
   exif = callPackage ../tools/graphics/exif { };
 
   exiftags = callPackage ../tools/graphics/exiftags { };
@@ -1588,7 +1588,7 @@ let
 
   fuse_zip = callPackage ../tools/filesystems/fuse-zip { };
 
-  fuse_exfat = callPackage ../tools/filesystems/fuse-exfat { };
+  exfat = callPackage ../tools/filesystems/exfat { };
 
   dos2unix = callPackage ../tools/text/dos2unix { };
 
@@ -6502,13 +6502,11 @@ let
 
   gnutls = gnutls34;
 
-  gnutls33 = import ../development/libraries/gnutls/3.3.nix {
-    inherit callPackage fetchurl;
+  gnutls33 = callPackage ../development/libraries/gnutls/3.3.nix {
     guileBindings = config.gnutls.guile or false;
   };
 
-  gnutls34 = import ../development/libraries/gnutls/3.4.nix {
-    inherit callPackage fetchurl;
+  gnutls34 = callPackage ../development/libraries/gnutls/3.4.nix {
     guileBindings = config.gnutls.guile or false;
   };
 
@@ -7200,7 +7198,6 @@ let
 
   libkate = callPackage ../development/libraries/libkate { };
 
-  libkeyfinder_0_11 = callPackage ../development/libraries/libkeyfinder/0.11.nix { };
   libkeyfinder = callPackage ../development/libraries/libkeyfinder { };
 
   libksba = callPackage ../development/libraries/libksba { };
@@ -8318,6 +8315,8 @@ let
   };
 
   thrift = callPackage ../development/libraries/thrift { };
+
+  tidyp = callPackage ../development/libraries/tidyp { };
 
   tinyxml = tinyxml2;
 
@@ -10442,6 +10441,8 @@ let
   xorg_sys_opengl = callPackage ../os-specific/linux/opengl/xorg-sys { };
 
   xpilot-ng = callPackage ../games/xpilot { };
+  bloodspilot-server = callPackage ../games/xpilot/bloodspilot-server.nix {};
+  bloodspilot-client = callPackage ../games/xpilot/bloodspilot-client.nix {};
 
   zd1211fw = callPackage ../os-specific/linux/firmware/zd1211 { };
 
@@ -11034,6 +11035,8 @@ let
     browserName = "conkeror";
     desktopName = "Conkeror";
   };
+
+  csdp = callPackage ../applications/science/math/csdp { };
 
   cuneiform = builderDefsPackage (import ../tools/graphics/cuneiform) {
     inherit cmake patchelf;
@@ -13644,6 +13647,8 @@ let
 
   ### GAMES
 
+  "2048-in-terminal" = callPackage ../games/2048-in-terminal { };
+
   airstrike = callPackage ../games/airstrike { };
 
   alienarena = callPackage ../games/alienarena { };
@@ -15323,7 +15328,9 @@ let
   clangAnalyzer = clang-analyzer;  # added 2015-02-20
   cool-old-term = cool-retro-term; # added 2015-01-31
   cv = progress; # added 2015-09-06
+  exfat-utils = exfat;                  # 2015-09-11
   firefoxWrapper = firefox-wrapper;
+  fuse_exfat = exfat;                   # 2015-09-11
   haskell-ng = haskell;                 # 2015-04-19
   haskellngPackages = haskellPackages;  # 2015-04-19
   htmlTidy = html-tidy;  # added 2014-12-06

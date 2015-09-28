@@ -5445,6 +5445,25 @@ let
     };
   };
 
+  django_compressor = buildPythonPackage rec {
+    name = "django-compressor-${version}";
+    version = "1.5";
+
+    src = pkgs.fetchurl {
+      url = "https://pypi.python.org/packages/source/d/django_compressor/django_compressor-${version}.tar.gz";
+      sha256 = "0bp2acagc6b1mmcajlmjf5vvp6zj429bq7p2wks05n47pwfzv281";
+    };
+
+    propagatedBuildInputs = with self; [ django_appconf ];
+
+    meta = {
+      description = "Compresses linked and inline JavaScript or CSS into single cached files";
+      homepage = http://django-compressor.readthedocs.org/en/latest/;
+      license = licenses.mit;
+      maintainers = with maintainers; [ desiderius ];
+    };
+  };
+
   django_evolution = buildPythonPackage rec {
     name = "django_evolution-0.6.9";
     disabled = isPy3k;
@@ -16703,12 +16722,18 @@ let
 
 
   unidecode = buildPythonPackage rec {
-    name = "Unidecode-0.04.12";
+    name = "Unidecode-0.04.18";
 
     src = pkgs.fetchurl {
       url = "http://pypi.python.org/packages/source/U/Unidecode/${name}.tar.gz";
-      md5 = "351dc98f4512bdd2e93f7a6c498730eb";
+      sha256 = "12hhblqy1ajvidm38im4171x4arg83pfmziyn53nizp29p3m14gi";
     };
+
+    preBuild = ''
+      export LC_ALL="en_US.UTF-8"
+    '';
+
+    buildInputs = [ pkgs.glibcLocales ];
 
     meta = {
       homepage = http://pypi.python.org/pypi/Unidecode/;
@@ -17080,11 +17105,11 @@ let
 
   libvirt = pkgs.stdenv.mkDerivation rec {
     name = "libvirt-python-${version}";
-    version = "1.2.18";
+    version = "1.2.19";
 
     src = pkgs.fetchurl {
       url = "http://libvirt.org/sources/python/${name}.tar.gz";
-      sha256 = "0f1ni9nv6zmrfhvv71bs2d5yg0pk01zl3hsz1dh1178c2vpkai90";
+      sha256 = "0jgcggrwaz9512wzlkgxirq56cr7zq2ihmg8qv95nhryqnq67aw8";
     };
 
     buildInputs = with self; [ python pkgs.pkgconfig pkgs.libvirt lxml ];
