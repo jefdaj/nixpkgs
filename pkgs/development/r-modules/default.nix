@@ -37,8 +37,16 @@ let
   # from the name, version, sha256, and optional per-package arguments above
   #
   deriveBioc = mkDerive {
-    mkHomepage = name: "http://cran.r-project.org/web/packages/${name}/";
+    mkHomepage = name: "http://www.bioconductor.org/packages/${name}.html";
     mkUrls = {name, version}: [ "mirror://bioc/src/contrib/${name}_${version}.tar.gz" ];
+  };
+  deriveBiocAnn = {
+    mkHomepage = name: "http://www.bioconductor.org/packages/${name}.html";
+    mkUrls = {name, version}: [ "mirror://bioc/data/annotation/src/contrib/${name}_${version}.tar.gz" ];
+  };
+  deriveBiocExp = {
+    mkHomepage = name: "http://www.bioconductor.org/packages/${name}.html";
+    mkUrls = {name, version}: [ "mirror://bioc/data/experiment/src/contrib/${name}_${version}.tar.gz" ];
   };
   deriveCran = mkDerive {
     mkHomepage = name: "http://bioconductor.org/packages/release/bioc/html/${name}.html";
@@ -210,6 +218,8 @@ let
   # packages in `_self` may depends on overridden packages.
   self = (defaultOverrides _self self) // overrides;
   _self = import ./bioc-packages.nix { inherit self; derive = deriveBioc; } //
+          import ./cran-packages.nix { inherit self; derive = deriveBiocAnn; } //
+          import ./cran-packages.nix { inherit self; derive = deriveBiocExp; } //
           import ./cran-packages.nix { inherit self; derive = deriveCran; } //
           import ./irkernel-packages.nix { inherit self; derive = deriveIRkernel; };
 
