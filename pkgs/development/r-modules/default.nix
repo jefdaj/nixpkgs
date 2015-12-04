@@ -38,13 +38,13 @@ let
   #
   deriveBioc = mkDerive {
     mkHomepage = name: "http://www.bioconductor.org/packages/${name}.html";
-    mkUrls = {name, version}: [ "mirror://bioc/src/contrib/${name}_${version}.tar.gz" ];
+    mkUrls = {name, version}: [ "mirror://bioc/bioc/src/contrib/${name}_${version}.tar.gz" ];
   };
-  deriveBiocAnn = {
+  deriveBiocAnn = mkDerive {
     mkHomepage = name: "http://www.bioconductor.org/packages/${name}.html";
     mkUrls = {name, version}: [ "mirror://bioc/data/annotation/src/contrib/${name}_${version}.tar.gz" ];
   };
-  deriveBiocExp = {
+  deriveBiocExp = mkDerive {
     mkHomepage = name: "http://www.bioconductor.org/packages/${name}.html";
     mkUrls = {name, version}: [ "mirror://bioc/data/experiment/src/contrib/${name}_${version}.tar.gz" ];
   };
@@ -218,8 +218,8 @@ let
   # packages in `_self` may depends on overridden packages.
   self = (defaultOverrides _self self) // overrides;
   _self = import ./bioc-packages.nix { inherit self; derive = deriveBioc; } //
-          import ./cran-packages.nix { inherit self; derive = deriveBiocAnn; } //
-          import ./cran-packages.nix { inherit self; derive = deriveBiocExp; } //
+          import ./bioc-annotation-packages.nix { inherit self; derive = deriveBiocAnn; } //
+          import ./bioc-experiment-packages.nix { inherit self; derive = deriveBiocExp; } //
           import ./cran-packages.nix { inherit self; derive = deriveCran; } //
           import ./irkernel-packages.nix { inherit self; derive = deriveIRkernel; };
 
