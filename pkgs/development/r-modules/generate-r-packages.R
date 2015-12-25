@@ -24,8 +24,15 @@ knownPackages <- sapply(knownPackages, gsub, pattern=".", replacement="_", fixed
 
 nixPrefetch <- function(name, version) {
   prevV <- readFormatted$V2 == name & readFormatted$V4 == version
-  if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else
-    system(paste0("nix-prefetch-url --type sha256 ", mirrorUrl, name, "_", version, ".tar.gz"), intern=TRUE)
+  if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else {
+
+    # download using wget because nix-prefetch-url fails randomly on large files
+    url <- paste0(mirrorUrl, name, "_", version, ".tar.gz")
+    tmp <- tempfile(pattern=paste0(name, "_", version), fileext=".tar.gz")
+    cmd <- paste0("wget -q -O '", tmp, "' '", url, "' && nix-prefetch-url file://", tmp, " && rm -rf ", tmp)
+    system(cmd, intern=TRUE)
+
+  }
 }
 
 formatPackage <- function(name, version, sha256, depends, imports, linkingTo) {
@@ -48,6 +55,9 @@ clusterExport(cl, c("nixPrefetch","readFormatted", "mirrorUrl", "knownPackages")
 pkgs <- as.data.table(available.packages(mirrorUrl, filters=c("R_version", "OS_type", "duplicates")))
 pkgs <- pkgs[order(Package)]
 pkgs$sha256 <- parApply(cl, pkgs, 1, function(p) nixPrefetch(p[1], p[2]))
+
+# prevents inserting sha256="character(0)" if a download fails
+pkgs[length(pkgs$sha256) == 0,] <- NULL
 
 nix <- apply(pkgs, 1, function(p) formatPackage(p[1], p[2], p[18], p[4], p[5], p[6]))
 
