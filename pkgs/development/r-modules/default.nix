@@ -246,7 +246,6 @@ let
     cairoDevice = [ pkgs.gtk2 ];
     Cairo = [ pkgs.libtiff pkgs.libjpeg pkgs.cairo ];
     Cardinal = [ pkgs.which ];
-    CARramps = [ pkgs.linuxPackages.nvidia_x11 pkgs.liblapack ];
     chebpol = [ pkgs.fftw ];
     ChemmineOB = [ pkgs.openbabel pkgs.pkgconfig ];
     cit = [ pkgs.gsl ];
@@ -296,7 +295,6 @@ let
     rapportools = [ pkgs.which ];
     rapport = [ pkgs.which ];
     rbamtools = [ pkgs.zlib ];
-    RCA = [ pkgs.gmp ];
     rcdd = [ pkgs.gmp ];
     RcppCNPy = [ pkgs.zlib ];
     RcppGSL = [ pkgs.gsl ];
@@ -327,7 +325,6 @@ let
     Rpoppler = [ pkgs.poppler ];
     RPostgreSQL = [ pkgs.postgresql ];
     RProtoBuf = [ pkgs.protobuf ];
-    rpud = [ pkgs.linuxPackages.nvidia_x11 ];
     rPython = [ pkgs.python ];
     RSclient = [ pkgs.openssl ];
     Rserve = [ pkgs.openssl ];
@@ -385,7 +382,6 @@ let
     qtpaint = [ pkgs.cmake ];
     qtbase = [ pkgs.cmake pkgs.perl ];
     gmatrix = [ pkgs.cudatoolkit ];
-    WideLM = [ pkgs.cudatoolkit ];
     RCurl = [ pkgs.curl ];
     R2SWF = [ pkgs.pkgconfig ];
     rggobi = [ pkgs.pkgconfig ];
@@ -411,10 +407,8 @@ let
     tcltk2 = [ pkgs.tcl pkgs.tk ];
     tikzDevice = [ pkgs.which pkgs.texLive ];
     rPython = [ pkgs.which ];
-    CARramps = [ pkgs.which pkgs.cudatoolkit ];
     gridGraphics = [ pkgs.which ];
     gputools = [ pkgs.which pkgs.cudatoolkit ];
-    rpud = [ pkgs.which pkgs.cudatoolkit ];
     adimpro = [ pkgs.which pkgs.xorg.xdpyinfo ];
     PET = [ pkgs.which pkgs.xorg.xdpyinfo pkgs.imagemagick ];
     dti = [ pkgs.which pkgs.xorg.xdpyinfo pkgs.imagemagick ];
@@ -528,7 +522,6 @@ let
     "JGR"
     "KappaGUI"
     "likeLTD"
-    "loe"
     "logmult"
     "LS2Wstat"
     "MAR1"
@@ -773,7 +766,6 @@ let
     "ChIPComp" # depends on broken package r-Rsamtools-1.21.18
     "chipenrich" # build is broken
     "chipPCR" # depends on broken nloptr-1.0.4
-    "Claddis" # broken build
     "climwin" # depends on broken package nlopt-2.4.2
     "clippda" # broken build
     "CLME" # depends on broken package nlopt-2.4.2
@@ -938,7 +930,6 @@ let
     "ibd" # depends on broken package nlopt-2.4.2
     "iccbeta" # depends on broken package nlopt-2.4.2
     "ifaTools" # depends on broken package r-OpenMx-2.2.6
-    "iFes" # depends on broken package cudatoolkit-5.5.22
     "imager" # broken build
     "immer" # depends on broken package r-sirt-1.8-9
     "immunoClust" # build is broken
@@ -1044,7 +1035,6 @@ let
     "netbenchmark" # build is broken
     "netresponse" # broken build
     "NetSAM" # broken build
-    "netweavers" # broken build
     "NGScopy"
     "NHPoisson" # depends on broken package nlopt-2.4.2
     "nloptr" # depends on broken package nlopt-2.4.2
@@ -1085,12 +1075,10 @@ let
     "pedigreemm" # depends on broken package nlopt-2.4.2
     "pedometrics" # depends on broken package nlopt-2.4.2
     "pequod" # depends on broken package nlopt-2.4.2
-    "permGPU" # build is broken
     "PharmacoGx"
     "PhenStat" # depends on broken package nlopt-2.4.2
     "phia" # depends on broken package nlopt-2.4.2
     "phylocurve" # depends on broken package nlopt-2.4.2
-    "phyloTop" # depends on broken package nlopt-2.4.2
     "phytools" # broken build
     "plateCore" # depends on broken package ncdfFlow-2.15.2
     "plfMA" # broken build
@@ -1099,7 +1087,6 @@ let
     "plsRglm" # depends on broken package nlopt-2.4.2
     "pmclust" # build is broken
     "pmm" # depends on broken package nlopt-2.4.2
-    "polytomous" # depends on broken package nlopt-2.4.2
     "pomp" # depends on broken package nlopt-2.4.2
     "predictionet" # broken build
     "predictmeans" # depends on broken package nlopt-2.4.2
@@ -1122,7 +1109,6 @@ let
     "quantification" # depends on broken package nlopt-2.4.2
     "R2STATS" # depends on broken package nlopt-2.4.2
     "RADami" # broken build
-    "radiant" # depends on broken package nlopt-2.4.2
     "raincpc" # build is broken
     "rainfreq" # build is broken
     "RAM" # broken build
@@ -1311,7 +1297,6 @@ let
     "VIMGUI" # depends on broken package nlopt-2.4.2
     "vows" # depends on broken package nlopt-2.4.2
     "wfe" # depends on broken package nlopt-2.4.2
-    "WideLM" # depends on broken package cudatoolkit-5.5.22
     "xcms" # depends on broken package mzR-2.3.1
     "x_ent" # broken build
     "xergm" # depends on broken package nlopt-2.4.2
@@ -1344,10 +1329,6 @@ let
 
     curl = old.curl.overrideDerivation (attrs: {
       preConfigure = "patchShebangs configure";
-    });
-
-    iFes = old.iFes.overrideDerivation (attrs: {
-      CUDA_HOME = "${pkgs.cudatoolkit}";
     });
 
     RcppArmadillo = old.RcppArmadillo.overrideDerivation (attrs: {
@@ -1429,32 +1410,11 @@ let
       CUDA_HOME = "${pkgs.cudatoolkit}";
     });
 
-    # It seems that we cannot override meta attributes with overrideDerivation.
-    CARramps = (old.CARramps.override { hydraPlatforms = stdenv.lib.platforms.none; }).overrideDerivation (attrs: {
-      patches = [ ./patches/CARramps.patch ];
-      configureFlags = [
-        "--with-cuda-home=${pkgs.cudatoolkit}"
-      ];
-    });
-
     gmatrix = old.gmatrix.overrideDerivation (attrs: {
       patches = [ ./patches/gmatrix.patch ];
       CUDA_LIB_PATH = "${pkgs.cudatoolkit}/lib64";
       R_INC_PATH = "${pkgs.R}/lib/R/include";
       CUDA_INC_PATH = "${pkgs.cudatoolkit}/include";
-    });
-
-    # It seems that we cannot override meta attributes with overrideDerivation.
-    rpud = (old.rpud.override { hydraPlatforms = stdenv.lib.platforms.none; }).overrideDerivation (attrs: {
-      patches = [ ./patches/rpud.patch ];
-      CUDA_HOME = "${pkgs.cudatoolkit}";
-    });
-
-    WideLM = old.WideLM.overrideDerivation (attrs: {
-      patches = [ ./patches/WideLM.patch ];
-      configureFlags = [
-        "--with-cuda-home=${pkgs.cudatoolkit}"
-      ];
     });
 
     EMCluster = old.EMCluster.overrideDerivation (attrs: {
