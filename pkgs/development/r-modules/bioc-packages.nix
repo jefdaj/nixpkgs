@@ -994,7 +994,7 @@ rMAT = derive { name="rMAT"; version="3.20.0"; sha256="0dq4ipz1j6qai8q8z038hjb5j
 rRDP = derive { name="rRDP"; version="1.4.0"; sha256="101g3j8r8h0nc69k0srlwkxld4qd99ww8xf5b34sm015hvhfx55k"; depends=[Biostrings]; };
 rSFFreader = derive { name="rSFFreader"; version="0.18.0"; sha256="0z2lkjbs3svx1b9zr4smjwrcd9xzxhfp98428vzaqq0k79h1v666"; depends=[Biostrings IRanges S4Vectors ShortRead XVector]; };
 rTANDEM = derive { name="rTANDEM"; version="1.10.0"; sha256="1dmaqdjfmjkkrddf666hpp95s7s6x0ssinx9aybl6952ylfjgcd1"; depends=[data_table Rcpp XML]; };
-rTRM = derive { name="rTRM"; version="1.8.0"; sha256="1k36p601n1f2bkkyfh6sr4x32ikd4jsr99ad3rbkmx04slkdzkka"; depends=[AnnotationDbi DBI igraph RSQLite]; };
+rTRM = derive { name="rTRM"; version="1.8.1"; sha256="0hy2wxlclbgw48gizm6l2c65x81s17qh4l7751h00yw0995l4dsq"; depends=[AnnotationDbi DBI igraph RSQLite]; };
 rTRMui = derive { name="rTRMui"; version="1.8.0"; sha256="1mbljb86k3vhiavcv4fvibj6fykg65p4nh7wrrm1nxz90k5hbznp"; depends=[MotifDb org_Hs_eg_db org_Mm_eg_db rTRM shiny]; };
 rain = derive { name="rain"; version="1.4.0"; sha256="0nldnsy6x91nv3i24gj81yxmrr7d4j7iicqxy279gh1k5zh5l5r1"; depends=[gmp multtest]; };
 rama = derive { name="rama"; version="1.44.0"; sha256="0nka6a2dk7jn4lk0i2p91hxwdgpny6y3j4dz709crrxlz3xjqflm"; depends=[]; };

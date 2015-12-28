@@ -6,31 +6,146 @@
 # and also leave a lot of build_*.log files from failed builds in the working dir.
 # You can delete those or look through them for clues.
 
-# update package lists
-for prefix in bioc bioc-annotation bioc-experiment cran irkernel; do
-  echo "Downloading updates to ${prefix}-packages.nix..."
-  Rscript generate-r-packages.R ${prefix} >new && mv new ${prefix}-packages.nix
-done
+# TODO: new overall algorithm:
+#       0. update package lists with generate-r-packages.R
+#       1. list all packages by rPackages attribute name (without trying to access them!)
+#       2. try to build each one, and
+#         2a. if the attribute is missing, mark as archived (how?)
+#         2b. if it works and is marked broken, fix that
+#         2c. if it's broken but not marked, fix that instead
+#            2ci. if there's a dependency error say it's due to that
+#            2cii. or if it's a hash mismatch put that in too
+#            2ciii. otherwise generic "broken build"
+#       3. make sure the whole rPackages can be evaluated (all archived packages gone)
 
-# check for newly un-broken packages
-update_package() {
+##################
+# update metadata
+##################
+
+update_package_list() {
+  prefix="$1"
+  path="${prefix}-packages.nix"
+  echo "  ${path}"
+  Rscript generate-r-packages.R ${prefix} >new && mv new ${path}
+  return $?
+}
+
+update_package_lists() {
+  echo "Downloading + hashing updated packages"
+  for prefix in bioc bioc-annotation bioc-experiment cran irkernel; do
+    update_package_list "$prefix" &> /dev/null
+  done
+  echo "Updated all package lists"
+  echo
+}
+
+###########################
+# remove archived packages
+###########################
+
+list_attr_names() {
+  expr="builtins.attrNames (import <nixpkgs> {}).rPackages"
+  nix-instantiate --eval --expr "$expr" |  sed 's/\ /\n/g' |
+    cut -d'"' -f2 | sort | uniq | tail -n+3 |
+    grep -v override
+}
+
+list_grep_names() {
+  grep '= derive' *-packages.nix |
+    cut -d':' -f2 | cut -d' ' -f1 | sort | uniq
+}
+
+list_removed() {
+  archived=$(comm -23 <(list_attr_names) <(list_grep_names))
+  [[ -z "$archived" ]] && return 0
+  echo "These packages have been removed upstream:"
+  echo "$archived" | while read l; do echo "  $l"; done
+  echo "They should be removed from default.nix too before continuing."
+  exit 1
+}
+
+test_rpackages() {
+  nix-env -f "<nixpkgs>" -qaP -A rPackages &> /dev/null
+  if [[ $? != 0 ]]; then
+    echo "Warning! rPackages failed to evaluate. Something went wrong. :("
+  fi
+}
+
+##################
+# test all builds
+##################
+
+mark_broken() {
+  reason="broken build"
   pkg="$1"
   logfile="build_${pkg}.log"
-  [[ -a $logfile ]] && return
-  nix-build --arg config '{ allowBroken = true; allowUnfree = true; }' '<nixpkgs>' -A "rPackages.${pkg}" 2>&1 &> $logfile
-  [[ $? == 0 ]] || return
-  rm build_${pkg}.log
-  sed -i "/\"$pkg\" # broken build/d"          default.nix
-  sed -i "/\"$pkg\" # build is broken/d"       default.nix
-  sed -i "/\"$pkg\" # Build Is Broken/d"       default.nix
-  sed -i "/# depends on broken package $pkg/d" default.nix
-  echo "${pkg} builds! Updated default.nix"
+  grep 'should have sha256'  $logfile > /dev/null && reason="hash mismatch"
+  grep 'dependencies couldn' $logfile > /dev/null && reason="broken dependency"
+  echo "marking $pkg broken (${reason})"
+  sed -i "/brokenPackages = \\[$/a \ \ \ \ \"$pkg\" # $reason" default.nix
 }
-echo "Checking for newly un-broken packages..."
-export -f update_package
-grep -E '" # (broken build|[Bb]uild [Ii]s [Bb]roken)' default.nix | cut -d'"' -f2 | while read pkg; do
-  sem --no-notice update_package $pkg
-done
+
+mark_fixed() {
+  echo "marking $1 fixed"
+  sed -i "/\"$1\" # broken build/d"          default.nix
+  sed -i "/\"$1\" # broken dependency/d"     default.nix
+  sed -i "/\"$1\" # build is broken/d"       default.nix
+  sed -i "/\"$1\" # Build Is Broken/d"       default.nix
+  sed -i "/# depends on broken package $1/d" default.nix
+}
+
+try_to_build() {
+  pkg="$1"
+  logfile="build_${pkg}.log"
+  if [[ -a $logfile ]]; then
+    echo "Skipping ${pkg} because ${logfile} exists"
+    return -1
+  fi
+  nix-build '<nixpkgs>' \
+    --arg config '{ allowBroken = true; allowUnfree = true; }' \
+    -A "rPackages.${pkg}" 2>&1 &> $logfile
+  code=$? #; echo "return code: $code"
+  [[ $code == 0 ]] && echo "${pkg} builds" || echo "${pkg} fails to build"
+  return $code
+}
+
+confirm_broken() {
+  try_to_build "$1" >/dev/null
+  [[ $? ==  0 ]] && mark_fixed "$1"
+}
+
+confirm_builds() {
+  try_to_build "$1" >/dev/null && echo "$1 still builds"
+  [[ $? == 1 ]] && mark_broken "$1"
+}
+
+export -f try_to_build mark_broken mark_fixed confirm_builds confirm_broken
+
+# TODO: remove references to packages removed upsream
+# echo "Removing references to packages archived upstream"
+# while [[ True ]]; do
+#   nix-env -f "<nixpkgs>" -qaP -A rPackages | grep -Po 'attribute (.*) missing' > /dev/null
+# done
+# curl 'https://cran.r-project.org/src/contrib/PACKAGES.in' | while read line; do
+# done
+
+# echo "Confirming that broken packages still fail to build"
+# grep -E '" # (broken build|[Bb]uild [Ii]s [Bb]roken)' default.nix | cut -d'"' -f2 |
+#   while read pkg; do
+#     sem --no-notice confirm_broken $pkg
+#   done
+# echo
+
+# TODO: now go through all R packages, still skipping the ones with logs
+# echo "Confirming that working packages still build OK"
+# grep '= derive' *-packages.nix |
+#   cut -d":" -f2 | cut -d' ' -f1 | sort | uniq |
+#   while read pkg; do
+#     sem --no-notice confirm_builds $pkg
+#   done
+# echo
+
+# TODO: don't need to build each package; fail dependencies of broken ones automatically
 
 # TODO: check for newly broken packages
 
@@ -38,3 +153,11 @@ done
 # TODO: fix 'should have sha256' errors
 # TODO: fix Octave_map errors
 # TODO: fix dependencies: BiGGr -> libsbml
+
+main() {
+  # update_package_lists
+  list_removed
+  test_rpackages
+}
+
+main
