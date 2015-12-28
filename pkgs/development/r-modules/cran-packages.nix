@@ -6434,9 +6434,9 @@ rgeolocate = derive { name="rgeolocate"; version="0.5.0"; sha256="0n680a9wnw2xvq
 rgeos = derive { name="rgeos"; version="0.3-15"; sha256="1f6nsqpcgbvwjcni9wj8jf4pag79801wiw4ks9gh5kxrc59a165y"; depends=[sp]; };
 rgexf = derive { name="rgexf"; version="0.15.3"; sha256="0iw1vk32ad623aasf6f8hl0qkj59f1dsc2riwqc775zvs5w7k2if"; depends=[igraph Rook XML]; };
 rggobi = derive { name="rggobi"; version="2.1.20"; sha256="1a7l68h3m9cq14k7y96ijgh0iz3d6j4j2anxg50pykz20lnykr9g"; depends=[RGtk2]; };
-rgl = derive { name="rgl"; version="0.95.1429"; sha256="1hmdjy8y4jrxbiay6zq4mfpgiz5sd4rg7cn49r5nj73z9hhsbrgn"; depends=[]; };
+rgl = derive { name="rgl"; version="0.95.1435"; sha256="17bjvrmwg3hda1fcwgyx3y0rd7rhk6n1fp16m0j0r4axj25br66d"; depends=[]; };
 rglobi = derive { name="rglobi"; version="0.2.8"; sha256="1033cmwairf4nm9r6nvi1ddgq0j9mzchlzvj1hph0vlcbb53ybqh"; depends=[RCurl rjson]; };
-rglwidget = derive { name="rglwidget"; version="0.1.1431"; sha256="0y4l7x4v7dcp86my8r5qwz59mvzva5snxnnv67sbw43aa0z464m3"; depends=[htmltools htmlwidgets jsonlite knitr rgl shiny]; };
+rglwidget = derive { name="rglwidget"; version="0.1.1434"; sha256="0fv8djyfc0i4d0w5mxnmsx3y3d0mzagllybv2wlfkar4sg44y9bj"; depends=[htmltools htmlwidgets jsonlite knitr magrittr rgl shiny]; };
 rgp = derive { name="rgp"; version="0.4-1"; sha256="1p5qa46v0sli7ccyp39iysn04yvq80dy2w1hk4c80pfwrxc6n03g"; depends=[emoa]; };
 rgpui = derive { name="rgpui"; version="0.1-2"; sha256="0sh5wj4f2wj6g3r7xaq95q89n0qjavchi5kfi6sj1j34ykybbs3g"; depends=[emoa rgp shiny]; };
 rgr = derive { name="rgr"; version="1.1.11"; sha256="01hlj3nqzfsffr4k7d3iyp4mfqs1sy94d0scy64wh9kkplrzkh4i"; depends=[fastICA MASS]; };

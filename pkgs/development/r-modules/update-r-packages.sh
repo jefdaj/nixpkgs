@@ -25,18 +25,15 @@
 update_package_list() {
   prefix="$1"
   path="${prefix}-packages.nix"
-  echo "  ${path}"
+  echo "Updating ${path}"
   Rscript generate-r-packages.R ${prefix} >new && mv new ${path}
   return $?
 }
 
 update_package_lists() {
-  echo "Downloading + hashing updated packages"
   for prefix in bioc bioc-annotation bioc-experiment cran irkernel; do
-    update_package_list "$prefix" &> /dev/null
+    update_package_list "$prefix"
   done
-  echo "Updated all package lists"
-  echo
 }
 
 ###########################
@@ -56,6 +53,7 @@ list_grep_names() {
 }
 
 list_removed() {
+  echo "Looking for removed packages"
   archived=$(comm -23 <(list_attr_names) <(list_grep_names))
   [[ -z "$archived" ]] && return 0
   echo "These packages have been removed upstream:"
@@ -65,6 +63,7 @@ list_removed() {
 }
 
 test_rpackages() {
+  echo "Testing that rPackages evaluates properly"
   nix-env -f "<nixpkgs>" -qaP -A rPackages &> /dev/null
   if [[ $? != 0 ]]; then
     echo "Warning! rPackages failed to evaluate. Something went wrong. :("
@@ -94,7 +93,7 @@ mark_fixed() {
   sed -i "/# depends on broken package $1/d" default.nix
 }
 
-try_to_build() {
+test_build() {
   pkg="$1"
   logfile="build_${pkg}.log"
   if [[ -a $logfile ]]; then
@@ -104,30 +103,33 @@ try_to_build() {
   nix-build '<nixpkgs>' \
     --arg config '{ allowBroken = true; allowUnfree = true; }' \
     -A "rPackages.${pkg}" 2>&1 &> $logfile
-  code=$? #; echo "return code: $code"
+  code=$?
   [[ $code == 0 ]] && echo "${pkg} builds" || echo "${pkg} fails to build"
   return $code
 }
 
 confirm_broken() {
-  try_to_build "$1" >/dev/null
+  test_build "$1" >/dev/null
   [[ $? ==  0 ]] && mark_fixed "$1"
 }
 
 confirm_builds() {
-  try_to_build "$1" >/dev/null && echo "$1 still builds"
+  test_build "$1" >/dev/null && echo "$1 still builds"
   [[ $? == 1 ]] && mark_broken "$1"
 }
 
-export -f try_to_build mark_broken mark_fixed confirm_builds confirm_broken
+# make functions available to parallel
+export -f test_build mark_broken mark_fixed confirm_broken confirm_builds
 
-# TODO: remove references to packages removed upsream
-# echo "Removing references to packages archived upstream"
-# while [[ True ]]; do
-#   nix-env -f "<nixpkgs>" -qaP -A rPackages | grep -Po 'attribute (.*) missing' > /dev/null
-# done
-# curl 'https://cran.r-project.org/src/contrib/PACKAGES.in' | while read line; do
-# done
+test_all_builds() {
+  echo "Testing each package build. This could take a while..."
+  list_attr_names | while read pkg; do
+    grep -E "\"$pkg\" # (depends on broken|[Bb]roken).*" default.nix &> /dev/null
+    [[ $? == 0 ]] && fn='confirm_broken' || fn='confirm_builds'
+    [[ $fn == 'confirm_broken' ]] || continue # TODO: remove this
+    sem --no-notice $fn "$pkg"
+  done
+}
 
 # echo "Confirming that broken packages still fail to build"
 # grep -E '" # (broken build|[Bb]uild [Ii]s [Bb]roken)' default.nix | cut -d'"' -f2 |
@@ -155,9 +157,10 @@ export -f try_to_build mark_broken mark_fixed confirm_builds confirm_broken
 # TODO: fix dependencies: BiGGr -> libsbml
 
 main() {
-  # update_package_lists
+  update_package_lists
   list_removed
   test_rpackages
+  test_all_builds
 }
 
 main
