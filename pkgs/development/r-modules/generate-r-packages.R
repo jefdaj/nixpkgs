@@ -26,10 +26,11 @@ nixPrefetch <- function(name, version) {
   prevV <- readFormatted$V2 == name & readFormatted$V4 == version
   if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else {
 
-    # download using wget because nix-prefetch-url fails randomly on large files
+    # download using wget because nix-prefetch-url often fails on large files
     url <- paste0(mirrorUrl, name, "_", version, ".tar.gz")
     tmp <- tempfile(pattern=paste0(name, "_", version), fileext=".tar.gz")
-    cmd <- paste0("wget -q -O '", tmp, "' '", url, "' && nix-prefetch-url file://", tmp, " && rm -rf ", tmp)
+    cmd <- paste0("wget -q -O '", tmp, "' '", url, "' && nix-hash --type sha256 --base32 ", tmp)
+    cmd <- paste0(cmd, " && echo >&2 '  added ", name, " ", version, "' && rm -rf ", tmp)
     system(cmd, intern=TRUE)
 
   }
