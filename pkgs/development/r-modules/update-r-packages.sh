@@ -6,11 +6,10 @@
 # starting and look through the diffs afterward. It also leaves a lot of
 # build/*.log files, which you can delete or look through for clues.
 
-# TODO: fix 'should have sha256' errors
 # TODO: fix Octave_map errors
 # TODO: fix dependencies: BiGGr -> libsbml
-# TODO: don't need to build each package?
-#       could fail dependencies of broken ones automatically
+# TODO: uh-oh! infinite recursion in canceR build
+# TODO: only build NEW packages to speed it up drastically!
 
 ##################
 # update metadata
@@ -30,9 +29,9 @@ update_package_lists() {
   done
 }
 
-###########################
-# remove archived packages
-###########################
+#####################################
+# prompt to remove archived packages
+#####################################
 
 list_attr_names() {
   expr="builtins.attrNames (import <nixpkgs> {}).rPackages"
@@ -64,29 +63,98 @@ test_rpackages() {
   fi
 }
 
-##################
-# test all builds
-##################
+#########################################
+# test all builds and update broken list
+#########################################
 
-mark_broken() {
-  reason="broken build"
-  pkg="$1"
-  logfile="build/${pkg}.log"
-  grep 'should have sha256'  $logfile > /dev/null && reason="hash mismatch"
-  grep 'dependencies couldn' $logfile > /dev/null && reason="broken dependency"
-  # TODO: make this into a generic "insert into list" function?
-  sed -i "/brokenPackages = \\[$/a \ \ \ \ \"$pkg\" # $reason" default.nix
-  echo "  added $pkg (${reason})"
+list_depends() {
+  [[ -z "$1" ]] && return
+  grep -E "^$1" *-packages.nix |
+    cut -d'[' -f2 | cut -d']' -f1 | sed "s/\ /\\n/g"
+}
+
+list_depends_rec() {
+  list_depends "$1" | while read pkg; do
+    echo "$pkg"
+    list_depends "$pkg"
+  done | sort | uniq
 }
 
 mark_fixed() {
+  [[ -z "$1" ]] && return
+  is_marked_broken "$1" || return
   sed -i "/\"$1\" # broken build/d"              default.nix
   sed -i "/\"$1\" # broken dependency/d"         default.nix
   sed -i "/\"$1\" # build is broken/d"           default.nix
   sed -i "/\"$1\" # Build Is Broken/d"           default.nix
   sed -i "/\"$1\" # depends on broken package/d" default.nix
   sed -i "/# depends on broken package $1/d"     default.nix
-  echo "  removed $1"
+  echo "    removed $1 from broken list"
+}
+
+mark_fixed_rec() {
+  mark_fixed "$1"
+  list_depends_rec "$1" | while read pkg; do
+    mark_fixed "$pkg"
+  done
+}
+
+list_rdepends() {
+  grep -E "depends=.*$1" *-packages.nix |
+    cut -d':' -f2 | cut -d' ' -f1 | sort | uniq
+}
+
+add_to_list() {
+  name="$1"
+  item="$2"
+  sed -i "/$name = \\[$/a \ \ \ \ $item" default.nix
+}
+
+is_marked_broken() {
+  grep -E "\"$1\" # broken build"              default.nix &>/dev/null && return 0
+  grep -E "\"$1\" # broken dependency"         default.nix &>/dev/null && return 0
+  grep -E "\"$1\" # build is broken"           default.nix &>/dev/null && return 0
+  grep -E "\"$1\" # Build Is Broken"           default.nix &>/dev/null && return 0
+  grep -E "\"$1\" # depends on broken package" default.nix &>/dev/null && return 0
+  grep -E "# depends on broken package $1"     default.nix &>/dev/null && return 0
+  return 1
+}
+
+# TODO: be more accurate about the broken dependency here?
+# TODO: or less accurate and have simpler code? could just say it's the build
+mark_broken() {
+  pkg="$1"
+  logfile="build/${pkg}.log"
+  reason="broken build"
+  grep 'should have sha256'  $logfile > /dev/null && reason="hash mismatch"
+  grep 'dependencies couldn' $logfile > /dev/null && reason="broken dependency"
+  msg="\"$pkg\" # $reason"
+  add_to_list "brokenPackages" "$msg"
+  echo "    added ${pkg} to broken list (${reason})"
+}
+
+mark_brokendep_rec() {
+  list_rdepends "$1" | while read pkg; do
+    if is_marked_broken "$pkg"; then
+      echo "    $pkg already marked broken"
+      continue
+    fi
+    msg="\"$pkg\" # depends on broken package $1"
+    add_to_list "brokenPackages" "$msg"
+    echo "    added ${pkg} to broken list (depends on $1)"
+    mark_brokendep_rec "$pkg"
+  done
+}
+
+mark_broken_rec() {
+  if is_marked_broken "$1"; then
+    echo "    $1 already marked broken"
+    return
+  fi
+  mark_broken "$1"
+  list_rdepends "$1" | while read pkg; do
+    mark_brokendep_rec "$pkg"
+  done
 }
 
 test_build() {
@@ -94,37 +162,27 @@ test_build() {
   logfile="build/${pkg}.log"
   [[ -d build ]] || mkdir build
   if [[ -a $logfile ]]; then
-    echo "Skipping ${pkg} because ${logfile} exists"
+    echo "  skipping ${pkg} because ${logfile} exists"
     return -1
   fi
+  echo -n "  building ${pkg}..."
   nix-build '<nixpkgs>' \
     --arg config '{ allowBroken = true; allowUnfree = true; }' \
     -A "rPackages.${pkg}" 2>&1 &> $logfile
   code=$?
-  [[ $code == 0 ]] && echo "${pkg} builds" || echo "${pkg} fails to build"
+  [[ $code == 0 ]] && echo " success!" || echo " fail :("
   return $code
 }
-
-confirm_broken() {
-  test_build "$1" >/dev/null
-  [[ $? ==  0 ]] && mark_fixed "$1"
-}
-
-confirm_builds() {
-  test_build "$1" >/dev/null && echo "$1 still builds"
-  [[ $? == 1 ]] && mark_broken "$1"
-}
-
-# make functions available to parallel
-export -f test_build mark_broken mark_fixed confirm_broken confirm_builds
 
 test_all_builds() {
   echo "Updating default.nix broken list. This will take a while!"
   list_attr_names | while read pkg; do
     grep -E "\"$pkg\" # (depends on broken|[Bb]roken).*" default.nix &> /dev/null
-    [[ $? == 0 ]] && fn='confirm_broken' || fn='confirm_builds'
-    [[ $fn == 'confirm_broken' ]] || continue # TODO: remove this
-    sem --no-notice $fn "$pkg"
+    test_build "${pkg}"
+    code=$?
+    # avoid doing anything on -1/255 (skipped)
+    [[ $code -eq 0 ]] && mark_fixed_rec  "$pkg"
+    [[ $code -eq 1 ]] && mark_broken_rec "$pkg"
   done
 }
 

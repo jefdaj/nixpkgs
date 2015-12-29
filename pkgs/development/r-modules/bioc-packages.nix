@@ -306,7 +306,7 @@ MBASED = derive { name="MBASED"; version="1.4.0"; sha256="0v56m2cdwq59drqxnpg3cg
 MBAmethyl = derive { name="MBAmethyl"; version="1.4.0"; sha256="0knn0fgrqmddwiyip49gchp5fzz77fb3fndhyddb0xw752nqvw8p"; depends=[]; };
 MBCB = derive { name="MBCB"; version="1.24.0"; sha256="1qryzcjf3w138n12amch1zq2nl5nvagqqv422kcladapaq2lsgi2"; depends=[preprocessCore tcltk2]; };
 MCRestimate = derive { name="MCRestimate"; version="2.26.0"; sha256="1igfffsgz6m4rl2a5fnkb92r5x4qjr2yl8gaj3ws8478q3aq0bgd"; depends=[Biobase e1071 golubEsets pamr randomForest RColorBrewer]; };
-MEAL = derive { name="MEAL"; version="1.0.2"; sha256="1ib6m40170ws8a7lmxq8mzkx1zzm7hc7x0mw47spal76fv9s45m8"; depends=[Biobase BiocGenerics DMRcate doParallel GenomicRanges ggplot2 IRanges limma minfi S4Vectors scales SNPassoc snpStats sva vegan]; };
+MEAL = derive { name="MEAL"; version="1.0.3"; sha256="1nvc3iygg3ybaii9yf5494q4l5sq6qjxdn3yqfcdzwj0q1ks4c4j"; depends=[Biobase BiocGenerics DMRcate doParallel GenomicRanges ggplot2 IRanges limma minfi S4Vectors SNPassoc snpStats sva vegan]; };
 MEDIPS = derive { name="MEDIPS"; version="1.20.0"; sha256="1p2lkms736idwq5wp79w2d0465yrkh2y7g97rcjffl60vhvjc8pm"; depends=[biomaRt Biostrings BSgenome DNAcopy edgeR GenomicRanges gtools IRanges preprocessCore Rsamtools rtracklayer]; };
 MEDME = derive { name="MEDME"; version="1.30.0"; sha256="0j2zgd9lx3cbbv2vyqb4nd9rk3lxk33az50n8b9sn4cab7yws54x"; depends=[Biostrings drc MASS]; };
 MEIGOR = derive { name="MEIGOR"; version="1.4.0"; sha256="1nywi9cndvkabiryrq72vxgrhz9d8jvzjvzhz9i4mx6g8xvphjng"; depends=[CNORode deSolve Rsolnp snowfall]; };
