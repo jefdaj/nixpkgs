@@ -870,7 +870,7 @@ GeoXp = derive { name="GeoXp"; version="1.6.2"; sha256="18wdmdwb79ipdjdii068dz9f
 GetR = derive { name="GetR"; version="0.1"; sha256="1b2wirhz4nhvmf863czwb8z8b42ilsyjjrg9rc4nd9b7nz50bmjg"; depends=[party]; };
 GetoptLong = derive { name="GetoptLong"; version="0.1.1"; sha256="05fwlzzjnl84rv6r2hlqkhhg1y0d4yxmk5w4fpxfc7lpz2zi3zcd"; depends=[GlobalOptions rjson]; };
 GhcnDaily = derive { name="GhcnDaily"; version="1.5"; sha256="1gln1giid5n5b9mxidh90l8ahvcgx968zak2lxr2f9c32pnrpmnp"; depends=[abind ncdf R_methodsS3 R_oo R_utils]; };
-GiANT = derive { name="GiANT"; version="1.1"; sha256="1918fncz7qgdc9qka6fv841ml4wzkg7nx6fwlz920x2a0zi494zj"; depends=[]; };
+GiANT = derive { name="GiANT"; version="1.2"; sha256="03syvzaz2q4hv03q6cs0gdka1sy4dqyl3aqpr2430nfi2phmz9i2"; depends=[]; };
 GibbsACOV = derive { name="GibbsACOV"; version="1.1"; sha256="1ikcdsf72sn1zgk527zmxw3zjhx0yvkal6dv001cgkv202842kll"; depends=[MASS]; };
 GillespieSSA = derive { name="GillespieSSA"; version="0.5-4"; sha256="0bs16g8vm9yrv74g94lj8fdfmf1rjj0f04lcnaya7gyak3jhk36q"; depends=[]; };
 Giza = derive { name="Giza"; version="1.0"; sha256="13nkm8mk1v7s85kmp6psvnr1v97vi0gid8rsqyq3x6046pyl5z6v"; depends=[lattice reshape]; };
@@ -4522,7 +4522,7 @@ hsmm = derive { name="hsmm"; version="0.4"; sha256="1fh8c5kfv4brygdq6bfkrhrhkm99
 hsphase = derive { name="hsphase"; version="2.0.1"; sha256="1z7yxbknldxn780dxw9xz984b3i8pj5hmdnbynvxc5k0ss8g7isy"; depends=[Rcpp RcppArmadillo snowfall]; };
 htmlTable = derive { name="htmlTable"; version="1.3"; sha256="00zcismapanyb68657gng5l6g3hsmpls84naracshj4gfk2l1cfs"; depends=[knitr magrittr stringr]; };
 htmltab = derive { name="htmltab"; version="0.6.0"; sha256="00171fsdgv3rks6j4i5w8rbk2kar2rbmqqpqrr2xdxkjqxsf6k4b"; depends=[httr XML]; };
-htmltools = derive { name="htmltools"; version="0.2.6"; sha256="1gp6f6388xy3cvnb08q08vraidjp740gfxlafdd19m2s04v5hncz"; depends=[digest]; };
+htmltools = derive { name="htmltools"; version="0.3"; sha256="15jxklc974f12s8qa169l0x0yn4y5p6am8ra30d7bn8f3lsb9z00"; depends=[digest]; };
 htmlwidgets = derive { name="htmlwidgets"; version="0.5"; sha256="1d583kk7g29r4sq0y1scri7fs48z6q17c051nyjywcvnpy4lvi8j"; depends=[htmltools jsonlite yaml]; };
 hts = derive { name="hts"; version="4.5"; sha256="1bjribmfczkx139z73b0cl3lzlw5n2byyyc5inqv9qgayz0dc6cp"; depends=[forecast Matrix Rcpp RcppEigen SparseM]; };
 httk = derive { name="httk"; version="1.3"; sha256="18vnl0dj6xhdy0bsayfhd2jq51b3ncqxms8r5y263q0ivqyxp2gd"; depends=[deSolve msm]; };
@@ -6045,7 +6045,7 @@ probsvm = derive { name="probsvm"; version="1.00"; sha256="1k0zysym7ncmjy9h7whwi
 prodlim = derive { name="prodlim"; version="1.5.7"; sha256="11dhzfw3daanmpnwyynx2q2mwkn8fihi4rsikl1f7rmzadis4ixd"; depends=[KernSmooth lava Rcpp survival]; };
 profdpm = derive { name="profdpm"; version="3.3"; sha256="07lhjavrx4fa5950w928mfpddmmnmvdapl5n6mv49m8h3bxs4nmy"; depends=[]; };
 profileModel = derive { name="profileModel"; version="0.5-9"; sha256="1p9b9jr5842im195d60ja82pp7vbk85vs8b0r3fnf62j4b92aky9"; depends=[]; };
-profileR = derive { name="profileR"; version="0.3-1"; sha256="1sr9a39zn29hs6kw4rplrrbgcpcxxw1y63q493wv4hk7y0lbw98n"; depends=[ggplot2 lavaan MASS RColorBrewer reshape]; };
+profileR = derive { name="profileR"; version="0.3-2"; sha256="19ld0aiy5gphndh8fcsny96axlw04k5vlprphrck30y6lkx00lda"; depends=[ggplot2 lavaan RColorBrewer reshape]; };
 profilr = derive { name="profilr"; version="0.1.0"; sha256="0rw5cjvvrgsdmhgrsaw4skfdk8h488b6mkmibgjj3dd3x0j3caq6"; depends=[]; };
 profr = derive { name="profr"; version="0.3.1"; sha256="1w06mm89apggy6wc273b2nsp95smajr8sf3dwshykivv7mhkxs5d"; depends=[plyr stringr]; };
 proftools = derive { name="proftools"; version="0.1-0"; sha256="1wzkrz7zr2pjw5id2sp6jdqm5pgrrh35zfwjrkr6mac22lniq4bv"; depends=[]; };

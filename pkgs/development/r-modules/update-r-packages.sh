@@ -8,7 +8,6 @@
 
 # TODO: fix Octave_map errors
 # TODO: fix dependencies: BiGGr -> libsbml
-# TODO: uh-oh! infinite recursion in canceR build
 # TODO: only build NEW packages to speed it up drastically!
 
 ##################
@@ -69,14 +68,15 @@ test_rpackages() {
 
 list_depends() {
   [[ -z "$1" ]] && return
-  grep -E "^$1" *-packages.nix |
+  grep -E "^$1 =" *-packages.nix |
     cut -d'[' -f2 | cut -d']' -f1 | sed "s/\ /\\n/g"
 }
 
 list_depends_rec() {
   list_depends "$1" | while read pkg; do
+    # [[ -z "$pkg" ]] && return
     echo "$pkg"
-    list_depends "$pkg"
+    list_depends_rec "$pkg"
   done | sort | uniq
 }
 
@@ -95,13 +95,22 @@ mark_fixed() {
 mark_fixed_rec() {
   mark_fixed "$1"
   list_depends_rec "$1" | while read pkg; do
+    # [[ -z "$pkg" ]] && continue
     mark_fixed "$pkg"
   done
 }
 
 list_rdepends() {
-  grep -E "depends=.*$1" *-packages.nix |
+  grep -E "depends=.*"[\ \[]$1[\ \[]"" *-packages.nix |
     cut -d':' -f2 | cut -d' ' -f1 | sort | uniq
+}
+
+list_rdepends_rec() {
+  list_rdepends "$1" | while read pkg; do
+    # [[ -z "$pkg" ]] && return
+    echo "$pkg"
+    list_rdepends_rec "$pkg"
+  done
 }
 
 add_to_list() {
@@ -116,7 +125,6 @@ is_marked_broken() {
   grep -E "\"$1\" # build is broken"           default.nix &>/dev/null && return 0
   grep -E "\"$1\" # Build Is Broken"           default.nix &>/dev/null && return 0
   grep -E "\"$1\" # depends on broken package" default.nix &>/dev/null && return 0
-  grep -E "# depends on broken package $1"     default.nix &>/dev/null && return 0
   return 1
 }
 
@@ -133,17 +141,16 @@ mark_broken() {
   echo "    added ${pkg} to broken list (${reason})"
 }
 
-mark_brokendep_rec() {
-  list_rdepends "$1" | while read pkg; do
-    if is_marked_broken "$pkg"; then
-      echo "    $pkg already marked broken"
-      continue
-    fi
-    msg="\"$pkg\" # depends on broken package $1"
+mark_broken_dep() {
+  pkg="$1"; dep="$2"
+  # [[ -z "$pkg" ]] && continue
+  if is_marked_broken "$pkg"; then
+    echo "    $pkg already marked broken"
+  else
+    msg="\"$pkg\" # depends on broken package $dep"
     add_to_list "brokenPackages" "$msg"
-    echo "    added ${pkg} to broken list (depends on $1)"
-    mark_brokendep_rec "$pkg"
-  done
+    echo "    added ${pkg} to broken list (depends on $dep)"
+  fi
 }
 
 mark_broken_rec() {
@@ -152,8 +159,9 @@ mark_broken_rec() {
     return
   fi
   mark_broken "$1"
-  list_rdepends "$1" | while read pkg; do
-    mark_brokendep_rec "$pkg"
+  list_rdepends_rec "$1" | while read pkg; do
+    # [[ -z "$pkg" ]] && continue
+    mark_broken_dep "$pkg" "$1"
   done
 }
 
@@ -163,7 +171,7 @@ test_build() {
   [[ -d build ]] || mkdir build
   if [[ -a $logfile ]]; then
     echo "  skipping ${pkg} because ${logfile} exists"
-    return -1
+    return 255
   fi
   echo -n "  building ${pkg}..."
   nix-build '<nixpkgs>' \
@@ -174,20 +182,26 @@ test_build() {
   return $code
 }
 
+update_package() {
+  pkg="$1"
+  # [[ -z "$pkg" ]] && continue
+  grep -E "\"$pkg\" # (depends on broken|[Bb]roken).*" default.nix &> /dev/null
+  test_build "${pkg}"
+  code=$?
+  [[ $code -eq 255 ]] && return # skipped
+  [[ $code -eq 0 ]] && mark_fixed_rec  "$pkg"
+  [[ $code -gt 0 ]] && mark_broken_rec "$pkg"
+}
+
 test_all_builds() {
   echo "Updating default.nix broken list. This will take a while!"
   list_attr_names | while read pkg; do
-    grep -E "\"$pkg\" # (depends on broken|[Bb]roken).*" default.nix &> /dev/null
-    test_build "${pkg}"
-    code=$?
-    # avoid doing anything on -1/255 (skipped)
-    [[ $code -eq 0 ]] && mark_fixed_rec  "$pkg"
-    [[ $code -eq 1 ]] && mark_broken_rec "$pkg"
+    update_package "$pkg"
   done
 }
 
 main() {
-  update_package_lists
+  # update_package_lists
   list_removed
   test_rpackages
   test_all_builds
