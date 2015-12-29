@@ -2428,7 +2428,7 @@ TKF = derive { name="TKF"; version="0.0.8"; sha256="1db87lwx26ayv1x2k8qd9dfr6j3j
 TLBC = derive { name="TLBC"; version="1.0"; sha256="08w187akbhfbz6nrrf7avf02lrhgj7bbrjmim9gkh4wlbjhzvw67"; depends=[caret HMM randomForest signal stringr]; };
 TMB = derive { name="TMB"; version="1.6.5"; sha256="0m3hh1rwxq86hrykdv233rzmc5nm73rr1bg72d2qg4giipmv8l5d"; depends=[Matrix RcppEigen]; };
 TMDb = derive { name="TMDb"; version="1.0"; sha256="0bbcmsv7b3vvskhdjww03gbcgql44vsvyjz2fajy9w2vgkr6ga90"; depends=[httr jsonlite]; };
-TOC = derive { name="TOC"; version="0.0-3"; sha256="0zgggkxsn7mqa5bh9rpb29ag019bwpy4yf3nd3nrcz5yk22bh7bn"; depends=[bit raster rgdal]; };
+TOC = derive { name="TOC"; version="0.0-4"; sha256="1c16d4wrzir6v3c323sck6r9yz6mv1a70xamlj5ha1ydmfixcza9"; depends=[bit raster rgdal]; };
 TP_idm = derive { name="TP.idm"; version="1.0"; sha256="1dgcalzhkhj4cn1yjf23q6cm527fgf083n7nw7201824g78566n5"; depends=[]; };
 TPmsm = derive { name="TPmsm"; version="1.2.1"; sha256="1vynzb6qpp8785rdjyarhvwbkasviamhljjlnp4i0dds96wwdgx1"; depends=[KernSmooth]; };
 TR8 = derive { name="TR8"; version="0.9.13"; sha256="07wrqwa5gf1l1y3b07mganr5xkzxdzrh6lrv7gf01m9b7bsz564m"; depends=[gdata gWidgets gWidgetstcltk plyr rappdirs RCurl taxize XML]; };
@@ -2575,7 +2575,7 @@ WARN = derive { name="WARN"; version="1.1"; sha256="0rnzsc8vbm116g4cwdivmxqv1zyg
 WCE = derive { name="WCE"; version="1.0"; sha256="1kb1z67ymnz8cgwxq6m5fpqgxmmrfiwh2q3x4rhanac2sinagyn4"; depends=[plyr survival]; };
 WCQ = derive { name="WCQ"; version="0.2"; sha256="1yhkr2iazd7lh9r68xz1lh32z6r1sdnmqrjshcrm4rbwai0j3lkr"; depends=[]; };
 WDI = derive { name="WDI"; version="2.4"; sha256="0ih6d9znq6b2prb4nvq5ypyjv1kpi1vylm3zvmkdjvx95z1qsinf"; depends=[RJSONIO]; };
-WGCNA = derive { name="WGCNA"; version="1.48"; sha256="18yl2v3s279saq318vd5hlwnqfm89rxmjjji778d2d26vviaf6bn"; depends=[AnnotationDbi doParallel dynamicTreeCut fastcluster foreach GO_db Hmisc impute matrixStats preprocessCore survival]; };
+WGCNA = derive { name="WGCNA"; version="1.49"; sha256="1jv6mx3pwl352kmq1wkd0gbyl405gky7h37d30ic8gk7i4cjda9r"; depends=[AnnotationDbi doParallel dynamicTreeCut fastcluster foreach GO_db Hmisc impute matrixStats preprocessCore survival]; };
 WMCapacity = derive { name="WMCapacity"; version="0.9.6.7"; sha256="167wx759xi7rv74n6sdsdkjnfpxdsiybk4ik70psdgfwdqqcga1y"; depends=[cairoDevice coda gtools gWidgets gWidgetsRGtk2 RGtk2 XML]; };
 WMDB = derive { name="WMDB"; version="1.0"; sha256="10wdjy3g2qg975yf1dhy09w9b8rs3w6iszhbzqx9igfqvi8isrr1"; depends=[]; };
 WRS2 = derive { name="WRS2"; version="0.4-0"; sha256="11yfq8jkr2f28zmshkvjv0ajslh0137mprn9clgala8y4xrpqv94"; depends=[MASS plyr reshape]; };
@@ -3082,7 +3082,7 @@ bvpSolve = derive { name="bvpSolve"; version="1.3.2"; sha256="1y6axzpbk7vnm2hsvi
 c060 = derive { name="c060"; version="0.2-4"; sha256="1yzy0p6041rygqfwzb8dpyc7jq12javmhlvdcmmc7p59bbk7wv3j"; depends=[glmnet lattice mlegp penalizedSVM peperr survival tgp]; };
 c3net = derive { name="c3net"; version="1.1.1"; sha256="0m4nvrs41kmlakc6m203zlncqwgj94wns8kzcb31xngjcacmcq42"; depends=[igraph]; };
 cAIC4 = derive { name="cAIC4"; version="0.2"; sha256="13sp3wywv82wgi1vsbxwn68v9xigy0fi3mcwyxjmmgmnsxns2fza"; depends=[lme4 Matrix]; };
-cIRT = derive { name="cIRT"; version="1.0.0"; sha256="0br6ibxldxxf185s0h5dkspjlnl9m0n4ll4da9kvzpr4zfnfdg1j"; depends=[Rcpp RcppArmadillo]; };
+cIRT = derive { name="cIRT"; version="1.1.0"; sha256="0gp3mmw1s57wg6rvh78261l4nwqg0zpr98q27v389fz2scab637d"; depends=[Rcpp RcppArmadillo]; };
 cOde = derive { name="cOde"; version="0.2"; sha256="0741ghg0cqxvgwgvrvsgi75qlkirnm8cjc6bw6xbmkg97scrs5ck"; depends=[]; };
 cSFM = derive { name="cSFM"; version="1.1"; sha256="1znxsqa8xdifmryg7jiqbpzm837n4n862kg5x1aki52crc4zyk3k"; depends=[MASS mgcv mnormt moments sn]; };
 ca = derive { name="ca"; version="0.58"; sha256="10dp261sq56ixrrr8qq4filxpzszcinz5qv50g40dan0k75n7isb"; depends=[]; };
@@ -3496,7 +3496,7 @@ dblcens = derive { name="dblcens"; version="1.1.7"; sha256="02639vyaqg7jpxih8clj
 dbmss = derive { name="dbmss"; version="2.2-4"; sha256="13dvdylra6ladpvgm3imad6wqqb1gaqhbb3s5l2lywx58kxrpnl8"; depends=[cubature Rcpp RcppParallel spatstat]; };
 dbscan = derive { name="dbscan"; version="0.9-6"; sha256="1a7x190lsz53p5n54zcmv02940ikpnc3jw8irybcal79yf0nqmb9"; depends=[Rcpp]; };
 dbstats = derive { name="dbstats"; version="1.0.4"; sha256="1miba5h5hkpb79kv9v9hqb5p66sinxpqvrw9hy9l5z4li6849yy1"; depends=[cluster pls]; };
-dc3net = derive { name="dc3net"; version="1.0"; sha256="1mnk02ajy7yxg02im9xp84km1rcbz32cwcparp054yxisbv2lvw9"; depends=[c3net igraph RedeR]; };
+dc3net = derive { name="dc3net"; version="1.0.1"; sha256="1pg29h391js55mqvx8867iwswjinbhygq3cccnxdk97jmv06vb4b"; depends=[c3net igraph RedeR]; };
 dcGOR = derive { name="dcGOR"; version="1.0.6"; sha256="0rvwa25r23yayx1i6xhkfaw2z85d2iyfx3slg3aq1m0fa7kj380p"; depends=[dnet igraph Matrix]; };
 dcemriS4 = derive { name="dcemriS4"; version="0.55"; sha256="15x4hjc5fwpn80h90q5x9a3p84pp3mxsmcx4hq5l0j52l9dy9nv3"; depends=[oro_nifti]; };
 dclone = derive { name="dclone"; version="2.0-0"; sha256="1j8g955rvdgcmc9vnz3xizlkq8w1bslav5h72igvzzffcvqbj9hq"; depends=[coda]; };
@@ -6067,7 +6067,7 @@ proto = derive { name="proto"; version="0.3-10"; sha256="03mvzi529y6kjcp9bkpk7zl
 protoclass = derive { name="protoclass"; version="1.0"; sha256="17d2m6r1shgb47v8mwdg1a7f5h29m5l7f5m0nsmv0xc90s9cpvk8"; depends=[class]; };
 protoclust = derive { name="protoclust"; version="1.5"; sha256="03qhqfqdz45s8c1p8c6sqs10i6c2ilx4fz8wkpwas3j78lgylskg"; depends=[]; };
 proton = derive { name="proton"; version="1.0"; sha256="1mgaw54is8l6ac1rf8s70rj7kv9xgsfdrlvjz01ggfwg7c6pyr3s"; depends=[digest]; };
-protr = derive { name="protr"; version="1.0-1"; sha256="1lvikmdin18vp985p2j58xzhhnianc62xy340dri7mi6h5iwf39h"; depends=[]; };
+protr = derive { name="protr"; version="1.1-1"; sha256="09iwyfvscz0ajgadfd69hhsnhkaqwpjnly9g6jjrdcqnaj4lw77l"; depends=[]; };
 provenance = derive { name="provenance"; version="1.0"; sha256="1l1m6m4f1hpsh8jc1kzpbwawav2xm0ni99mgqny7giraavp5j55y"; depends=[MASS smacof]; };
 proxy = derive { name="proxy"; version="0.4-15"; sha256="17qnrihxyyyj0lx6hka4mwkgy764ha4jx00a822xjnnbygk81iqv"; depends=[]; };
 prozor = derive { name="prozor"; version="0.1.1"; sha256="0yv9yzp8ldn888v2sg62qaq0vjg5xwjq9274x68idrlywzgplfgv"; depends=[doParallel foreach Matrix seqinr]; };

@@ -698,123 +698,236 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
-    "ChAMP" # broken dependency
-    "ChainLadder" # broken dependency
-    "cgdv17" # broken dependency
-    "cffdrs" # broken dependency
-    "CFC" # broken dependency
-    "ceuhm3" # broken dependency
-    "ceu1kgv" # broken dependency
-    "censusr" # broken dependency
-    "cems" # broken dependency
-    "cdcsis" # broken dependency
-    "ccTutorial" # broken dependency
-    "CCMnet" # broken dependency
-    "CCl4" # broken dependency
-    "CCAGFA" # broken dependency
-    "cati" # broken dependency
-    "caschrono" # broken dependency
-    "caRpools" # broken dependency
-    "CarletonStats" # broken dependency
-    "CardinalWorkflows" # broken dependency
-    "CARBayes" # broken dependency
-    "captr" # broken dependency
-    "capm" # broken dependency
-    "cape" # broken dependency
-    "candisc" # broken dependency
-    "canceR" # broken dependency
-    "CAFE" # broken dependency
-    "CADFtest" # broken dependency
-    "BubbleTree" # broken dependency
-    "bsseqData" # broken dependency
-    "BSgenome_Tguttata_UCSC_taeGut2" # broken dependency
-    "BSgenome_Tguttata_UCSC_taeGut1_masked" # broken dependency
-    "BSgenome_Sscrofa_UCSC_susScr3_masked" # broken dependency
-    "BSgenome_Rnorvegicus_UCSC_rn6" # broken dependency
-    "BSgenome_Rnorvegicus_UCSC_rn5_masked" # broken dependency
-    "BSgenome_Rnorvegicus_UCSC_rn4_masked" # broken dependency
-    "BSgenome_Ptroglodytes_UCSC_panTro3_masked" # broken dependency
-    "BSgenome_Ptroglodytes_UCSC_panTro2_masked" # broken dependency
-    "BSgenome_Mmusculus_UCSC_mm9_masked" # broken dependency
-    "BSgenome_Mmusculus_UCSC_mm8_masked" # broken dependency
-    "BSgenome_Mmusculus_UCSC_mm10_masked" # broken dependency
-    "BSgenome_Mmulatta_UCSC_rheMac3_masked" # broken dependency
-    "BSgenome_Mmulatta_UCSC_rheMac2_masked" # broken dependency
-    "BSgenome_Mfuro_UCSC_musFur1" # broken dependency
-    "BSgenome_Mfascicularis_NCBI_5_0" # broken dependency
-    "BSgenome_Hsapiens_UCSC_hg38_masked" # broken dependency
-    "BSgenome_Hsapiens_UCSC_hg19_masked" # broken dependency
-    "BSgenome_Hsapiens_UCSC_hg18_masked" # broken dependency
-    "BSgenome_Hsapiens_UCSC_hg17_masked" # broken dependency
-    "BSgenome_Hsapiens_NCBI_GRCh38" # broken dependency
-    "BSgenome_Hsapiens_1000genomes_hs37d5" # broken dependency
-    "BSgenome_Ggallus_UCSC_galGal4_masked" # broken dependency
-    "BSgenome_Ggallus_UCSC_galGal3_masked" # broken dependency
-    "BSgenome_Drerio_UCSC_danRer7_masked" # broken dependency
-    "BSgenome_Drerio_UCSC_danRer6_masked" # broken dependency
-    "BSgenome_Drerio_UCSC_danRer5_masked" # broken dependency
-    "BSgenome_Drerio_UCSC_danRer10" # broken dependency
-    "BSgenome_Cfamiliaris_UCSC_canFam3_masked" # broken dependency
-    "BSgenome_Cfamiliaris_UCSC_canFam2_masked" # broken dependency
-    "BSgenome_Btaurus_UCSC_bosTau8" # broken dependency
-    "BSgenome_Btaurus_UCSC_bosTau6_masked" # broken dependency
-    "BSgenome_Btaurus_UCSC_bosTau4_masked" # broken dependency
-    "BSgenome_Btaurus_UCSC_bosTau3_masked" # broken dependency
-    "BSgenome_Athaliana_TAIR_04232008" # broken dependency
-    "BSgenome_Amellifera_BeeBase_assembly4" # broken dependency
-    "BRugs" # broken dependency
-    "brms" # broken dependency
-    "brainR" # broken dependency
-    "brainGraph" # broken dependency
-    "bovine_db0" # broken dependency
-    "bootsPLS" # broken dependency
-    "bootnet" # broken dependency
-    "bmem" # broken dependency
-    "bmd" # broken dependency
-    "blowtorch" # broken dependency
-    "blimaTestingData" # broken dependency
-    "birdring" # broken dependency
-    "biplotbootGUI" # broken dependency
-    "bios2mds" # broken dependency
-    "BiodiversityR" # broken dependency
-    "Biocomb" # broken dependency
-    "BIFIEsurvey" # broken dependency
-    "bfast" # broken dependency
-    "BEDASSLE" # broken dependency
-    "BeadArrayUseCases" # broken dependency
-    "bdynsys" # broken dependency
-    "Bclim" # broken dependency
-    "Bchron" # broken dependency
-    "BBRecapture" # broken dependency
-    "bayesDem" # broken dependency
-    "bartMachine" # broken dependency
-    "AutoModel" # broken dependency
-    "auRoc" # broken dependency
-    "ath1121501_db" # broken dependency
-    "ARTool" # broken dependency
-    "ART" # broken dependency
-    "arrayMvout" # broken dependency
-    "arfima" # broken dependency
-    "apt" # broken dependency
-    "apaTables" # broken dependency
-    "Anthropometry" # broken dependency
-    "animalTrack" # broken dependency
-    "analogueExtra" # broken dependency
-    "anacor" # broken dependency
-    "ampliQueso" # broken dependency
-    "alr4" # broken dependency
-    "alr3" # broken dependency
-    "alphashape3d" # broken dependency
-    "aLFQ" # broken dependency
-    "AgiMicroRna" # broken dependency
-    "ag_db" # broken dependency
-    "AFM" # broken dependency
-    "Affymoe4302Expr" # broken dependency
-    "Affyhgu133Plus2Expr" # broken dependency
-    "Affyhgu133aExpr" # broken dependency
-    "afex" # broken dependency
-    "abcdeFBA" # broken dependency
-    "a4" # broken dependency
+    "CARrampsOcl" # broken build
+    "CardinalWorkflows" # broken build
+    "CAFE" # broken build
+    "BTSPAS" # broken build
+    "bsseqData" # broken build
+    "BSgenome_Tguttata_UCSC_taeGut2" # broken build
+    "BSgenome_Tguttata_UCSC_taeGut1" # broken build
+    "BSgenome_Sscrofa_UCSC_susScr3" # broken build
+    "BSgenome_Rnorvegicus_UCSC_rn6" # broken build
+    "BSgenome_Rnorvegicus_UCSC_rn5" # broken build
+    "BSgenome_Rnorvegicus_UCSC_rn4" # broken build
+    "BSgenome_Ptroglodytes_UCSC_panTro3" # broken build
+    "BSgenome_Ptroglodytes_UCSC_panTro2" # broken build
+    "BSgenome_Mmusculus_UCSC_mm9" # broken build
+    "BSgenome_Mmusculus_UCSC_mm8" # broken build
+    "BSgenome_Mmusculus_UCSC_mm10" # broken build
+    "BSgenome_Mmulatta_UCSC_rheMac3" # broken build
+    "BSgenome_Mmulatta_UCSC_rheMac2" # broken build
+    "BSgenome_Mfuro_UCSC_musFur1" # broken build
+    "BSgenome_Mfascicularis_NCBI_5_0" # broken build
+    "BSgenome_Hsapiens_UCSC_hg38" # broken build
+    "BSgenome_Hsapiens_UCSC_hg19" # broken build
+    "BSgenome_Hsapiens_UCSC_hg18" # broken build
+    "BSgenome_Hsapiens_UCSC_hg17" # broken build
+    "BSgenome_Hsapiens_NCBI_GRCh38" # broken build
+    "BSgenome_Hsapiens_1000genomes_hs37d5" # broken build
+    "BSgenome_Ggallus_UCSC_galGal4" # broken build
+    "BSgenome_Ggallus_UCSC_galGal3" # broken build
+    "BSgenome_Drerio_UCSC_danRer7" # broken build
+    "BSgenome_Drerio_UCSC_danRer6" # broken build
+    "BSgenome_Drerio_UCSC_danRer5" # broken build
+    "BSgenome_Drerio_UCSC_danRer10" # broken build
+    "BSgenome_Cfamiliaris_UCSC_canFam3" # broken build
+    "BSgenome_Cfamiliaris_UCSC_canFam2" # broken build
+    "BSgenome_Btaurus_UCSC_bosTau8" # broken build
+    "BSgenome_Btaurus_UCSC_bosTau6" # broken build
+    "BSgenome_Btaurus_UCSC_bosTau4" # broken build
+    "BSgenome_Btaurus_UCSC_bosTau3" # broken build
+    "BSgenome_Athaliana_TAIR_04232008" # broken build
+    "BSgenome_Amellifera_BeeBase_assembly4" # broken build
+    "bovine_db0" # broken build
+    "blowtorch" # broken build
+    "blimaTestingData" # broken build
+    "biotools" # broken build
+    "BiGGR" # broken build
+    "BeadArrayUseCases" # broken build
+    "bcrypt" # broken build
+    "BaySIC" # broken build
+    "bayesmix" # broken build
+    "bayescount" # broken build
+    "BANOVA" # broken build
+    "bamdit" # broken build
+    "auRoc" # broken build
+    "arfima" # broken build
+    "annmap" # broken build
+    "Affymoe4302Expr" # broken build
+    "Affyhgu133Plus2Expr" # broken build
+    "Affyhgu133aExpr" # broken build
+    "VIM" # depends on broken package car
+    "translateSPSS2R" # depends on broken package car
+    "sampleSelection" # depends on broken package car
+    "erer" # depends on broken package car
+    "systemfit" # depends on broken package car
+    "seeg" # depends on broken package car
+    "sdcMicro" # depends on broken package car
+    "RTN" # depends on broken package car
+    "rockchalk" # depends on broken package car
+    "RcmdrMisc" # depends on broken package car
+    "RcmdrPlugin_Export" # depends on broken package car
+    "Rcmdr" # depends on broken package car
+    "plsRglm" # depends on broken package car
+    "splm" # depends on broken package car
+    "Rchoice" # depends on broken package car
+    "pglm" # depends on broken package car
+    "plm" # depends on broken package car
+    "mosaic" # depends on broken package car
+    "mixlm" # depends on broken package car
+    "miceadds" # depends on broken package car
+    "ITEMAN" # depends on broken package car
+    "heplots" # depends on broken package car
+    "funcy" # depends on broken package car
+    "FSA" # depends on broken package car
+    "TextoMineR" # depends on broken package car
+    "SensoMineR" # depends on broken package car
+    "pcaBootPlot" # depends on broken package car
+    "ClustGeo" # depends on broken package car
+    "FactoMineR" # depends on broken package car
+    "TriMatch" # depends on broken package car
+    "ez" # depends on broken package car
+    "extRemes" # depends on broken package car
+    "dynlm" # depends on broken package car
+    "drc" # depends on broken package car
+    "DJL" # depends on broken package car
+    "Deducer" # depends on broken package car
+    "TLBC" # depends on broken package car
+    "pRoloc" # depends on broken package car
+    "LOGIT" # depends on broken package car
+    "preprocomb" # depends on broken package car
+    "caretEnsemble" # depends on broken package car
+    "caret" # depends on broken package car
+    "car" # depends on broken package nloptr
+    "capm" # depends on broken package htmltools
+    "cape" # depends on broken package rgl
+    "metaMS" # depends on broken package CAMERA
+    "specmine" # depends on broken package CAMERA
+    "MAIT" # depends on broken package CAMERA
+    "flagme" # depends on broken package CAMERA
+    "CAMERA" # depends on broken package xcms
+    "BSgenome_Tguttata_UCSC_taeGut1_masked" # depends on broken package BSgenome_Tguttata_UCSC_taeGut1
+    "BSgenome_Sscrofa_UCSC_susScr3_masked" # depends on broken package BSgenome_Sscrofa_UCSC_susScr3
+    "BSgenome_Rnorvegicus_UCSC_rn5_masked" # depends on broken package BSgenome_Rnorvegicus_UCSC_rn5
+    "BSgenome_Rnorvegicus_UCSC_rn4_masked" # depends on broken package BSgenome_Rnorvegicus_UCSC_rn4
+    "BSgenome_Ptroglodytes_UCSC_panTro3_masked" # depends on broken package BSgenome_Ptroglodytes_UCSC_panTro3
+    "BSgenome_Ptroglodytes_UCSC_panTro2_masked" # depends on broken package BSgenome_Ptroglodytes_UCSC_panTro2
+    "BSgenome_Mmusculus_UCSC_mm9_masked" # depends on broken package BSgenome_Mmusculus_UCSC_mm9
+    "BSgenome_Mmusculus_UCSC_mm8_masked" # depends on broken package BSgenome_Mmusculus_UCSC_mm8
+    "BSgenome_Mmusculus_UCSC_mm10_masked" # depends on broken package BSgenome_Mmusculus_UCSC_mm10
+    "DOQTL" # depends on broken package BSgenome_Mmusculus_UCSC_mm10
+    "BSgenome_Mmulatta_UCSC_rheMac3_masked" # depends on broken package BSgenome_Mmulatta_UCSC_rheMac3
+    "BSgenome_Mmulatta_UCSC_rheMac2_masked" # depends on broken package BSgenome_Mmulatta_UCSC_rheMac2
+    "BSgenome_Hsapiens_UCSC_hg38_masked" # depends on broken package BSgenome_Hsapiens_UCSC_hg38
+    "BSgenome_Hsapiens_UCSC_hg19_masked" # depends on broken package BSgenome_Hsapiens_UCSC_hg19
+    "traseR" # depends on broken package BSgenome_Hsapiens_UCSC_hg19
+    "motifRG" # depends on broken package BSgenome_Hsapiens_UCSC_hg19
+    "CODEX" # depends on broken package BSgenome_Hsapiens_UCSC_hg19
+    "oneChannelGUI" # depends on broken package BSgenome_Hsapiens_UCSC_hg19
+    "chimera" # depends on broken package BSgenome_Hsapiens_UCSC_hg19
+    "BSgenome_Hsapiens_UCSC_hg18_masked" # depends on broken package BSgenome_Hsapiens_UCSC_hg18
+    "BSgenome_Hsapiens_UCSC_hg17_masked" # depends on broken package BSgenome_Hsapiens_UCSC_hg17
+    "BSgenome_Ggallus_UCSC_galGal4_masked" # depends on broken package BSgenome_Ggallus_UCSC_galGal4
+    "BSgenome_Ggallus_UCSC_galGal3_masked" # depends on broken package BSgenome_Ggallus_UCSC_galGal3
+    "BSgenome_Drerio_UCSC_danRer7_masked" # depends on broken package BSgenome_Drerio_UCSC_danRer7
+    "InPAS" # depends on broken package BSgenome_Drerio_UCSC_danRer7
+    "cleanUpdTSeq" # depends on broken package BSgenome_Drerio_UCSC_danRer7
+    "BSgenome_Drerio_UCSC_danRer6_masked" # depends on broken package BSgenome_Drerio_UCSC_danRer6
+    "BSgenome_Drerio_UCSC_danRer5_masked" # depends on broken package BSgenome_Drerio_UCSC_danRer5
+    "BSgenome_Cfamiliaris_UCSC_canFam3_masked" # depends on broken package BSgenome_Cfamiliaris_UCSC_canFam3
+    "BSgenome_Cfamiliaris_UCSC_canFam2_masked" # depends on broken package BSgenome_Cfamiliaris_UCSC_canFam2
+    "BSgenome_Btaurus_UCSC_bosTau6_masked" # depends on broken package BSgenome_Btaurus_UCSC_bosTau6
+    "BSgenome_Btaurus_UCSC_bosTau4_masked" # depends on broken package BSgenome_Btaurus_UCSC_bosTau4
+    "BSgenome_Btaurus_UCSC_bosTau3_masked" # depends on broken package BSgenome_Btaurus_UCSC_bosTau3
+    "brms" # depends on broken package htmltools
+    "brainR" # depends on broken package rgl
+    "brainGraph" # broken build
+    "mcaGUI" # depends on broken package bpca
+    "bpca" # depends on broken package rgl
+    "boral" # depends on broken package R2jags
+    "bootsPLS" # depends on broken package rgl
+    "bmeta" # depends on broken package R2jags
+    "BLCOP" # depends on broken package fPortfolio
+    "birdring" # depends on broken package rgl
+    "biplotbootGUI" # depends on broken package rgl
+    "bios2mds" # depends on broken package rgl
+    "Biocomb" # depends on broken package rgl
+    "bgmm" # depends on broken package nloptr
+    "BEST" # depends on broken package jagsUI
+    "BEDASSLE" # depends on broken package rgl
+    "bdynsys" # depends on broken package nloptr
+    "bdvis" # depends on broken package htmltools
+    "bde" # depends on broken package htmltools
+    "Bclim" # depends on broken package rgl
+    "Bchron" # depends on broken package rgl
+    "BCA" # depends on broken package nloptr
+    "BBEST" # depends on broken package htmltools
+    "BayesMed" # depends on broken package R2jags
+    "bayesPop" # depends on broken package bayesLife
+    "bayesLife" # depends on broken package nloptr
+    "backtestGraphics" # depends on broken package htmltools
+    "ath1121501_db" # depends on broken package org_At_tair_db
+    "arrayQualityMetrics" # broken build
+    "arrayMvout" # depends on broken package rgl
+    "ArrayExpressHTS" # broken build
+    "mi" # depends on broken package arm
+    "interplot" # depends on broken package arm
+    "arm" # depends on broken package nloptr
+    "Anthropometry" # depends on broken package rgl
+    "AnnotationHub" # depends on broken package htmltools
+    "animalTrack" # depends on broken package rgl
+    "analogueExtra" # depends on broken package rgl
+    "ampliQueso" # depends on broken package rgl
+    "alsace" # depends on broken package nloptr
+    "alphashape3d" # depends on broken package rgl
+    "ag_db" # depends on broken package org_At_tair_db
+    "AFM" # depends on broken package rgl
+    "AgiMicroRna" # depends on broken package affycoretools
+    "affycoretools" # depends on broken package ReportingTools
+    "AER" # depends on broken package nloptr
+    "adhoc" # depends on broken package htmltools
+    "adegenet" # depends on broken package htmltools
+    "AdaptGauss" # depends on broken package htmltools
+    "adabag" # depends on broken package nloptr
+    "abd" # depends on broken package nloptr
+    "abcdeFBA" # depends on broken package rgl
+    "a4Classif" # depends on broken package htmltools
+    "a4" # depends on broken package htmltools
+    "RefNet" # depends on broken package AnnotationHub
+    "pwOmics" # depends on broken package AnnotationHub
+    "gwascat" # depends on broken package AnnotationHub
+    "grasp2db" # depends on broken package AnnotationHub
+    "EnsDb_Rnorvegicus_v79" # depends on broken package AnnotationHub
+    "EnsDb_Rnorvegicus_v75" # depends on broken package AnnotationHub
+    "EnsDb_Mmusculus_v79" # depends on broken package AnnotationHub
+    "EnsDb_Mmusculus_v75" # depends on broken package AnnotationHub
+    "EnsDb_Hsapiens_v79" # depends on broken package AnnotationHub
+    "EnsDb_Hsapiens_v75" # depends on broken package AnnotationHub
+    "REDseq" # depends on broken package AnnotationHub
+    "GUIDEseq" # depends on broken package AnnotationHub
+    "ggtut" # depends on broken package AnnotationHub
+    "FunciSNP" # depends on broken package AnnotationHub
+    "ChIPpeakAnno" # depends on broken package AnnotationHub
+    "ensembldb" # depends on broken package AnnotationHub
+    "AnnotationHubData" # depends on broken package AnnotationHub
+    "Zelig" # depends on broken package AER
+    "REndo" # depends on broken package AER
+    "rdd" # depends on broken package AER
+    "clusterSEs" # depends on broken package AER
+    "StAMPP" # depends on broken package adegenet
+    "strataG" # depends on broken package adegenet
+    "popprxl" # depends on broken package adegenet
+    "poppr" # depends on broken package adegenet
+    "pegas" # depends on broken package adegenet
+    "outbreaker" # depends on broken package adegenet
+    "PopGenReport" # depends on broken package adegenet
+    "mmod" # depends on broken package adegenet
+    "hierfstat" # depends on broken package adegenet
+    "apex" # depends on broken package adegenet
+    "AFLPsim" # depends on broken package adegenet
+    "treescape" # depends on broken package adegenet
+    "phylosignal" # depends on broken package adegenet
+    "adephylo" # depends on broken package adegenet
     "Actigraphy" # Build Is Broken
     "afex" # depends on broken package nlopt-2.4.2
     "agRee" # depends on broken package nlopt-2.4.2
@@ -830,7 +943,6 @@ let
     "ART" # depends on broken package ar-car-2.1-0
     "ARTool" # depends on broken package nlopt-2.4.2
     "AutoModel" # depends on broken package r-car-2.1-0
-    "bamsignals" # build is broken
     "bapred" # depends on broken package r-lme4-1.1-9
     "bartMachine" # depends on broken package nlopt-2.4.2
     "bayesDem" # depends on broken package nlopt-2.4.2
