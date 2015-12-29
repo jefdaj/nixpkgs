@@ -234,6 +234,9 @@ let
 
   # TODO: try to figure these out by zgrepping packages
   packagesWithNativeBuildInputs = {
+    affyPLM = [ pkgs.zlib ];
+    bamsignals = [ pkgs.zlib ];
+    BitSeq = [ pkgs.zlib ];
     abn = [ pkgs.gsl ];
     adimpro = [ pkgs.imagemagick ];
     audio = [ pkgs.portaudio ];
@@ -725,17 +728,9 @@ let
     "cape" # broken dependency
     "candisc" # broken dependency
     "canceR" # broken dependency
-    "camtrapR" # broken dependency
-    "calmate" # broken dependency
-    "calACS" # broken dependency
-    "cairoDevice" # broken dependency
     "CAFE" # broken dependency
     "CADFtest" # broken dependency
-    "BVS" # broken dependency
-    "bujar" # broken dependency
     "BubbleTree" # broken dependency
-    "btergm" # broken dependency
-    "bst" # broken dependency
     "bsseqData" # broken dependency
     "BSgenome_Tguttata_UCSC_taeGut2" # broken dependency
     "BSgenome_Tguttata_UCSC_taeGut1_masked" # broken dependency
@@ -777,8 +772,6 @@ let
     "BSgenome_Ggallus_UCSC_galGal4" # broken dependency
     "BSgenome_Ggallus_UCSC_galGal3_masked" # broken dependency
     "BSgenome_Ggallus_UCSC_galGal3" # broken dependency
-    "BSgenome_Gaculeatus_UCSC_gasAcu1_masked" # broken dependency
-    "BSgenome_Gaculeatus_UCSC_gasAcu1" # broken dependency
     "BSgenome_Drerio_UCSC_danRer7_masked" # broken dependency
     "BSgenome_Drerio_UCSC_danRer7" # broken dependency
     "BSgenome_Drerio_UCSC_danRer6_masked" # broken dependency
@@ -786,7 +779,6 @@ let
     "BSgenome_Drerio_UCSC_danRer5_masked" # broken dependency
     "BSgenome_Drerio_UCSC_danRer5" # broken dependency
     "BSgenome_Drerio_UCSC_danRer10" # broken dependency
-    "BSgenome_Dmelanogaster_UCSC_dm6" # broken dependency
     "BSgenome_Cfamiliaris_UCSC_canFam3_masked" # broken dependency
     "BSgenome_Cfamiliaris_UCSC_canFam3" # broken dependency
     "BSgenome_Cfamiliaris_UCSC_canFam2_masked" # broken dependency
@@ -802,137 +794,65 @@ let
     "BSgenome_Amellifera_BeeBase_assembly4" # broken dependency
     "BRugs" # broken dependency
     "brms" # broken dependency
-    "breastCancerUPP" # broken dependency
-    "breastCancerUNT" # broken dependency
     "brainR" # broken dependency
     "brainGraph" # broken dependency
     "bpca" # broken dependency
     "bovine_db0" # broken dependency
     "bootsPLS" # broken dependency
     "bootnet" # broken dependency
-    "bodenmiller" # broken dependency
-    "BMhyd" # broken dependency
     "bmem" # broken dependency
     "bmd" # broken dependency
     "blowtorch" # broken dependency
     "blimaTestingData" # broken dependency
-    "blavaan" # broken dependency
-    "BlandAltmanLeh" # broken dependency
-    "bisectr" # broken dependency
     "birdring" # broken dependency
     "biplotbootGUI" # broken dependency
-    "BioSeqClass" # broken dependency
     "bios2mds" # broken dependency
-    "BioNet" # broken build
-    "BioMVCClass" # broken build
-    "biomod2" # broken dependency
-    "bioinactivation" # broken dependency
     "BiodiversityR" # broken dependency
-    "biocViews" # broken dependency
     "Biocomb" # broken dependency
-    "BiocCheck" # broken dependency
-    "bio3d" # broken dependency
-    "binomen" # broken dependency
-    "binaryLogic" # broken dependency
-    "bigmemoryExtras" # broken dependency
-    "BIGDAWG" # broken dependency
     "BIFIEsurvey" # broken dependency
     "bgmm" # broken dependency
     "bfast" # broken dependency
-    "betalink" # broken dependency
     "BEDASSLE" # broken dependency
     "BeadArrayUseCases" # broken dependency
     "bdynsys" # broken dependency
-    "BDgraph" # broken dependency
     "Bclim" # broken dependency
     "Bchron" # broken dependency
     "BCA" # broken dependency
     "BBRecapture" # broken dependency
-    "bayou" # broken dependency
-    "bayesTFR" # broken dependency
     "bayesPop" # broken dependency
-    "bayesmeta" # broken dependency
     "bayesLife" # broken dependency
-    "bayesGARCH" # broken dependency
     "bayesDem" # broken dependency
-    "batteryreduction" # broken dependency
-    "BAT" # broken dependency
-    "Basic4Cseq" # broken dependency
     "bartMachine" # broken dependency
-    "backtestGraphics" # broken dependency
-    "BacArena" # broken dependency
-    "aws_signature" # broken dependency
     "AutoModel" # broken dependency
     "auRoc" # broken dependency
     "ath1121501_db" # broken dependency
-    "AtelieR" # broken dependency
-    "astrochron" # broken dependency
-    "AssocTests" # broken dependency
-    "aSPU" # broken dependency
-    "arulesViz" # broken dependency
-    "arulesSequences" # broken dependency
-    "arulesNBMiner" # broken dependency
-    "arules" # broken dependency
     "ARTool" # broken dependency
-    "artfima" # broken dependency
     "ART" # broken dependency
     "arrayMvout" # broken dependency
-    "aroma_core" # broken dependency
-    "aroma_cn" # broken dependency
-    "aroma_affymetrix" # broken dependency
     "arfima" # broken dependency
-    "archiDART" # broken dependency
-    "aqp" # broken dependency
-    "aqfig" # broken dependency
     "apt" # broken dependency
-    "APSIM" # broken dependency
-    "apricom" # broken dependency
-    "apex" # broken dependency
-    "apcluster" # broken dependency
     "apaTables" # broken dependency
-    "aoristic" # broken dependency
     "Anthropometry" # broken dependency
-    "AnnotationHubData" # broken dependency
     "animalTrack" # broken dependency
-    "AnalyzeTS" # broken dependency
     "analogueExtra" # broken dependency
     "anacor" # broken dependency
     "ampliQueso" # broken dependency
-    "AMOEBA" # broken dependency
     "alr4" # broken dependency
     "alr3" # broken dependency
     "alphashape3d" # broken dependency
-    "alphahull" # broken dependency
     "aLFQ" # broken dependency
-    "AICcmodavg" # broken dependency
-    "agrmt" # broken dependency
-    "agricolae" # broken dependency
     "AgiMicroRna" # broken dependency
     "ag_db" # broken dependency
     "AFM" # broken dependency
-    "AFLPsim" # broken dependency
     "Affymoe4302Expr" # broken dependency
-    "AffymetrixDataTestFiles" # broken dependency
     "Affyhgu133Plus2Expr" # broken dependency
     "Affyhgu133aExpr" # broken dependency
     "affycoretools" # broken dependency
-    "affycompData" # broken dependency
     "afex" # broken dependency
-    "AF" # broken dependency
     "AER" # broken dependency
-    "AEDForecasting" # broken dependency
-    "ads" # broken dependency
-    "ADMMnet" # broken dependency
-    "adhoc" # broken dependency
-    "adephylo" # broken dependency
-    "adegenet" # broken dependency
-    "adaptsmoFMRI" # broken dependency
-    "adagio" # broken dependency
     "adabag" # broken dependency
-    "ACNE" # broken dependency
     "abd" # broken dependency
     "abcdeFBA" # broken dependency
-    "abbyyR" # broken dependency
     "a4Classif" # broken dependency
     "a4" # broken dependency
     "a4Classif" # broken build
@@ -940,7 +860,6 @@ let
     "Actigraphy" # Build Is Broken
     "adabag" # depends on broken package nlopt-2.4.2
     "ADaCGH2" # depends on broken package tilingArray-1.47.0
-    "adhoc" # broken build
     "AER" # depends on broken package nlopt-2.4.2
     "afex" # depends on broken package nlopt-2.4.2
     "agRee" # depends on broken package nlopt-2.4.2
@@ -957,7 +876,6 @@ let
     "arm" # depends on broken package nlopt-2.4.2
     "ART" # depends on broken package ar-car-2.1-0
     "ARTool" # depends on broken package nlopt-2.4.2
-    "AtelieR" # broken build
     "AutoModel" # depends on broken package r-car-2.1-0
     "bamsignals" # build is broken
     "bapred" # depends on broken package r-lme4-1.1-9
@@ -966,30 +884,21 @@ let
     "bayesLife" # depends on broken package nlopt-2.4.2
     "bayesPop" # depends on broken package nlopt-2.4.2
     "Bayesthresh" # depends on broken package nlopt-2.4.2
-    "bayou" # broken build
-    "baySeq" # broken build
-    "BBCAnalyzer" # depends on broken package r-Rsamtools-1.21.18
     "BBRecapture" # depends on broken package nlopt-2.4.2
     "BCA" # depends on broken package nlopt-2.4.2
     "bgmm" # depends on broken package nlopt-2.4.2
     "BIFIEsurvey" # depends on broken package nlopt-2.4.2
     "bigGP" # build is broken
     "BiGGR" # depends on broken package rsbml-2.27.0
-    "bigmemoryExtras" # broken build
     "bioassayR" # broken build
-    "BiocCheck" # broken build
-    "biocViews" # broken build
     "BiodiversityR" # depends on broken package nlopt-2.4.2
-    "BioSeqClass" # broken build
     "biotools" # depends on broken package rpanel-1.1-3
     "birte" # build is broken
-    "bisectr" # broken build
     "BLCOP" # depends on broken package Rsymphony-0.1-20
     "blmeco" # depends on broken package nlopt-2.4.2
     "blme" # depends on broken package nlopt-2.4.2
     "bmd" # depends on broken package nlopt-2.4.2
     "bmem" # depends on broken package nlopt-2.4.2
-    "BMhyd" # broken build
     "bootnet" # depends on broken package nlopt-2.4.2
     "boss" # depends on broken package nlopt-2.4.2
     "BradleyTerry2" # depends on broken package nlopt-2.4.2

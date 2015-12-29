@@ -2,21 +2,15 @@
 
 # Usage: ./update-r-packages.sh
 
-# It'll edit the package lists and default.nix,
-# and also leave a lot of build_*.log files from failed builds in the working dir.
-# You can delete those or look through them for clues.
+# It edits the .nix files, so you want to make sure they're clean before
+# starting and look through the diffs afterward. It also leaves a lot of
+# build/*.log files, which you can delete or look through for clues.
 
-# TODO: new overall algorithm:
-#       0. update package lists with generate-r-packages.R
-#       1. list all packages by rPackages attribute name (without trying to access them!)
-#       2. try to build each one, and
-#         2a. if the attribute is missing, mark as archived (how?)
-#         2b. if it works and is marked broken, fix that
-#         2c. if it's broken but not marked, fix that instead
-#            2ci. if there's a dependency error say it's due to that
-#            2cii. or if it's a hash mismatch put that in too
-#            2ciii. otherwise generic "broken build"
-#       3. make sure the whole rPackages can be evaluated (all archived packages gone)
+# TODO: fix 'should have sha256' errors
+# TODO: fix Octave_map errors
+# TODO: fix dependencies: BiGGr -> libsbml
+# TODO: don't need to build each package?
+#       could fail dependencies of broken ones automatically
 
 ##################
 # update metadata
@@ -25,7 +19,7 @@
 update_package_list() {
   prefix="$1"
   path="${prefix}-packages.nix"
-  echo "Updating ${path}"
+  echo "Downloading updates to ${path}"
   Rscript generate-r-packages.R ${prefix} >new && mv new ${path}
   return $?
 }
@@ -77,25 +71,28 @@ test_rpackages() {
 mark_broken() {
   reason="broken build"
   pkg="$1"
-  logfile="build_${pkg}.log"
+  logfile="build/${pkg}.log"
   grep 'should have sha256'  $logfile > /dev/null && reason="hash mismatch"
   grep 'dependencies couldn' $logfile > /dev/null && reason="broken dependency"
-  echo "marking $pkg broken (${reason})"
+  # TODO: make this into a generic "insert into list" function?
   sed -i "/brokenPackages = \\[$/a \ \ \ \ \"$pkg\" # $reason" default.nix
+  echo "  added $pkg (${reason})"
 }
 
 mark_fixed() {
-  echo "marking $1 fixed"
-  sed -i "/\"$1\" # broken build/d"          default.nix
-  sed -i "/\"$1\" # broken dependency/d"     default.nix
-  sed -i "/\"$1\" # build is broken/d"       default.nix
-  sed -i "/\"$1\" # Build Is Broken/d"       default.nix
-  sed -i "/# depends on broken package $1/d" default.nix
+  sed -i "/\"$1\" # broken build/d"              default.nix
+  sed -i "/\"$1\" # broken dependency/d"         default.nix
+  sed -i "/\"$1\" # build is broken/d"           default.nix
+  sed -i "/\"$1\" # Build Is Broken/d"           default.nix
+  sed -i "/\"$1\" # depends on broken package/d" default.nix
+  sed -i "/# depends on broken package $1/d"     default.nix
+  echo "  removed $1"
 }
 
 test_build() {
   pkg="$1"
-  logfile="build_${pkg}.log"
+  logfile="build/${pkg}.log"
+  [[ -d build ]] || mkdir build
   if [[ -a $logfile ]]; then
     echo "Skipping ${pkg} because ${logfile} exists"
     return -1
@@ -122,7 +119,7 @@ confirm_builds() {
 export -f test_build mark_broken mark_fixed confirm_broken confirm_builds
 
 test_all_builds() {
-  echo "Testing each package build. This could take a while..."
+  echo "Updating default.nix broken list. This will take a while!"
   list_attr_names | while read pkg; do
     grep -E "\"$pkg\" # (depends on broken|[Bb]roken).*" default.nix &> /dev/null
     [[ $? == 0 ]] && fn='confirm_broken' || fn='confirm_builds'
@@ -131,36 +128,12 @@ test_all_builds() {
   done
 }
 
-# echo "Confirming that broken packages still fail to build"
-# grep -E '" # (broken build|[Bb]uild [Ii]s [Bb]roken)' default.nix | cut -d'"' -f2 |
-#   while read pkg; do
-#     sem --no-notice confirm_broken $pkg
-#   done
-# echo
-
-# TODO: now go through all R packages, still skipping the ones with logs
-# echo "Confirming that working packages still build OK"
-# grep '= derive' *-packages.nix |
-#   cut -d":" -f2 | cut -d' ' -f1 | sort | uniq |
-#   while read pkg; do
-#     sem --no-notice confirm_builds $pkg
-#   done
-# echo
-
-# TODO: don't need to build each package; fail dependencies of broken ones automatically
-
-# TODO: check for newly broken packages
-
-# TODO: look through build logs to see what obvious fixes can be added (but commit first)
-# TODO: fix 'should have sha256' errors
-# TODO: fix Octave_map errors
-# TODO: fix dependencies: BiGGr -> libsbml
-
 main() {
   update_package_lists
   list_removed
   test_rpackages
   test_all_builds
+  test_rpackages
 }
 
 main
