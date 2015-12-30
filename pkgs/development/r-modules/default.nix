@@ -698,6 +698,30 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
+    "exomePeak" # broken build
+    "munsellinterpol" # broken build
+    "colorscience" # depends on broken package munsellinterpol
+    "munsellinterpol" # broken build
+    "synthpop" # depends on broken package coefplot
+    "coefplot" # broken build
+    "R2jags" # broken build
+    "classify" # depends on broken package R2jags
+    "CCTpack" # depends on broken package R2jags
+    "R2jags" # broken build
+    "rJPSGCS" # depends on broken package chopsticks
+    "chopsticks" # broken build
+    "MBmca" # depends on broken package chipPCR
+    "chipPCR" # depends on broken package nloptr
+    "Rchemcpp" # depends on broken package ChemmineR
+    "RbioRXN" # depends on broken package ChemmineR
+    "fmcsR" # depends on broken package ChemmineR
+    "eiR" # depends on broken package ChemmineR
+    "ChemmineR" # broken build
+    "cghMCR" # broken build
+    "CALIB" # broken build
+    "AtelieR" # depends on broken package polynom
+    "AssetPricing" # depends on broken package polynom
+    "algstat" # depends on broken package polynom
     "zebrafish_db0" # broken build
     "zebrafish_db" # broken build
     "yri1kgv" # broken build
@@ -1623,7 +1647,6 @@ let
     "caretEnsemble" # depends on broken package car
     "caret" # depends on broken package car
     "car" # depends on broken package nloptr
-    "cape" # depends on broken package rgl
     "metaMS" # depends on broken package CAMERA
     "specmine" # depends on broken package CAMERA
     "MAIT" # depends on broken package CAMERA
@@ -1663,32 +1686,17 @@ let
     "BSgenome_Btaurus_UCSC_bosTau4_masked" # depends on broken package BSgenome_Btaurus_UCSC_bosTau4
     "BSgenome_Btaurus_UCSC_bosTau3_masked" # depends on broken package BSgenome_Btaurus_UCSC_bosTau3
     "brms" # depends on broken package htmltools
-    "brainR" # depends on broken package rgl
     "brainGraph" # broken build
-    "mcaGUI" # depends on broken package bpca
-    "bpca" # depends on broken package rgl
     "boral" # depends on broken package R2jags
-    "bootsPLS" # depends on broken package rgl
     "bmeta" # depends on broken package R2jags
     "BLCOP" # depends on broken package fPortfolio
-    "birdring" # depends on broken package rgl
-    "biplotbootGUI" # depends on broken package rgl
-    "bios2mds" # depends on broken package rgl
-    "Biocomb" # depends on broken package rgl
     "bgmm" # depends on broken package nloptr
     "BEST" # depends on broken package jagsUI
-    "BEDASSLE" # depends on broken package rgl
     "bdynsys" # depends on broken package nloptr
-    "bdvis" # depends on broken package htmltools
-    "bde" # depends on broken package htmltools
-    "Bclim" # depends on broken package rgl
-    "Bchron" # depends on broken package rgl
     "BCA" # depends on broken package nloptr
-    "BBEST" # depends on broken package htmltools
     "BayesMed" # depends on broken package R2jags
     "bayesPop" # depends on broken package bayesLife
     "bayesLife" # depends on broken package nloptr
-    "backtestGraphics" # depends on broken package htmltools
     "ath1121501_db" # depends on broken package org_At_tair_db
     "arrayQualityMetrics" # broken build
     "arrayMvout" # depends on broken package rgl
@@ -1696,13 +1704,8 @@ let
     "mi" # depends on broken package arm
     "interplot" # depends on broken package arm
     "arm" # depends on broken package nloptr
-    "animalTrack" # depends on broken package rgl
-    "analogueExtra" # depends on broken package rgl
-    "ampliQueso" # depends on broken package rgl
     "alsace" # depends on broken package nloptr
-    "alphashape3d" # depends on broken package rgl
     "ag_db" # depends on broken package org_At_tair_db
-    "AFM" # depends on broken package rgl
     "AgiMicroRna" # depends on broken package affycoretools
     "affycoretools" # depends on broken package ReportingTools
     "AER" # depends on broken package nloptr
@@ -1760,7 +1763,6 @@ let
     "chipenrich" # build is broken
     "chipPCR" # depends on broken nloptr-1.0.4
     "climwin" # depends on broken package nlopt-2.4.2
-    "clippda" # broken build
     "CLME" # depends on broken package nlopt-2.4.2
     "clpAPI" # build is broken
     "clusterPower" # depends on broken package nlopt-2.4.2
@@ -2100,7 +2102,6 @@ let
     "SoyNAM" # depends on broken package r-lme4-1.1-8
     "spacom" # depends on broken package nlopt-2.4.2
     "spade" # broken build
-    "spdynmod" # broken build
     "specificity" # depends on broken package nlopt-2.4.2
     "spoccutils" # depends on broken spocc-0.3.0
     "spsann" # depends on broken package r-pedometrics-0.6-2

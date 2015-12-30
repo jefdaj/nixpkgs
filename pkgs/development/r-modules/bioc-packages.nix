@@ -704,7 +704,7 @@ erccdashboard = derive { name="erccdashboard"; version="1.4.0"; sha256="1fj9wbm5
 erma = derive { name="erma"; version="0.2.0"; sha256="character(0)"; depends=[Biobase BiocGenerics foreach GenomicFiles GenomicRanges ggplot2 Homo_sapiens rtracklayer S4Vectors shiny]; };
 eudysbiome = derive { name="eudysbiome"; version="1.0.0"; sha256="10id5pcs29xsicr9ffpd8rd2fqvj776wgdbn80vvym87gyn3kxxh"; depends=[plyr]; };
 exomeCopy = derive { name="exomeCopy"; version="1.16.0"; sha256="09awyyfgs0k639nqrcrbq1k875qlyac1146w4ay6nxgijqy7iv82"; depends=[GenomeInfoDb GenomicRanges IRanges Rsamtools]; };
-exomePeak = derive { name="exomePeak"; version="2.2.0"; sha256="1hxj9s7vjj7i5cb7c85kar445j0y8ckcy4hxlhkxrkryqq5k3q4w"; depends=[GenomicAlignments GenomicFeatures Rsamtools rtracklayer]; };
+exomePeak = derive { name="exomePeak"; version="2.2.2"; sha256="character(0)"; depends=[GenomicAlignments GenomicFeatures Rsamtools rtracklayer]; };
 explorase = derive { name="explorase"; version="1.34.0"; sha256="108p864qq8zh4x7p765ygrdkj4r0vm3s2fmi3scswkhcv3vjcjg3"; depends=[limma rggobi RGtk2]; };
 fCI = derive { name="fCI"; version="1.0.0"; sha256="17d592qmyia0j91sx8qlsv5xi3d4akd41rdqz0gsvnsbc5c494qn"; depends=[FNN gtools psych rgl VennDiagram zoo]; };
 fabia = derive { name="fabia"; version="2.16.0"; sha256="0fm7bkqydks0qqfiifbkf5i7z8jb9l8bpbwkfy0kw4wfnzn4j7n8"; depends=[Biobase]; };
@@ -723,7 +723,7 @@ flowCHIC = derive { name="flowCHIC"; version="1.4.0"; sha256="0j7kvlc6l6cigz88r4
 flowCL = derive { name="flowCL"; version="1.8.0"; sha256="064946w944gw7l0hizw974i21cahzvfj1xza8f7ay9rx2baz28sh"; depends=[Rgraphviz SPARQL]; };
 flowClean = derive { name="flowClean"; version="1.6.0"; sha256="0ck0fqbx7zrj56nn4c30qgbn5rncqch8kcc6dra6nxib9p9hy0db"; depends=[bit changepoint flowCore sfsmisc]; };
 flowClust = derive { name="flowClust"; version="3.8.0"; sha256="1w2a9ls1cyvfwx8b7vcmxxzyj1crdpyifqld99lcwcnz5g6cw9cj"; depends=[Biobase BiocGenerics clue corpcor ellipse flowCore flowViz graph MCMCpack mnormt RBGL]; };
-flowCore = derive { name="flowCore"; version="1.36.3"; sha256="character(0)"; depends=[BH Biobase BiocGenerics corpcor graph Rcpp rrcov]; };
+flowCore = derive { name="flowCore"; version="1.36.4"; sha256="11aq6nwl0ld19ksda459d3ms5z70bvl1zs89h4bmf610drxd43bv"; depends=[BH Biobase BiocGenerics corpcor graph Rcpp rrcov]; };
 flowCyBar = derive { name="flowCyBar"; version="1.6.0"; sha256="0j9hdcgkh1glfyxa9wcwpdxrkn3vgfns7w15xp341m2c4lf7rq7s"; depends=[gplots vegan]; };
 flowDensity = derive { name="flowDensity"; version="1.4.0"; sha256="1gr9rd3brxqpg3dzgsrvrz104lvzcs8kf50zbx2nh22viyv1kmfp"; depends=[car flowCore GEOmap gplots RFOC]; };
 flowFP = derive { name="flowFP"; version="1.28.0"; sha256="0sa17dnn2x1wq4mk719nbfpabjslyv8aafc8i0g09dlb9zm303q7"; depends=[Biobase BiocGenerics flowCore flowViz]; };
@@ -742,7 +742,7 @@ flowType = derive { name="flowType"; version="2.8.0"; sha256="1wbh440myrcjjrlwwh
 flowUtils = derive { name="flowUtils"; version="1.34.0"; sha256="0qba66cfsy8facvdpnl5jf71xwaqs3w6j2z0ph7c39zyng0nibwp"; depends=[Biobase corpcor flowCore flowViz graph RUnit XML]; };
 flowVS = derive { name="flowVS"; version="1.2.0"; sha256="0hls6c9s3h470hzayfd1k9vn5v146cymfp2b20hzjyc6dg20fj2s"; depends=[flowCore flowStats flowViz]; };
 flowViz = derive { name="flowViz"; version="1.34.0"; sha256="10i73d2n69p40i4504xrjax3pr3b2hkarp0fn6y9yvfr9jb4nd97"; depends=[Biobase flowCore hexbin IDPmisc KernSmooth lattice latticeExtra MASS RColorBrewer]; };
-flowWorkspace = derive { name="flowWorkspace"; version="3.16.8"; sha256="0k9hj6kf191shvf9dwhbrpyi14ihb1zyi9psspx62m5ywk2isry7"; depends=[BH Biobase BiocGenerics data_table dplyr flowCore flowUtils flowViz graph gridExtra jsonlite lattice latticeExtra ncdfFlow RBGL RColorBrewer Rcpp Rgraphviz stringr XML]; };
+flowWorkspace = derive { name="flowWorkspace"; version="3.16.9"; sha256="0bjb2vvm0ra65h23pqkdiq6riv5ilhzxzgnkvrjm43g0k3s4ci3b"; depends=[BH Biobase BiocGenerics data_table dplyr flowCore flowUtils flowViz graph gridExtra jsonlite lattice latticeExtra ncdfFlow RBGL RColorBrewer Rcpp Rgraphviz stringr XML]; };
 flowcatchR = derive { name="flowcatchR"; version="1.4.0"; sha256="0rd9sg3d17ihrm4zz4jpvv3n4xcz4djcfnsvx6qzkri2vjmk7spj"; depends=[abind BiocParallel colorRamps EBImage rgl]; };
 fmcsR = derive { name="fmcsR"; version="1.12.0"; sha256="0qyd2l6ny7mjargfa1wbiwp5m4ylz65qr8c150h8q3ivqvvnmg2r"; depends=[BiocGenerics ChemmineR RUnit]; };
 focalCall = derive { name="focalCall"; version="1.4.0"; sha256="1dqk0lda24lkhfsid15c6n121s63zbk6658za5qxqkxdd82z7axf"; depends=[CGHcall]; };
