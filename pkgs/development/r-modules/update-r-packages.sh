@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 
-# Usage: ./update-r-packages.sh (all | git ref)
+# Messy but hopefully working script to maintain r-modules. Call it with a git
+# ref (I usually use `master` or `HEAD`) and it will test build all packages
+# added upstream since that commit. It will also prompt you to remove anything
+# that's been archived upstream so the attribute set continues to evaluate.
 
-# This edits the .nix files, so you want to make sure they're clean before
-# starting and look through the diffs afterward. It also leaves a lot of
-# build/*.log files, which you can delete or look through for clues. Note that
-# if you choose 'all' the script will attempt to build all ~10000 R packages!
-# It's much faster to provide a git ref, and only packages added since that ref
-# will be built. I normally use `HEAD` or `master`.
+# Usage: ./update-r-packages.sh [<git ref>]
 
-# TODO: fix Octave_map errors
-# TODO: fix dependencies: BiGGr -> libsbml
+# Some details and tips:
+# - If you omit the ref it will try to build all ~10000 R packages.
+# - This edits the .nix files, so you want to make sure they're clean before
+#   starting and skim the diffs afterward. It also leaves a lot of log files
+#   in build/, which you can delete or search for clues.
+# - Packages with existing log files will be skipped, so you can kill the
+#   script and resume where you left off.
+# - The generated "depends on..." comments aren't 100% reliable.
+
 # TODO: canceR capkcage infinite loop?
-# TODO: has it ever actually marked something unbroken?
-# TODO: do newly updated packages always hash mismatch?
 
 ##################################
 # run R script to update metadata
@@ -26,12 +29,12 @@ update_package_list() {
   return $?
 }
 
-list_package_files() {
+list_prefixes() {
   ls *-packages.nix | sed 's/\(.*\)-packages.nix/\1/p' | sort | uniq
 }
 
 update_package_lists() {
-  list_package_files | while read prefix; do
+  list_prefixes | while read prefix; do
     update_package_list "$prefix"
   done
 }
@@ -69,9 +72,9 @@ test_rpackages() {
   fi
 }
 
-#########################################
-# test all builds and update broken list
-#########################################
+#####################################
+# test builds and update broken list
+#####################################
 
 list_depends() {
   [[ -z "$1" ]] && return
@@ -172,10 +175,12 @@ mark_broken_rec() {
 test_build() {
   pkg="$1"; logfile="build/${pkg}.log"
   [[ -d build ]] || mkdir build
-  if [[ -a $logfile ]]; then
+  if [[ -a "$logfile" ]]; then
     echo "  skipping ${pkg} because ${logfile} exists"
     return 255
   fi
+  cleanup() { rm -f "$logfile"; }
+  trap cleanup EXIT
   echo -n "  building ${pkg}..."
   nix-build '<nixpkgs>' \
     --arg config '{ allowBroken = true; allowUnfree = true; }' \
@@ -203,12 +208,16 @@ list_updated_packages() {
 
 test_all_builds() {
   ref="$1"
-  [[ "$ref" == "all" ]] && fn='list_grep_names' || fn='list_updated_packages'
+  [[ -z "$ref" ]] && fn='list_grep_names' || fn='list_updated_packages'
   echo "Updating default.nix broken list. This may take a while!"
   $fn "$ref" | while read pkg; do
     update_package "$pkg"
   done
 }
+
+#######
+# main
+#######
 
 main() {
   update_package_lists
@@ -218,4 +227,4 @@ main() {
   test_rpackages
 }
 
-main
+main $@

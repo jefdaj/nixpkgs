@@ -27,12 +27,11 @@ nixPrefetch <- function(name, version) {
   if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else {
 
     # download using wget because nix-prefetch-url often fails on large files
-    # see https://nixos.org/wiki/How_to_add_files_to_the_nix-store
     url <- paste0(mirrorUrl, name, "_", version, ".tar.gz")
     tmp <- tempfile(pattern=paste0(name, "_", version), fileext=".tar.gz")
     cmd <- paste0("wget -q -O '", tmp, "' '", url, "'")
     cmd <- paste0(cmd, " && nix-prefetch-url file://", tmp, " 2> /dev/null")
-    cmd <- paste0(cmd, " && echo >&2 '  added ", name, " ", version, "' && rm -rf ", tmp)
+    cmd <- paste0(cmd, " && echo >&2 '  added ", name, " ", version, "' ; rm -rf ", tmp)
     system(cmd, intern=TRUE)
 
   }
