@@ -698,9 +698,13 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
+    "DBKGrad" # depends on broken package SDD
+    "SDD" # broken build
+    "colorscience" # depends on broken package munsellinterpol
+    "webp" # broken build
+    "CopulaDTA" # broken build
     "exomePeak" # broken build
     "munsellinterpol" # broken build
-    "colorscience" # depends on broken package munsellinterpol
     "munsellinterpol" # broken build
     "synthpop" # depends on broken package coefplot
     "coefplot" # broken build
@@ -1795,8 +1799,6 @@ let
     "DeducerText" # depends on broken package nlopt-2.4.2
     "DiagTest3Grp" # depends on broken package nlopt-2.4.2
     "difR" # depends on broken package nlopt-2.4.2
-    "diggit" # broken build
-    "discSurv" # depends on broken package nlopt-2.4.2
     "DistatisR" # depends on broken package nlopt-2.4.2
     "diveRsity" # depends on broken package nlopt-2.4.2
     "doMPI" # build is broken
@@ -1811,7 +1813,6 @@ let
     "EffectLiteR" # depends on broken package nlopt-2.4.2
     "EMA" # depends on broken package nlopt-2.4.2
     "EnQuireR" # depends on broken package nlopt-2.4.2
-    "EnrichedHeatmap" # broken build
     "EnrichmentBrowser" # depends on broken package r-EDASeq-2.3.2
     "episplineDensity" # depends on broken package nlopt-2.4.2
     "epr" # depends on broken package nlopt-2.4.2
@@ -1823,11 +1824,8 @@ let
     "faoutlier" # depends on broken package nlopt-2.4.2
     "fastR" # depends on broken package nlopt-2.4.2
     "FDRreg" # depends on broken package nlopt-2.4.2
-    "FedData" # broken build
-    "FindMyFriends" # broken build
     "flowBeads" # broken build
     "flowBin" # broken build
-    "flowcatchR" # broken build
     "flowCHIC" # broken build
     "flowClean" # broken build
     "flowDensity" # depends on broken package nlopt-2.4.2
@@ -1843,11 +1841,8 @@ let
     "gamclass" # depends on broken package nlopt-2.4.2
     "gcmr" # depends on broken package nlopt-2.4.2
     "GDAtools" # depends on broken package nlopt-2.4.2
-    "genefu" # broken build
-    "genotypeeval" # depends on broken package r-rtracklayer-1.29.12
     "genridge" # depends on broken package nlopt-2.4.2
     "GEWIST" # depends on broken package nlopt-2.4.2
-    "gfcanalysis" # broken build
     "gimme" # depends on broken package nlopt-2.4.2
     "gmatrix" # depends on broken package cudatoolkit-5.5.22
     "GPC" # broken build
@@ -1857,17 +1852,14 @@ let
     "graphicalVAR" # depends on broken package nlopt-2.4.2
     "GraphPCA" # depends on broken package nlopt-2.4.2
     "GUIProfiler" # broken build
-    "Guitar" # depends on broken package r-GenomicAlignments-1.5.18
     "GWAF" # depends on broken package nlopt-2.4.2
     "h5" # build is broken
     "hbsae" # depends on broken package nlopt-2.4.2
-    "HCsnip" # broken build
     "hierGWAS"
     "HierO" # Build Is Broken
     "highriskzone"
     "HilbertVisGUI" # Build Is Broken
     "HiPLARM" # Build Is Broken
-    "hisse" # broken build
     "HistDAWass" # depends on broken package nlopt-2.4.2
     "HLMdiag" # depends on broken package nlopt-2.4.2
     "HydeNet" # broken build
@@ -1877,7 +1869,6 @@ let
     "iccbeta" # depends on broken package nlopt-2.4.2
     "ifaTools" # depends on broken package r-OpenMx-2.2.6
     "imager" # broken build
-    "immer" # depends on broken package r-sirt-1.8-9
     "immunoClust" # build is broken
     "imputeR" # depends on broken package nlopt-2.4.2
     "in2extRemes" # depends on broken package nlopt-2.4.2
@@ -1894,7 +1885,6 @@ let
     "jetset"
     "joda" # depends on broken package nlopt-2.4.2
     "jomo" # build is broken
-    "ldblock" # depends on broken package r-snpStats-1.19.3
     "learnstats" # depends on broken package nlopt-2.4.2
     "lefse" # build is broken
     "LMERConvenienceFunctions" # depends on broken package nlopt-2.4.2
@@ -1918,7 +1908,6 @@ let
     "meta4diag" # broken build
     "metacom" # broken build
     "metagear" # build is broken
-    "MetaLandSim" # broken build
     "metaMix" # build is broken
     "metaplus" # depends on broken package nlopt-2.4.2
     "Metatron" # depends on broken package nlopt-2.4.2
@@ -1946,11 +1935,9 @@ let
     "mutossGUI" # build is broken
     "mvinfluence" # depends on broken package nlopt-2.4.2
     "mvMORPH" # broken build
-    "myvariant" # depends on broken package r-VariantAnnotation-1.15.31
     "nCal" # depends on broken package nlopt-2.4.2
     "netbenchmark" # build is broken
     "netresponse" # broken build
-    "NetSAM" # broken build
     "NGScopy"
     "NHPoisson" # depends on broken package nlopt-2.4.2
     "nlts" # broken build
@@ -1964,7 +1951,6 @@ let
     "OUwie" # depends on broken package nlopt-2.4.2
     "pacman" # broken build
     "PADOG" # build is broken
-    "paleotree" # broken build
     "pamm" # depends on broken package nlopt-2.4.2
     "panelAR" # depends on broken package nlopt-2.4.2
     "papeR" # depends on broken package nlopt-2.4.2
@@ -1986,14 +1972,12 @@ let
     "pmclust" # build is broken
     "pmm" # depends on broken package nlopt-2.4.2
     "pomp" # depends on broken package nlopt-2.4.2
-    "predictionet" # broken build
     "predictmeans" # depends on broken package nlopt-2.4.2
     "prLogistic" # depends on broken package nlopt-2.4.2
     "pRolocGUI" # depends on broken package nlopt-2.4.2
     "ProteomicsAnnotationHubData" # depends on broken package r-AnnotationHub-2.1.40
     "PSAboot" # depends on broken package nlopt-2.4.2
     "ptw" # depends on broken nloptr-1.0.4
-    "purge" # depends on broken package r-lme4-1.1-9
     "pvca" # depends on broken package nlopt-2.4.2
     "PythonInR"
     "QFRM"
@@ -2003,10 +1987,8 @@ let
     "RADami" # broken build
     "raincpc" # build is broken
     "rainfreq" # build is broken
-    "RAM" # broken build
     "RareVariantVis" # depends on broken VariantAnnotation-1.15.19
     "rasclass" # depends on broken package nlopt-2.4.2
-    "rase" # broken build
     "RBerkeley"
     "Rblpapi" # broken build
     "rbundler" # broken build
@@ -2084,9 +2066,7 @@ let
     "RVFam" # depends on broken package nlopt-2.4.2
     "RWebServices" # broken build
     "ryouready" # depends on broken package nlopt-2.4.2
-    "saps" # broken build
     "sdcMicroGUI" # depends on broken package nlopt-2.4.2
-    "sejmRP" # depends on broken package r-rvest-0.3.0
     "semdiag" # depends on broken package nlopt-2.4.2
     "semGOF" # depends on broken package nlopt-2.4.2
     "semPlot" # depends on broken package nlopt-2.4.2
@@ -2095,7 +2075,6 @@ let
     "SeqGrapheR" # Build Is Broken
     "seqTools" # build is broken
     "simPop" # depends on broken package r-VIM-4.4.1
-    "simulatorZ" # broken build
     "sjPlot" # depends on broken package nlopt-2.4.2
     "SOD" # depends on broken package cudatoolkit-5.5.22
     "sortinghat" # broken build
@@ -2104,7 +2083,6 @@ let
     "spade" # broken build
     "specificity" # depends on broken package nlopt-2.4.2
     "spoccutils" # depends on broken spocc-0.3.0
-    "spsann" # depends on broken package r-pedometrics-0.6-2
     "ssmrob" # depends on broken package nlopt-2.4.2
     "Statomica" # broken build
     "stcm" # depends on broken package nlopt-2.4.2
