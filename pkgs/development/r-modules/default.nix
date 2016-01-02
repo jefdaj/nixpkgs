@@ -1015,9 +1015,6 @@ let
     "VBmix" # broken build
     "VIM" # depends on broken package car
     "VIMGUI" # depends on broken package nlopt-2.4.2
-    "XtraSNPlocs_Hsapiens_dbSNP141_GRCh38" # broken build
-    "XtraSNPlocs_Hsapiens_dbSNP144_GRCh37" # broken build
-    "XtraSNPlocs_Hsapiens_dbSNP144_GRCh38" # broken build
     "Zelig" # depends on broken package AER
     "ZeligMultilevel" # depends on broken package nlopt-2.4.2
     "a4" # depends on broken package htmltools
@@ -1572,23 +1569,16 @@ let
     "webbioc" # depends on broken package annaffy
     "webp" # broken build
     "wfe" # depends on broken package nlopt-2.4.2
-    "worm_db0" # broken build
     "x_ent" # broken build
     "xcms" # broken build
     "xcms" # broken build
-    "xenopus_db0" # broken build
     "xergm" # depends on broken package nlopt-2.4.2
-    "xlaevis2probe" # broken build
     "xps" # build is broken
-    "xtropicalisprobe" # broken build
     "yeast2_db" # broken build
     "yeastNagalakshmi" # broken build
-    "yeastRNASeq" # broken build
     "yeast_db0" # broken build
     "ygs98_db" # broken build
-    "yri1kgv" # broken build
     "zebrafish_db" # broken build
-    "zebrafish_db0" # broken build
     "zetadiv" # depends on broken package nlopt-2.4.2
   ];
 
