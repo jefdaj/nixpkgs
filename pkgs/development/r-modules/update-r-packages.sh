@@ -16,7 +16,8 @@
 #   script and resume where you left off.
 # - The generated "depends on..." comments aren't 100% reliable.
 
-# TODO: canceR capkcage infinite loop?
+# TODO: fix infinite loops! canceR, euroMix, ... all using tcltk2?
+# TODO: is_newly_broken to allow skipping reverse dependencies
 
 ##################################
 # run R script to update metadata
@@ -97,7 +98,7 @@ mark_fixed() {
   sed -i "/\"$1\" # Build Is Broken/d"           default.nix
   sed -i "/\"$1\" # depends on broken package/d" default.nix
   sed -i "/# depends on broken package $1/d"     default.nix
-  echo "    marked $1 unbroken"
+  echo "    marked $1 fixed"
 }
 
 mark_fixed_rec() {
@@ -116,6 +117,12 @@ list_rdepends_rec() {
   list_rdepends "$1" | while read pkg; do
     echo "$pkg"
     list_rdepends_rec "$pkg"
+  done
+}
+
+update_rdepends_rec() {
+  list_rdepends "$1" | while read pkg; do
+    update_package "$pkg"
   done
 }
 
@@ -141,9 +148,11 @@ first_broken_dependency() {
 
 mark_broken() {
   pkg="$1"; logfile="build/${pkg}.log"; reason="broken build"
-  if grep 'dependencies couldn' $logfile > /dev/null; then
+  if grep 'dependencies couldn' $logfile &> /dev/null; then
     broken="$(first_broken_dependency "${pkg}")"
-    [[ $broken == $pkg ]] || reason="depends on broken package ${broken}"
+    [[ "$broken" == "$pkg" ]] && break
+    mark_broken_rec "$broken"
+    return
   fi
   msg="\"$pkg\" # $reason"
   add_to_list "brokenPackages" "$msg"
@@ -164,9 +173,9 @@ mark_broken_dep() {
 mark_broken_rec() {
   if is_marked_broken "$1"; then
     echo "    $1 already marked broken"
-    return
+  else
+    mark_broken "$1"
   fi
-  mark_broken "$1"
   list_rdepends_rec "$1" | while read pkg; do
     mark_broken_dep "$pkg" "$1"
   done
@@ -175,11 +184,8 @@ mark_broken_rec() {
 test_build() {
   pkg="$1"; logfile="build/${pkg}.log"
   [[ -d build ]] || mkdir build
-  if [[ -a "$logfile" ]]; then
-    echo "  skipping ${pkg} because ${logfile} exists"
-    return 255
-  fi
-  cleanup() { rm -f "$logfile"; }
+  [[ -a "$logfile" ]] && echo "  skipping $1" && return 255
+  cleanup() { rm -f "$logfile"; echo "Removed $logfile"; }
   trap cleanup EXIT
   echo -n "  building ${pkg}..."
   nix-build '<nixpkgs>' \
@@ -191,13 +197,11 @@ test_build() {
 }
 
 update_package() {
-  pkg="$1"
-  grep -E "\"$pkg\" # (depends on broken|[Bb]roken).*" default.nix &> /dev/null
-  test_build "${pkg}"
+  test_build "$1"
   code=$?
   [[ $code -eq 255 ]] && return # skipped
-  [[ $code -eq 0 ]] && mark_fixed_rec  "$pkg"
-  [[ $code -gt 0 ]] && mark_broken_rec "$pkg"
+  [[ $code -eq 0 ]] && mark_fixed_rec  "$1" && update_rdepends_rec "$1"
+  [[ $code -gt 0 ]] && mark_broken_rec "$1"
 }
 
 list_updated_packages() {
