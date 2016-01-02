@@ -698,6 +698,15 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
+    "synapter" # depends on broken package MSnbase
+    "proteoQC" # depends on broken package MSnbase
+    "Pbase" # depends on broken package MSnbase
+    "MSnID" # depends on broken package MSnbase
+    "msmsTests" # depends on broken package MSnbase
+    "msmsEDA" # depends on broken package MSnbase
+    "Prostar" # depends on broken package MSnbase
+    "DAPAR" # depends on broken package MSnbase
+    "MSnbase" # broken build
     "DBKGrad" # depends on broken package SDD
     "SDD" # broken build
     "colorscience" # depends on broken package munsellinterpol

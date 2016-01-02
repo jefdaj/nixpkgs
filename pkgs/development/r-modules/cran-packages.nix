@@ -1595,7 +1595,7 @@ PanelCount = derive { name="PanelCount"; version="1.0.9"; sha256="1b6c83qypjc3yl
 Paneldata = derive { name="Paneldata"; version="1.0"; sha256="00hk340x5d4mnpl3k0hy1nypgj55as2j7y2pgzfk3fpn3zls5zib"; depends=[]; };
 ParDNAcopy = derive { name="ParDNAcopy"; version="2.0"; sha256="017xwznhfibi8kp0ifww02c0qcq0vxs06rjww4kcp2bvdmld8kc4"; depends=[DNAcopy]; };
 ParallelForest = derive { name="ParallelForest"; version="1.1.0"; sha256="1xa9lfgrvzv7bvv1aaabcfk4372p8x5gxgj463h5ggf9x177lj5j"; depends=[]; };
-ParallelPC = derive { name="ParallelPC"; version="1.1"; sha256="0g2x0y2r2qffypjsp1cr6hgj5k25r0lh15sc6465prnkdmc016vv"; depends=[]; };
+ParallelPC = derive { name="ParallelPC"; version="1.2"; sha256="07y7xb16865khxkvwsk1yglzyy7ja4aj2wpkipaz48i77c3x8bi2"; depends=[]; };
 ParamHelpers = derive { name="ParamHelpers"; version="1.6"; sha256="07lzqww0grkra14b1pviv1r39nsp0zj438zcqnw0q1lyvdflih23"; depends=[BBmisc checkmate]; };
 ParentOffspring = derive { name="ParentOffspring"; version="1.0"; sha256="117g8h0k65f2cjffigl8n4x37y41rr2kz33qn2awyi876nd3mh93"; depends=[]; };
 ParetoPosStable = derive { name="ParetoPosStable"; version="1.1"; sha256="1fwji5wrhbxr089dll812csamvb5q2pxn1607rpirarifgfbj28m"; depends=[ADGofTest doParallel foreach lmom]; };
@@ -2298,7 +2298,7 @@ Shrinkage = derive { name="Shrinkage"; version="1.0"; sha256="1n338zj4a063c8b9wa
 SiZer = derive { name="SiZer"; version="0.1-4"; sha256="0kiwvxrfa2b49r2iab5v2aysc2yzk5ck3h41f2hr0vq5pdnz0qy5"; depends=[boot]; };
 SigTree = derive { name="SigTree"; version="1.10.2"; sha256="0d91s2x809mhirkmcdn8zvnivimssqhnydgfwchfrckk6p4jfm40"; depends=[ape phyext2 phylobase phyloseq RColorBrewer]; };
 SightabilityModel = derive { name="SightabilityModel"; version="1.3"; sha256="0rgv5735y07yyv5y9c3flzha97ykn34ysmzy6as1z94hqfr4w746"; depends=[]; };
-Sim_DiffProc = derive { name="Sim.DiffProc"; version="3.0"; sha256="1xzh7vdygx3vk9fanvhg65dy9prddrkj012ihv36w8wbqrk284gv"; depends=[rgl scatterplot3d]; };
+Sim_DiffProc = derive { name="Sim.DiffProc"; version="3.1"; sha256="1q7h3mfgs19jav8xp8xgzzk075fcmvz2lfbp64mzgpiin2rwx2q0"; depends=[rgl scatterplot3d]; };
 SimComp = derive { name="SimComp"; version="2.2"; sha256="07gmlbwvv07kq3z7gq2jxlank011c0cqh8zwwp4pzf061d3gjdm6"; depends=[mratios multcomp mvtnorm]; };
 SimCorMultRes = derive { name="SimCorMultRes"; version="1.4.0"; sha256="0hrkwim582cb22ipy5vv1gp9bszjsqyzyzrwqwgy4247brag26fm"; depends=[evd]; };
 SimDesign = derive { name="SimDesign"; version="0.5"; sha256="0hz6vwibz2jr518dhxzj9iild7xxd18sa23fgxxv4h99wvfn1m89"; depends=[foreach plyr]; };
@@ -2764,7 +2764,7 @@ archetypes = derive { name="archetypes"; version="2.2-0"; sha256="1djzlnl1pjb0nd
 archiDART = derive { name="archiDART"; version="1.2"; sha256="0kshyad4bhmiry5avkvmnlv5nhpyb1pbb0s9yviazcvj2yx8phwd"; depends=[XML]; };
 archivist = derive { name="archivist"; version="1.8"; sha256="0xafdsada1d5gq4k004s851q9gd8xl96qfxgmm2ss0i53a7a31jw"; depends=[DBI digest git2r httr jsonlite knitr lubridate magrittr RCurl RSQLite]; };
 arf3DS4 = derive { name="arf3DS4"; version="2.5-10"; sha256="12cbrk57c9m7fj1x7nfmcj1vp28wj0wymsjdz8ylxhm3jblbgmxc"; depends=[corpcor]; };
-arfima = derive { name="arfima"; version="1.3-3"; sha256="001mdhhycpimpv96fnkjb6ndyhqc6w0wk9h7fk0dmjh4lb4a0ffc"; depends=[ltsa]; };
+arfima = derive { name="arfima"; version="1.3-4"; sha256="0348zkr8h5la1vh66fifl1fn21hp03k34zv5ga29crmwvvsvk8pi"; depends=[ltsa]; };
 argosfilter = derive { name="argosfilter"; version="0.63"; sha256="0rrc2f28hla0azw90a5gk3zj72vxhm1b6yy8ani7r78yyfhgm9ig"; depends=[]; };
 argparse = derive { name="argparse"; version="1.0.1"; sha256="03p8dpwc26xz01lfbnmckcx6wzky43dyq71085b0anzsavgx0786"; depends=[findpython getopt proto rjson]; };
 argparser = derive { name="argparser"; version="0.3"; sha256="1lwlkrh8hq4p02jmb76nss9qjrgyf5fqqzifv9z8ff1lk7szgmy4"; depends=[]; };
@@ -5077,7 +5077,7 @@ marg = derive { name="marg"; version="1.2-2"; sha256="0j08zzcrj8nqsargi6xi50gy9p
 markdown = derive { name="markdown"; version="0.7.7"; sha256="00j1hlib3il50azs2vlcyhi0bjpx1r50mxr9w9dl5g1bwjjc71hb"; depends=[mime]; };
 marked = derive { name="marked"; version="1.1.10"; sha256="0a5b3nx7fwk0lavjpdlr9c1hm0zl215b2f2mi6kx00irys6h9nyh"; depends=[coda expm ggplot2 lme4 Matrix numDeriv optimx R2admb Rcpp truncnorm]; };
 markmyassignment = derive { name="markmyassignment"; version="0.3.0"; sha256="1s35hkvmc4l4fm96jm0m2vzd7lbkiqb75gb6zwck58v1k6qckw2v"; depends=[codetools httr testthat yaml]; };
-markophylo = derive { name="markophylo"; version="1.0.3"; sha256="17rcjrn8a1vgwl3yrd0k9hw1ig8a0lwm9mi5z6ip567773xci76p"; depends=[ape numDeriv phangorn Rcpp RcppArmadillo]; };
+markophylo = derive { name="markophylo"; version="1.0.4"; sha256="12np5rg59wjyh1mfhhfh115ziciba973fjvbrhn4qzdnry1mwbdb"; depends=[ape numDeriv phangorn Rcpp RcppArmadillo]; };
 markovchain = derive { name="markovchain"; version="0.4.3"; sha256="0xzadlpznkclx7s0y8hpd9yf3ck578w913yljfg6fh7m9avzgvmw"; depends=[expm igraph matlab Matrix Rcpp RcppArmadillo RcppParallel]; };
 marl = derive { name="marl"; version="1.0"; sha256="0rndnf3rbcibv3gsrw1kfp5zhg37cw9wwlz0b7dbwprd0m71l3pm"; depends=[]; };
 marmap = derive { name="marmap"; version="0.9.5"; sha256="0avdi55b43nrkryygs7g3l62g48m1b2zhjf7xcwx7q166k7lb7ax"; depends=[adehabitatMA DBI gdistance geosphere ggplot2 ncdf4 plotrix raster reshape2 RSQLite shape sp]; };
@@ -5341,7 +5341,7 @@ mplot = derive { name="mplot"; version="0.7.7"; sha256="052idykpv2362mmqvf9zcr1s
 mpm = derive { name="mpm"; version="1.0-22"; sha256="0wijw8v0wmbfrda5564cmnp788qmlkk21yn5cp5qk8aprm9l1fnk"; depends=[KernSmooth MASS]; };
 mpmcorrelogram = derive { name="mpmcorrelogram"; version="0.1-3"; sha256="0qgzsh744002whh3v1hrxs1i0xnk9zgfgkdgx2f0ffj00vvnwr97"; depends=[vegan]; };
 mpmi = derive { name="mpmi"; version="0.41"; sha256="1iwdhvdglsamzq18f0r5mh0anrd4ffrddafdlbw16kr8jy0c8fdn"; depends=[KernSmooth]; };
-mpoly = derive { name="mpoly"; version="0.1.0"; sha256="0q0ypaj1r12yc72b6qb22rvgrzc703v4n7ns2yg1n9ff20y5m4z0"; depends=[partitions plyr rJava rjson rJython rSymPy stringr]; };
+mpoly = derive { name="mpoly"; version="1.0.0"; sha256="1y8hx97hxhfsik4sikdlmrp2p05xywjqw1fx77rb1s6j97k3kbnk"; depends=[ggplot2 orthopolynom partitions plyr polynom reshape2 rJava rjson rJython rSymPy stringr]; };
 mppa = derive { name="mppa"; version="1.0"; sha256="06v6vq2nfh4b407x2gyvcp5wbdrcnk3m8y58akapi66lj8xplcx4"; depends=[]; };
 mpt = derive { name="mpt"; version="0.5-2"; sha256="16rrcy8hy9fw603pbi9wybnql11w0bxlxi1kxx482khg9fj7lwn0"; depends=[]; };
 mra = derive { name="mra"; version="2.16.4"; sha256="134fw4bv34bycgia58z238acj7kb8jkw51pjfa2cwprrgsjdpf5g"; depends=[]; };
@@ -7557,7 +7557,7 @@ vioplot = derive { name="vioplot"; version="0.2"; sha256="16wkb26kv6qr34hv5zgqmg
 viopoints = derive { name="viopoints"; version="0.2-1"; sha256="0cpbkkzm1rxch8gnvlmmzy8g521f5ang3nhlcnin419gha0w6avf"; depends=[]; };
 vipor = derive { name="vipor"; version="0.3.2"; sha256="12c4f2f5h6na24dra4sj3p8jssswnx6mx60a9ir8mh584npqjhmp"; depends=[]; };
 viridis = derive { name="viridis"; version="0.3.1"; sha256="0zz9i874s1fwhl9bcbiprlzaz7zsy1rj6c729zn3k525d63qbnj7"; depends=[ggplot2 gridExtra]; };
-viridisLite = derive { name="viridisLite"; version="0.1"; sha256="03rpvfm1aykgpyxipv5wbrvpnkl8pqh8h2kkynkzfyv3jjqaq40q"; depends=[]; };
+viridisLite = derive { name="viridisLite"; version="0.1.1"; sha256="0cgkp20la0g3qxs716fi2k4ir6awqw0h9mh89s0j4v80za9qcip7"; depends=[]; };
 virtualspecies = derive { name="virtualspecies"; version="1.1"; sha256="0znrb6xqyzddd1r999rhx6ix6wgpj1laf5bcns7zgmq6zb39j74s"; depends=[ade4 dismo raster rworldmap]; };
 visNetwork = derive { name="visNetwork"; version="0.2.0"; sha256="0id6j05ddx0jhsc46dzlpdz0zfjwfpfcxhlb3gixivls7c9vibnv"; depends=[htmltools htmlwidgets jsonlite magrittr]; };
 visreg = derive { name="visreg"; version="2.2-0"; sha256="1hnyrfgyk5fign5l35aql2q7q4mmw3jby5pkv696h8k1mc8qq096"; depends=[lattice]; };
