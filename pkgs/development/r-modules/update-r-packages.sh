@@ -26,7 +26,7 @@
 update_package_list() {
   prefix="$1"; path="${prefix}-packages.nix"
   echo "Downloading updates to ${path}"
-  Rscript generate-r-packages.R ${prefix} >new && mv new ${path}
+  Rscript update-r-packages.R ${prefix} >new && mv new ${path}
   return $?
 }
 
