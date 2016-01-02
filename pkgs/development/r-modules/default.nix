@@ -988,35 +988,17 @@ let
     "SDD" # broken build
     "SHDZ_db" # broken build
     "SNAGEE" # broken build
-    "SNAGEEdata" # broken build
-    "SNPhoodData" # broken build
-    "SNPlocs_Hsapiens_dbSNP141_GRCh38" # broken build
-    "SNPlocs_Hsapiens_dbSNP142_GRCh37" # broken build
-    "SNPlocs_Hsapiens_dbSNP144_GRCh37" # broken build
-    "SNPlocs_Hsapiens_dbSNP144_GRCh38" # broken build
-    "SNPlocs_Hsapiens_dbSNP_20090506" # broken build
-    "SNPlocs_Hsapiens_dbSNP_20100427" # broken build
-    "SNPlocs_Hsapiens_dbSNP_20101109" # broken build
-    "SNPlocs_Hsapiens_dbSNP_20110815" # broken build
-    "SNPlocs_Hsapiens_dbSNP_20111119" # broken build
     "SOD" # depends on broken package cudatoolkit-5.5.22
-    "SVM2CRM" # broken build
-    "SVM2CRMdata" # broken build
     "ScISI" # depends on broken package apComplex
     "SemDist" # broken build
     "SensMixed" # depends on broken package r-lme4-1.1-9
     "SensoMineR" # depends on broken package car
     "SeqFeatR" # broken build
     "SeqGrapheR" # Build Is Broken
-    "SomatiCAData" # broken build
     "SoyNAM" # depends on broken package r-lme4-1.1-8
-    "SpikeIn" # broken build
     "Statomica" # broken build
     "Surrogate" # depends on broken package nlopt-2.4.2
-    "TBX20BamSubset" # broken build
-    "TCGAMethylation450k" # broken build
     "TCGAbiolinks" # depends on broken package r-affy-1.47.1
-    "TCGAcrcmRNA" # broken build
     "TDMR" # depends on broken package nlopt-2.4.2
     "TED" # broken build
     "TFBSTools" # depends on broken package CNEr
@@ -1024,23 +1006,15 @@ let
     "TLBC" # depends on broken package car
     "TSMySQL" # broken build
     "TSdist" # broken build
-    "TargetScoreData" # broken build
-    "TargetSearchData" # broken build
     "TcGSA" # depends on broken package nlopt-2.4.2
     "TextoMineR" # depends on broken package car
     "TransferEntropy" # broken build
     "TriMatch" # depends on broken package car
     "TxDb_Celegans_UCSC_ce6_ensGene" # broken build
-    "TxDb_Hsapiens_UCSC_hg38_knownGene" # broken build
-    "TxDb_Mmusculus_UCSC_mm9_knownGene" # broken build
     "TxDb_Rnorvegicus_BioMart_igis" # broken build
     "VBmix" # broken build
     "VIM" # depends on broken package car
     "VIMGUI" # depends on broken package nlopt-2.4.2
-    "WES_1KG_WUGSC" # broken build
-    "XtraSNPlocs_Hsapiens_dbSNP141_GRCh38" # broken build
-    "XtraSNPlocs_Hsapiens_dbSNP144_GRCh37" # broken build
-    "XtraSNPlocs_Hsapiens_dbSNP144_GRCh38" # broken build
     "Zelig" # depends on broken package AER
     "ZeligMultilevel" # depends on broken package nlopt-2.4.2
     "a4" # depends on broken package htmltools
@@ -1571,13 +1545,11 @@ let
     "ssmrob" # depends on broken package nlopt-2.4.2
     "stcm" # depends on broken package nlopt-2.4.2
     "stepp" # depends on broken package nlopt-2.4.2
-    "stjudem" # broken build
     "sybilSBML" # build is broken
     "synapter" # depends on broken package MSnbase
     "synapterdata" # broken build
     "synthpop" # depends on broken package coefplot
     "systemPipeR" # depends on broken package AnnotationForge
-    "systemPipeRdata" # broken build
     "systemfit" # depends on broken package car
     "tigerstats" # depends on broken package nlopt-2.4.2
     "tmle" # broken build
@@ -1586,7 +1558,6 @@ let
     "translateSPSS2R" # depends on broken package car
     "traseR"
     "tsoutliers" # depends on broken package polynom
-    "tweeDEseqCountData" # broken build
     "u133aaofav2cdf" # broken build
     "u133x3p_db" # broken build
     "u133x3pcdf" # broken build
@@ -1595,28 +1566,19 @@ let
     "varComp" # depends on broken package r-lme4-1.1-9
     "variancePartition" # depends on broken package nloptr
     "vows" # depends on broken package nlopt-2.4.2
-    "waveTilingData" # broken build
     "webbioc" # depends on broken package annaffy
     "webp" # broken build
     "wfe" # depends on broken package nlopt-2.4.2
-    "wheatprobe" # broken build
-    "worm_db0" # broken build
     "x_ent" # broken build
     "xcms" # broken build
     "xcms" # broken build
-    "xenopus_db0" # broken build
     "xergm" # depends on broken package nlopt-2.4.2
-    "xlaevis2probe" # broken build
     "xps" # build is broken
-    "xtropicalisprobe" # broken build
     "yeast2_db" # broken build
     "yeastNagalakshmi" # broken build
-    "yeastRNASeq" # broken build
     "yeast_db0" # broken build
     "ygs98_db" # broken build
-    "yri1kgv" # broken build
     "zebrafish_db" # broken build
-    "zebrafish_db0" # broken build
     "zetadiv" # depends on broken package nlopt-2.4.2
   ];
 

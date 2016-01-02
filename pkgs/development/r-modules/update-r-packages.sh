@@ -219,6 +219,33 @@ test_all_builds() {
   done
 }
 
+##################
+# print a summary
+##################
+
+worst_broken_packages() {
+  echo "These 10 break the most dependencies:"
+  grep -E '\s*".*" #.*[Bb]roken' default.nix |
+    less | grep -Eo 'package (.*)' | cut -d' ' -f2- |
+    sort | uniq -c | sort -rh | head
+}
+
+diff_summary() {
+  ref="$1"
+  difffixed=$(git diff "$1" default.nix | grep -E '^-\s' | wc -l)
+  diffbroken=$(git diff "$1" default.nix | grep -E '^\+\s' | wc -l)
+  totbroken=$(grep -E '[Bb]roken' default.nix | wc -l)
+  echo "Packages fixed since '${1}': $difffixed"
+  echo "Packages broken since '${1}': $diffbroken"
+  echo "Total broken packages: $totbroken"
+}
+
+print_summary() {
+  echo
+  diff_summary "$1"
+  worst_broken_packages
+}
+
 #######
 # main
 #######
@@ -229,6 +256,7 @@ main() {
   test_rpackages
   test_all_builds "$1"
   test_rpackages
+  print_summary "$1"
 }
 
 main $@
