@@ -24,14 +24,17 @@ knownPackages <- sapply(knownPackages, gsub, pattern=".", replacement="_", fixed
 
 nixPrefetch <- function(name, version) {
   prevV <- readFormatted$V2 == name & readFormatted$V4 == version
-  if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else {
+  if (sum(prevV) == 1)
+    as.character(readFormatted$V6[ prevV ])
+  else {
 
-    # download using wget because nix-prefetch-url often fails on large files
+    # avoid nix-prefetch-url because it often fails to fetch/hash large files
     url <- paste0(mirrorUrl, name, "_", version, ".tar.gz")
     tmp <- tempfile(pattern=paste0(name, "_", version), fileext=".tar.gz")
     cmd <- paste0("wget -q -O '", tmp, "' '", url, "'")
-    cmd <- paste0(cmd, " && nix-prefetch-url file://", tmp, " 2> /dev/null")
-    cmd <- paste0(cmd, " && echo >&2 '  added ", name, " ", version, "' ; rm -rf ", tmp)
+    cmd <- paste0(cmd, " && nix-hash --type sha256 --base32 --flat '", tmp, "'")
+    cmd <- paste0(cmd, " && echo >&2 '  added ", name, " v", version, "'")
+    cmd <- paste0(cmd, " ; rm -rf '", tmp, "'")
     system(cmd, intern=TRUE)
 
   }
@@ -57,10 +60,6 @@ clusterExport(cl, c("nixPrefetch","readFormatted", "mirrorUrl", "knownPackages")
 pkgs <- as.data.table(available.packages(mirrorUrl, filters=c("R_version", "OS_type", "duplicates")))
 pkgs <- pkgs[order(Package)]
 pkgs$sha256 <- parApply(cl, pkgs, 1, function(p) nixPrefetch(p[1], p[2]))
-
-# prevents inserting sha256="character(0)" if a download fails
-pkgs[length(pkgs$sha256) == 0,] <- NULL
-
 nix <- apply(pkgs, 1, function(p) formatPackage(p[1], p[2], p[18], p[4], p[5], p[6]))
 
 cat("# This file is generated from generate-r-packages.R. DO NOT EDIT.\n")

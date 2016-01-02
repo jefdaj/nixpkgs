@@ -61,7 +61,7 @@ list_removed() {
   [[ -z "$archived" ]] && return 0
   echo "These packages have been removed upstream:"
   echo "$archived" | while read l; do echo "  $l"; done
-  echo "They should be removed from default.nix too before continuing."
+  echo "They should be removed from default.nix so rPackages will evaluate."
   exit 1
 }
 
