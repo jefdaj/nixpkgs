@@ -4,15 +4,17 @@ library(parallel)
 cl <- makeCluster(10)
 
 mirrorType <- commandArgs(trailingOnly=TRUE)[1]
-stopifnot(mirrorType %in% c("bioc","cran", "irkernel"))
-
-packagesFile <- paste(mirrorType, 'packages.nix', sep='-')
-readFormatted <- as.data.table(read.table(skip=6, sep='"', text=head(readLines(packagesFile), -1)))
-
 mirrorUrls <- list( bioc="http://bioconductor.statistik.tu-dortmund.de/packages/3.2/bioc/src/contrib/"
+                  , "bioc-annotation"="http://bioconductor.statistik.tu-dortmund.de/packages/3.2/data/annotation/src/contrib/"
+                  , "bioc-experiment"="http://bioconductor.statistik.tu-dortmund.de/packages/3.2/data/experiment/src/contrib/"
                   , cran="http://cran.r-project.org/src/contrib/"
                   , irkernel="http://irkernel.github.io/src/contrib/"
                   )
+
+stopifnot(mirrorType %in% names(mirrorUrls))
+packagesFile <- paste(mirrorType, 'packages.nix', sep='-')
+readFormatted <- as.data.table(read.table(skip=6, sep='"', text=head(readLines(packagesFile), -1)))
+
 mirrorUrl <- mirrorUrls[mirrorType][[1]]
 knownPackages <- lapply(mirrorUrls, function(url) as.data.table(available.packages(url, filters=c("R_version", "OS_type", "duplicates"))))
 pkgs <- knownPackages[mirrorType][[1]]
@@ -22,8 +24,17 @@ knownPackages <- sapply(knownPackages, gsub, pattern=".", replacement="_", fixed
 
 nixPrefetch <- function(name, version) {
   prevV <- readFormatted$V2 == name & readFormatted$V4 == version
-  if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else
-    system(paste0("nix-prefetch-url --type sha256 ", mirrorUrl, name, "_", version, ".tar.gz"), intern=TRUE)
+  if (sum(prevV) == 1) as.character(readFormatted$V6[ prevV ]) else {
+
+    # download using wget because nix-prefetch-url often fails on large files
+    url <- paste0(mirrorUrl, name, "_", version, ".tar.gz")
+    tmp <- tempfile(pattern=paste0(name, "_", version), fileext=".tar.gz")
+    cmd <- paste0("wget -q -O '", tmp, "' '", url, "'")
+    cmd <- paste0(cmd, " && nix-prefetch-url file://", tmp, " 2> /dev/null")
+    cmd <- paste0(cmd, " && echo >&2 '  added ", name, " ", version, "' ; rm -rf ", tmp)
+    system(cmd, intern=TRUE)
+
+  }
 }
 
 formatPackage <- function(name, version, sha256, depends, imports, linkingTo) {
@@ -46,6 +57,9 @@ clusterExport(cl, c("nixPrefetch","readFormatted", "mirrorUrl", "knownPackages")
 pkgs <- as.data.table(available.packages(mirrorUrl, filters=c("R_version", "OS_type", "duplicates")))
 pkgs <- pkgs[order(Package)]
 pkgs$sha256 <- parApply(cl, pkgs, 1, function(p) nixPrefetch(p[1], p[2]))
+
+# prevents inserting sha256="character(0)" if a download fails
+pkgs[length(pkgs$sha256) == 0,] <- NULL
 
 nix <- apply(pkgs, 1, function(p) formatPackage(p[1], p[2], p[18], p[4], p[5], p[6]))
 
