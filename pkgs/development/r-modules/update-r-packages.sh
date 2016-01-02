@@ -224,7 +224,7 @@ test_all_builds() {
 ##################
 
 worst_broken_packages() {
-  echo "These 10 break the most dependencies:"
+  echo "These 10 have the most dependencies:"
   grep -E '\s*".*" #.*[Bb]roken' default.nix |
     less | grep -Eo 'package (.*)' | cut -d' ' -f2- |
     sort | uniq -c | sort -rh | head
