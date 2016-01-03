@@ -64,7 +64,7 @@ BiocGenerics = derive { name="BiocGenerics"; version="0.16.1"; sha256="0f16ryy5f
 BiocInstaller = derive { name="BiocInstaller"; version="1.20.1"; sha256="0lsqkx8q98rix4g7wfx78fnkzmz2mjb7m9wc9zgm69m0iyp50aad"; depends=[]; };
 BiocParallel = derive { name="BiocParallel"; version="1.4.3"; sha256="1f5mndx66vampcsq0n66afg6x851crl0h3nyv2nyp9bsgzj9cdzq"; depends=[futile_logger snow]; };
 BiocStyle = derive { name="BiocStyle"; version="1.8.0"; sha256="03lmw649fch64kcwyps6ry9qmjz7f0ydwhc4yzkl7d6lffgfvihc"; depends=[]; };
-Biostrings = derive { name="Biostrings"; version="2.38.2"; sha256="1afp9szc8ci6jn0m3hrrqh6df65cpw3v1dcnl6xir3d3m3lwwmk4"; depends=[BiocGenerics IRanges S4Vectors XVector]; };
+Biostrings = derive { name="Biostrings"; version="2.38.3"; sha256="097kr5zanpfcyp3gf913s6nf4awhnbzs8566vhch1g498j6bgfwd"; depends=[BiocGenerics IRanges S4Vectors XVector]; };
 BitSeq = derive { name="BitSeq"; version="1.14.0"; sha256="1q58za8jd96bk2wxy7np0b7lar3v0pk6ll833k10x1b260rvpgbp"; depends=[IRanges Rsamtools S4Vectors zlibbioc]; };
 BrainStars = derive { name="BrainStars"; version="1.14.0"; sha256="0r6jd6h48c15sg655079lwr9v1gl79wk8773w2q9fyfmakhj15vx"; depends=[Biobase RCurl RJSONIO]; };
 BridgeDbR = derive { name="BridgeDbR"; version="1.4.0"; sha256="0qb1xiyq993hfzdgjaw982hhvnd9lwwdzq6anr2r9dbpzsini136"; depends=[RCurl rJava]; };
