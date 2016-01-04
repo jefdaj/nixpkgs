@@ -317,7 +317,6 @@ let
     RGtk2 = [ pkgs.gtk2 ];
     Rhpc = [ pkgs.zlib pkgs.bzip2 pkgs.icu pkgs.lzma pkgs.openmpi pkgs.pcre ];
     Rhtslib = [ pkgs.zlib ];
-    ridge = [ pkgs.gsl_1 ];
     RJaCGH = [ pkgs.zlib ];
     rjags = [ pkgs.jags ];
     rJava = [ pkgs.zlib pkgs.bzip2 pkgs.icu pkgs.lzma pkgs.pcre pkgs.jdk pkgs.libzip ];
@@ -698,6 +697,11 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
+    "graphscan" # broken build
+    "metaheur" # depends on broken package nloptr
+    "vmsbase" # broken build
+    "fds" # broken build
+    "BubbleTree" # broken build
     "AER" # depends on broken package nloptr
     "ARRmNormalization" # broken build
     "ART" # depends on broken package ar-car-2.1-0
@@ -1016,7 +1020,6 @@ let
     "VIM" # depends on broken package car
     "VIMGUI" # depends on broken package nlopt-2.4.2
     "Zelig" # depends on broken package AER
-    "ZeligMultilevel" # depends on broken package nlopt-2.4.2
     "a4" # depends on broken package htmltools
     "a4Base" # broken build
     "a4Reporting" # broken build
@@ -1275,7 +1278,6 @@ let
     "illuminaRatv1_db" # broken build
     "imager" # broken build
     "immunoClust" # build is broken
-    "imputeR" # depends on broken package nlopt-2.4.2
     "in2extRemes" # depends on broken package nlopt-2.4.2
     "inSilicoMerging" # build is broken
     "indac_db" # broken build

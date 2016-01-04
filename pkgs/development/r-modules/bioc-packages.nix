@@ -70,7 +70,7 @@ BrainStars = derive { name="BrainStars"; version="1.14.0"; sha256="0r6jd6h48c15s
 BridgeDbR = derive { name="BridgeDbR"; version="1.4.0"; sha256="0qb1xiyq993hfzdgjaw982hhvnd9lwwdzq6anr2r9dbpzsini136"; depends=[RCurl rJava]; };
 BrowserViz = derive { name="BrowserViz"; version="1.2.1"; sha256="0l316ybgs7mbklnv03c54f5qfvvksclmjdlkjzgvbi8w4lfzpc3m"; depends=[BiocGenerics httpuv jsonlite Rcpp]; };
 BrowserVizDemo = derive { name="BrowserVizDemo"; version="1.2.1"; sha256="1n1jy94zqvd2pjkzpbbg8nmx44ambxg62xa41a7kgz04xz2vjasy"; depends=[BiocGenerics BrowserViz httpuv jsonlite Rcpp]; };
-BubbleTree = derive { name="BubbleTree"; version="2.0.0"; sha256="135jnak07y4ih82mrql8kccbicrdir8m38kjdkqzsk5ygagcavbh"; depends=[Biobase BiocGenerics BiocStyle biovizBase dplyr GenomicRanges ggplot2 gridExtra gtable gtools IRanges limma magrittr plyr rainbow RColorBrewer rgl scales WriteXLS]; };
+BubbleTree = derive { name="BubbleTree"; version="2.0.0"; sha256="135jnak07y4ih82mrql8kccbicrdir8m38kjdkqzsk5ygagcavbh"; depends=[Biobase BiocGenerics BiocStyle biovizBase dplyr GenomicRanges ggplot2 gridExtra gtable gtools IRanges limma magrittr plyr RColorBrewer rgl scales WriteXLS]; };
 BufferedMatrix = derive { name="BufferedMatrix"; version="1.34.0"; sha256="0f345lsj5khgys2apjid513psx79fdpzg6vm5ndn9iw1rkgafv9f"; depends=[]; };
 BufferedMatrixMethods = derive { name="BufferedMatrixMethods"; version="1.34.0"; sha256="1i8b0s0g4yk8s99iw6bli494rbg169306b8idwl4sncjyl6mzj0c"; depends=[BufferedMatrix]; };
 CAFE = derive { name="CAFE"; version="1.6.0"; sha256="0mmfjb93apnn39g3jrfan4zmxz7axlc6mnv6464n44kysdxyh5a4"; depends=[affy annotate Biobase biovizBase GenomicRanges ggbio ggplot2 gridExtra IRanges]; };
@@ -614,7 +614,7 @@ biomvRCNS = derive { name="biomvRCNS"; version="1.10.0"; sha256="1vma189z83hvq90
 biosvd = derive { name="biosvd"; version="2.6.0"; sha256="0mjkan7drib9v49dk3rnrkydm1dxfqimk5gk4jm9qv8kdfcjk0zh"; depends=[Biobase BiocGenerics NMF]; };
 biovizBase = derive { name="biovizBase"; version="1.18.0"; sha256="1lp89grxfgkhc9h5jmqs2nr9gr8321nyzwimrszls9dcc787xf00"; depends=[AnnotationDbi BiocGenerics Biostrings dichromat GenomeInfoDb GenomicAlignments GenomicFeatures GenomicRanges Hmisc IRanges RColorBrewer Rsamtools S4Vectors scales SummarizedExperiment VariantAnnotation]; };
 birta = derive { name="birta"; version="1.14.0"; sha256="1pszpvmvjp1r0bwj7w9ws0y8xmb3yfmq5gifj9jwvgw2p7y718zr"; depends=[Biobase limma MASS]; };
-birte = derive { name="birte"; version="1.6.0"; sha256="1mlh8fg77lcpqdb5ali5pxx1qpdskbsljk55cbsswgsjw437fwi0"; depends=[Biobase limma MASS nem Rcpp RcppArmadillo ridge]; };
+birte = derive { name="birte"; version="1.6.0"; sha256="1mlh8fg77lcpqdb5ali5pxx1qpdskbsljk55cbsswgsjw437fwi0"; depends=[Biobase limma MASS nem Rcpp RcppArmadillo]; };
 blima = derive { name="blima"; version="1.4.0"; sha256="1mv153f42x0pjva03gw8b064qmf2558p82xqzvxqycyn7ry3riyz"; depends=[beadarray Biobase BiocGenerics]; };
 bridge = derive { name="bridge"; version="1.34.0"; sha256="08lfbczaj7hkgqfsm060z56anx1yvsfwknzw40gq919k0zm9vfcf"; depends=[rama]; };
 bsseq = derive { name="bsseq"; version="1.6.0"; sha256="1bz3b79iiqz251nq54lybxd9bfyzm44p1dbb3nxmjdnf2n1gxs5w"; depends=[Biobase BiocGenerics data_table GenomeInfoDb GenomicRanges gtools IRanges locfit matrixStats R_utils S4Vectors scales SummarizedExperiment]; };
