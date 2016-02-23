@@ -20,7 +20,6 @@
 "extradite"
 "fugitive"
 "ghcmod"
-"github:JagaJaga/vim-addon-vim2nix"
 "github:ap/vim-css-color"
 "github:benekastah/neomake"
 "github:bitc/vim-hdevtools"
@@ -123,4 +122,5 @@
 "vim-webdevicons"
 "vim2hs"
 "vimwiki"
+"vinegar"
 "vundle"

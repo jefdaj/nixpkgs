@@ -15,15 +15,14 @@ with stdenv.lib;
 
 let
 
-  version = "0.1.0";
-
   # Note: this is NOT the libvterm already in nixpkgs, but some NIH silliness:
-  neovimLibvterm = let version = "2015-02-23"; in stdenv.mkDerivation {
+  neovimLibvterm = stdenv.mkDerivation rec {
     name = "neovim-libvterm-${version}";
+    version = "2015-11-06";
 
     src = fetchFromGitHub {
-      sha256 = "0i2h74jrx4fy90sv57xj8g4lbjjg4nhrq2rv6rz576fmqfpllcc5";
-      rev = "v${version}";
+      sha256 = "0f9r0wnr9ajcdd6as24igmch0n8s1annycb9f4k0vg6fngwaypy9";
+      rev = "04781d37ce5af3f580376dc721bd3b89c434966b";
       repo = "libvterm";
       owner = "neovim";
     };
@@ -59,12 +58,13 @@ let
     ignoreCollisions = true;
   };
 
-  neovim = stdenv.mkDerivation {
+  neovim = stdenv.mkDerivation rec {
     name = "neovim-${version}";
+    version = "0.1.1";
 
     src = fetchFromGitHub {
-      sha256 = "1704f3dqf5p6hicpzf0pi21n6ymylra9prsm4azvqp86allmvnfx";
-      rev = "c4826c300340a9e4df20964a14650caf64fc1b58";
+      sha256 = "0crswjslp687yp1cpn7nmm0j2sccqhcxryzxv1s81cgpai0fzf60";
+      rev = "v${version}";
       repo = "neovim";
       owner = "neovim";
     };
@@ -145,8 +145,11 @@ let
   };
 
 in if (vimAlias == false && configure == null) then neovim else stdenv.mkDerivation {
-  name = "neovim-${version}-configured";
+  name = "neovim-${neovim.version}-configured";
+  inherit (neovim) version;
+
   nativeBuildInputs = [ makeWrapper ];
+
   buildCommand = ''
     mkdir -p $out/bin
     for item in ${neovim}/bin/*; do
