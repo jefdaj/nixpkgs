@@ -646,6 +646,13 @@ in
 
   config = mkIf cfg.enable {
 
+    services.gitit = {
+      haskellPackages = mkDefault pkgs.haskellPackages;
+      staticDir    = mkDefault (gititShared + "/data/static");
+      templatesDir = mkDefault (gititShared + "/data/templates");
+      plugins = [ ];
+    };
+
     users.extraUsers.gitit = {
       group = config.users.extraGroups.gitit.name;
       description = "Gitit user";

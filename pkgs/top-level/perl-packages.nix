@@ -10257,10 +10257,10 @@ let self = _self // overrides; _self = with self; {
   };
 
   SoftwareLicense = buildPerlPackage rec {
-    name = "Software-License-0.103010";
+    name = "Software-License-0.103011";
     src = fetchurl {
       url = "mirror://cpan/authors/id/R/RJ/RJBS/${name}.tar.gz";
-      sha256 = "929fbace96f69a0977a0380000820c93fc1af4e973a422c73e6cd254405fa47c";
+      sha256 = "03dyc5sx0asq1m3276l224q5776ng24fw5llf3gr9mbgklkgj05s";
     };
     propagatedBuildInputs = [ DataSection TextTemplate TryTiny ];
     meta = {
@@ -12179,10 +12179,10 @@ let self = _self // overrides; _self = with self; {
   };
 
   TextCSVEncoded = buildPerlPackage rec {
-    name = "Text-CSV-Encoded-0.24";
+    name = "Text-CSV-Encoded-0.25";
     src = fetchurl {
       url = "mirror://cpan/authors/id/Z/ZA/ZARQUON/${name}.tar.gz";
-      sha256 = "ce8f307dabdcb623cfc385c175152b0f465096d449b9c828efbe6611efcab0d5";
+      sha256 = "1l5rwlmnpnhjszb200a94lwvkwslsvyxm24ycf37gm8dla1mk2i4";
     };
     propagatedBuildInputs = [ TextCSV ];
     meta = {

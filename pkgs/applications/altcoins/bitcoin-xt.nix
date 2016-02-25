@@ -3,7 +3,7 @@
 , withGui }:
 
 with stdenv.lib;
-stdenv.mkDerivation rec{
+stdenv.mkDerivation rec {
 
   name = "bitcoin" + (toString (optional (!withGui) "d")) + "-xt-" + version;
   version = "0.11D";
