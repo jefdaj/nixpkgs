@@ -5,6 +5,8 @@
 
 let
   isGo14 = go.meta.branch == "1.4";
+  isGo15 = go.meta.branch == "1.5";
+  isGo16 = go.meta.branch == "1.6";
 
   self = _self // overrides; _self = with self; {
 
@@ -270,6 +272,13 @@ let
     doCheck = false;
   };
 
+  astrotime = buildFromGitHub {
+    rev = "9c7d514efdb561775030eaf8f1a9ae6bddb3a2ca";
+    owner = "cpucycle";
+    repo = "astrotime";
+    sha256 = "024sc7g55v4s54irssm5wsn74sr2k2ynsm6z16w47q66cxhgvby1";
+  };
+
   aws-sdk-go = buildFromGitHub {
     #rev    = "a28ecdc9741b7905b5198059c94aed20868ffc08";
     rev    = "127313c1b41e534a0456a68b6b3a16712dacb35d";
@@ -288,6 +297,23 @@ let
       make generate
       popd
     '';
+  };
+
+  azure-sdk-for-go = buildFromGitHub {
+    rev   = "v2.0.0-beta";
+    owner = "Azure";
+    repo  = "azure-sdk-for-go";
+    sha256 = "04bixwh4bzgysa79azis1p755rb6zxjjzhpskpvpmvkv49baharc";
+    propagatedBuildInputs = [ go-autorest cli-go ];
+  };
+
+  azure-vhd-tools-for-go = buildFromGitHub {
+    rev    = "7db4795475aeab95590f8643969e06b633ead4ec";
+    owner  = "Microsoft";
+    repo   = "azure-vhd-utils-for-go";
+    sha256 = "0xg6a1qw8jjxqhgvy9zlvq5b8xnnvfkjnkjz9f8g4y1kcw09lird";
+
+    propagatedBuildInputs = [ azure-sdk-for-go ];
   };
 
   hashicorp.aws-sdk-go = buildFromGitHub {
@@ -596,17 +622,20 @@ let
     sha256 = "09sdijfx5d05z4cd5k6lhl7k3kbpdf2amzlngv15h5v0fff9qw4s";
   };
 
-  dbus = buildGoPackage rec {
-    rev = "a5942dec6340eb0d57f43f2003c190ce06e43dea";
-    name = "dbus-${stdenv.lib.strings.substring 0 7 rev}";
-    goPackagePath = "github.com/godbus/dbus";
+  dbus-old-2015-05-19 = buildFromGitHub {
+    rev    = "a5942dec6340eb0d57f43f2003c190ce06e43dea";
+    date   = "2015-05-19";
+    owner  = "godbus";
+    repo   = "dbus";
+    sha256 = "1vk31wal7ncvjwvnb8q1myrkihv1np46f3q8dndi5k0csflbxxdf";
+  };
 
-    src = fetchFromGitHub {
-      inherit rev;
-      owner = "godbus";
-      repo = "dbus";
-      sha256 = "1vk31wal7ncvjwvnb8q1myrkihv1np46f3q8dndi5k0csflbxxdf";
-    };
+  dbus = buildFromGitHub {
+    rev    = "230e4b23db2fd81c53eaa0073f76659d4849ce51";
+    date   = "2016-03-02";
+    owner  = "godbus";
+    repo   = "dbus";
+    sha256 = "1wxv2cbihzcsz2z7iycyzl7f3arhhgagcc5kqln1k1mkm4l85z0q";
   };
 
   deis = buildFromGitHub {
@@ -818,7 +847,7 @@ let
 
     meta = with stdenv.lib; {
       homepage    = "https://github.com/martingallagher/gawp";
-      description = "A simple, configurable, file watching, job execution tool implemented in Go.";
+      description = "A simple, configurable, file watching, job execution tool implemented in Go";
       maintainers = with maintainers; [ kamilchm ];
       license     = licenses.asl20 ;
       platforms   = platforms.all;
@@ -878,10 +907,11 @@ let
   };
 
   git-lfs = buildFromGitHub {
-    rev = "v1.0.0";
+    date = "1.1.1";  # "date" is effectively "version"
+    rev = "v1.1.1";
     owner = "github";
     repo = "git-lfs";
-    sha256 = "1zlg3rm5yxak6d88brffv1wpj0iq4qgzn6sgg8xn0pbnzxjd1284";
+    sha256 = "1m7kii57jrsb22m5x9v8xa3s1qmipfkpk6cscgxrbrj7g0a75fnc";
 
     # Tests fail with 'lfstest-gitserver.go:46: main redeclared in this block'
     excludedPackages = [ "test" ];
@@ -1234,6 +1264,14 @@ let
       sha256 = "1lfrvqqmb09y6pcr76yjv4r84cshkd4s7fpmiy7268kfi2cvqnpc";
     };
     propagatedBuildInputs = [ pretty ];
+  };
+
+  go-autorest = buildFromGitHub {
+    rev = "v6.0.0";
+    owner = "Azure";
+    repo = "go-autorest";
+    sha256 = "07zrbw8p3jc5xfjwn0qj1hrn1r7nbnryc5zmvk42qgximyxsls26";
+    propagatedBuildInputs = [ jwt-go crypto ];
   };
 
   go-backblaze = buildFromGitHub {
@@ -1644,6 +1682,21 @@ let
     sha256 = "00f2rfhsaqj2wjanh5qp73phx7x12a5pwd7lc0rjfv68l6sgpg2v";
   };
 
+  go-sct = buildFromGitHub {
+    rev = "b82c2f81727357c45a47a43965c50ed5da5a2e74";
+    date = "2016-01-11";
+    owner = "d4l3k";
+    repo = "go-sct";
+    sha256 = "13hgmpv2c8ll5ap8fn1n480bdv1j21n86jjwcssd36kh2i933anl";
+    buildInputs = [ astrotime pkgs.xorg.libX11 pkgs.xorg.libXrandr ];
+    meta = with stdenv.lib; {
+      description = "Color temperature setting library and CLI that operates in a similar way to f.lux and Redshift";
+      license = licenses.mit;
+      maintainers = with maintainers; [ cstrahan ];
+      platforms = platforms.unix;
+    };
+  };
+
   go-simplejson = buildFromGitHub {
     rev    = "18db6e68d8fd9cbf2e8ebe4c81a78b96fd9bf05a";
     date   = "2015-03-31";
@@ -1683,18 +1736,13 @@ let
     sha256 = "1j53m2wjyczm9m55znfycdvm4c8vfniqgk93dvzwy8vpj5gm6sb3";
   };
 
-  go-systemd = buildGoPackage rec {
-    rev = "2688e91251d9d8e404e86dd8f096e23b2f086958";
-    name = "go-systemd-${stdenv.lib.strings.substring 0 7 rev}";
-    goPackagePath = "github.com/coreos/go-systemd";
-
-    src = fetchFromGitHub {
-      inherit rev;
-      owner = "coreos";
-      repo = "go-systemd";
-      sha256 = "0c1k3y5msc1xplhx0ksa7g08yqjaavns8s5zrfg4ig8az30gwlpa";
-    };
-
+  go-systemd = buildFromGitHub {
+    rev    = "7b2428fec40033549c68f54e26e89e7ca9a9ce31";
+    date   = "2016-03-10";
+    owner  = "coreos";
+    repo   = "go-systemd";
+    sha256 = "0kfbxvm9zsjgvgmiq2jl807y4s5z0rya65rm399llr5rr7vz1lxd";
+    nativeBuildInputs = [ pkgs.pkgconfig pkgs.systemd ];
     buildInputs = [ dbus ];
   };
 
@@ -1704,7 +1752,7 @@ let
     owner = "stgraber";
     repo = "lxd-go-systemd";
     sha256 = "006dhy3j8ld0kycm8hrjxvakd7xdn1b6z2dsjp1l4sqrxdmm188w";
-    buildInputs = [ dbus ];
+    buildInputs = [ dbus-old-2015-05-19 ];
   };
 
   go-update-v0 = buildFromGitHub {
@@ -2001,6 +2049,13 @@ let
     sha256 = "0m8867afsvka5gp2idrmlarpjg7kxx7qacpwrz1wl8y3zxyn3945";
   };
 
+  jwt-go  = buildFromGitHub {
+    rev = "v2.4.0";
+    owner = "dgrijalva";
+    repo = "jwt-go";
+    sha256 = "00rvv1d2f62svd6311dkr8j56ysx8wgk9yfkb9vqf2mp5ix37dc0";
+  };
+
   kagome = buildFromGitHub {
     rev = "1bbdbdd590e13a8c2f4508c67a079113cd7b9f51";
     date = "2016-01-19";
@@ -2051,10 +2106,10 @@ let
   };
 
   liner = buildFromGitHub {
-    rev    = "1bb0d1c1a25ed393d8feb09bab039b2b1b1fbced";
+    rev    = "ad1edfd30321d8f006ccf05f1e0524adeb943060";
     owner  = "peterh";
     repo   = "liner";
-    sha256 = "05ihxpmp6x3hw71xzvjdgxnyvyx2s4lf23xqnfjj16s4j4qidc48";
+    sha256 = "0c24d9j1gnq7r982h1l2isp3d37379qw155hr8ihx9i2mhpfz317";
   };
 
   odeke-em.log = buildFromGitHub {
@@ -2101,10 +2156,10 @@ let
   };
 
   logrus = buildFromGitHub rec {
-    rev = "v0.8.6";
+    rev = "v0.9.0";
     owner = "Sirupsen";
     repo = "logrus";
-    sha256 = "1v2qcjy6w24jgdm7kk0f8lqpa25qxzll2x6ycqwidd3pzjhrkifa";
+    sha256 = "1m6vvd4pg4lwglhk54lv5mf6cc8h7bi0d9zb3gar4crz531r66y4";
     propagatedBuildInputs = [ airbrake-go bugsnag-go raven-go ];
   };
 
@@ -2457,11 +2512,11 @@ let
   };
 
   oh = buildFromGitHub {
-    rev = "a99b5f1128247014fb2a83a775fa1813be14b67d";
-    date = "2015-11-21";
+    rev = "f3e482f664e76dcf98d5f94dd93c216da300b78e";
+    date = "2016-02-23";
     owner = "michaelmacinnis";
     repo = "oh";
-    sha256 = "1srl3d1flqlh2k9q9pjss72rxw82msys108x22milfylmr75v03m";
+    sha256 = "1j5g37jjl1kxri44ihb1bsrzx4al07dvl4s5dglb2m7bjia6iqs2";
     goPackageAliases = [ "github.com/michaelmacinnis/oh" ];
     buildInputs = [ adapted liner ];
     disabled = isGo14;
@@ -2650,33 +2705,35 @@ let
     propagatedBuildInputs = [ kr.text ];
   };
 
-  prometheus.alertmanager = buildGoPackage rec {
-    name = "prometheus-alertmanager-${rev}";
-    rev = "0.0.4";
-    goPackagePath = "github.com/prometheus/alertmanager";
-
-    src = fetchFromGitHub {
-      owner = "prometheus";
-      repo = "alertmanager";
-      inherit rev;
-      sha256 = "0g656rzal7m284mihqdrw23vhs7yr65ax19nvi70jl51wdallv15";
-    };
+  prometheus.alertmanager = buildFromGitHub rec {
+    rev = "0.1.0";
+    owner = "prometheus";
+    repo = "alertmanager";
+    sha256 = "1ya465bns6cj2lqbipmfm13wz8kxii5h9mm7lc0ba1xv26xx5zs7";
 
     buildInputs = [
-      fsnotify.v0
-      httprouter
-      prometheus.client_golang
-      prometheus.log
-      pushover
+      # fsnotify.v0
+      # httprouter
+      # prometheus.client_golang
+      # prometheus.log
+      # pushover
     ];
 
-    buildFlagsArray = ''
+    # Tests exist, but seem to clash with the firewall.
+    doCheck = false;
+
+    preBuild = ''
+      export GO15VENDOREXPERIMENT=1
+    '';
+
+    buildFlagsArray = let t = "github.com/${owner}/${repo}/version"; in ''
       -ldflags=
-          -X main.buildVersion=${rev}
-          -X main.buildBranch=master
-          -X main.buildUser=nix@nixpkgs
-          -X main.buildDate=20150101-00:00:00
-          -X main.goVersion=${stdenv.lib.getVersion go}
+         -X ${t}.Version=${rev}
+         -X ${t}.Revision=unknown
+         -X ${t}.Branch=unknown
+         -X ${t}.BuildUser=nix@nixpkgs
+         -X ${t}.BuildDate=unknown
+         -X ${t}.GoVersion=${stdenv.lib.getVersion go}
     '';
 
     meta = with stdenv.lib; {
@@ -2818,10 +2875,10 @@ let
   };
 
   prometheus.node-exporter = buildFromGitHub {
-    rev = "0.10.0";
+    rev = "0.11.0";
     owner = "prometheus";
     repo = "node_exporter";
-    sha256 = "0dmczav52v9vi0kxl8gd2s7x7c94g0vzazhyvlq1h3729is2nf0p";
+    sha256 = "149fs9yxnbiyd4ww7bxsv730mcskblpzb3cs4v12jnq2v84a4kk4";
 
     buildInputs = [
       go-runit
@@ -2831,6 +2888,8 @@ let
       prometheus.log
       protobuf
     ];
+
+    doCheck = true;
 
     meta = with stdenv.lib; {
       description = "Prometheus exporter for machine metrics";
@@ -2870,49 +2929,46 @@ let
     };
   };
 
-  prometheus.prometheus = buildGoPackage rec {
-    name = "prometheus-${version}";
-    version = "0.15.1";
-    goPackagePath = "github.com/prometheus/prometheus";
-    rev = "64349aade284846cb194be184b1b180fca629a7c";
-
-    src = fetchFromGitHub {
-      inherit rev;
-      owner = "prometheus";
-      repo = "prometheus";
-      sha256 = "0gljpwnlip1fnmhbc96hji2rc56xncy97qccm7v1z5j1nhc5fam2";
-    };
+  prometheus.prometheus = buildFromGitHub rec {
+    rev = "0.17.0";
+    owner = "prometheus";
+    repo = "prometheus";
+    sha256 = "176198krna2i37dfhwsqi7m36sqn175yiny6n52vj27mc9s8ggzx";
 
     buildInputs = [
-      consul
-      dns
-      fsnotify.v1
-      go-zookeeper
-      goleveldb
-      httprouter
-      logrus
-      net
-      prometheus.client_golang
-      prometheus.log
-      yaml-v2
+      # consul
+      # dns
+      # fsnotify.v1
+      # go-zookeeper
+      # goleveldb
+      # httprouter
+      # logrus
+      # net
+      # prometheus.client_golang
+      # prometheus.log
+      # yaml-v2
     ];
+
+    docheck = true;
+
+    preBuild = ''
+      export GO15VENDOREXPERIMENT=1
+    '';
+
+    buildFlagsArray = let t = "github.com/${owner}/${repo}/version"; in ''
+      -ldflags=
+         -X ${t}.Version=${rev}
+         -X ${t}.Revision=unknown
+         -X ${t}.Branch=unknown
+         -X ${t}.BuildUser=nix@nixpkgs
+         -X ${t}.BuildDate=unknown
+         -X ${t}.GoVersion=${stdenv.lib.getVersion go}
+    '';
 
     preInstall = ''
       mkdir -p "$bin/share/doc/prometheus" "$bin/etc/prometheus"
       cp -a $src/documentation/* $bin/share/doc/prometheus
       cp -a $src/console_libraries $src/consoles $bin/etc/prometheus
-    '';
-
-    # Metadata that gets embedded into the binary
-    buildFlagsArray = let t = "${goPackagePath}/version"; in
-    ''
-      -ldflags=
-          -X ${t}.Version=${version}
-          -X ${t}.Revision=${builtins.substring 0 6 rev}
-          -X ${t}.Branch=master
-          -X ${t}.BuildUser=nix@nixpkgs
-          -X ${t}.BuildDate=20150101-00:00:00
-          -X ${t}.GoVersion=${stdenv.lib.getVersion go}
     '';
 
     meta = with stdenv.lib; {
@@ -3346,11 +3402,11 @@ let
   };
 
   syncthing = buildFromGitHub rec {
-    version = "0.12.10";
+    version = "0.12.19";
     rev = "v${version}";
     owner = "syncthing";
     repo = "syncthing";
-    sha256 = "1xvar4mm6f33mg8d8z8h49cni6sj1vfns379zspqvszs404fra0z";
+    sha256 = "11ij8whaqrrzriavxa08jpsmbd1zkc2qxsni1nbgszw2hymmv38g";
     buildFlags = [ "-tags noupgrade,release" ];
     disabled = isGo14;
     buildInputs = [
@@ -3425,6 +3481,16 @@ let
     };
 
     subPackages = [ "./" ]; # prevent building _demos
+  };
+
+  terraform = buildFromGitHub {
+    rev = "v0.6.13";
+    owner = "hashicorp";
+    repo = "terraform";
+    disabled = isGo14 || isGo15;
+    sha256 = "1f1xm5pyz1hxqm2k74psanirpydf71pmxixplyc2x2w68hgjzi2l";
+
+    buildInputs = [ ];
   };
 
   testify = buildGoPackage rec {
@@ -3545,10 +3611,10 @@ let
   };
 
   vcs = buildFromGitHub {
-    rev    = "1.0.0";
+    rev    = "1.4.0";
     owner  = "Masterminds";
     repo   = "vcs";
-    sha256 = "1qav4lf4ln5gs81714876q2cy9gfaxblbvawg3hxznbwakd9zmd8";
+    sha256 = "0590ww2av4407y7zy3bcmnr8i74fv00k9zzcxcpjxivl6qszna0d";
   };
 
   viper = buildFromGitHub {
@@ -3732,5 +3798,88 @@ let
         -e 's|/sbin/cryptsetup|${pkgs.cryptsetup}/bin/cryptsetup|'
     '';
     disabled = isGo14;
+  };
+
+  template = buildFromGitHub {
+    rev = "14fd436dd20c3cc65242a9f396b61bfc8a3926fc";
+    owner = "alecthomas";
+    repo = "template";
+    sha256 = "19rzvvcgvr1z2wz9xpqsmlm8syizbpxjp5zbzgakvrqlajpbjvx2";
+  };
+
+  units = buildFromGitHub {
+    rev = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a";
+    owner = "alecthomas";
+    repo = "units";
+    sha256 = "1j65b91qb9sbrml9cpabfrcf07wmgzzghrl7809hjjhrmbzri5bl";
+  };
+
+  go-difflib = buildFromGitHub {
+    rev = "d8ed2627bdf02c080bf22230dbb337003b7aba2d";
+    owner = "pmezard";
+    repo = "go-difflib";
+    sha256 = "0w1jp4k4zbnrxh3jvh8fgbjgqpf2hg31pbj8fb32kh26px9ldpbs";
+  };
+
+  kingpin = buildFromGitHub {
+    rev = "21551c2a6259a8145110ca80a36e25c9d7624032";
+    owner = "alecthomas";
+    repo = "kingpin";
+    sha256 = "1zhpqc4qxsw9lc1b4dwk5r42k9r702ihzrabs3mnsphvm9jx4l59";
+    propagatedBuildInputs = [ template units ];
+    goPackageAliases = [ "gopkg.in/alecthomas/kingpin.v2" ];
+  };
+
+  go2nix = buildFromGitHub rec {
+    rev = "4c552dadd855e3694ed3499feb46dca9cd855f60";
+    owner = "kamilchm";
+    repo = "go2nix";
+    sha256 = "1pwnm1vrjxvgl17pk9n1k5chmhgwxkrwp2s1bzi64xf12anibj63";
+
+    buildInputs = [ pkgs.makeWrapper go-bindata.bin tools.bin vcs go-spew gls go-difflib assertions goconvey testify kingpin ];
+
+    preBuild = ''go generate ./...'';
+
+    postInstall = ''
+      wrapProgram $bin/bin/go2nix \
+        --prefix PATH : ${pkgs.nix-prefetch-git}/bin \
+        --prefix PATH : ${pkgs.git}/bin
+    '';
+
+    allowGoReference = true;
+  };
+
+  godotenv = buildFromGitHub rec {
+    rev    = "4ed13390c0acd2ff4e371e64d8b97c8954138243";
+    date   = "2015-09-07";
+    owner  = "joho";
+    repo   = "godotenv";
+    sha256 = "1wzgws4dnlavi14aw3jzdl3mdr348skgqaq8xx4j8l68irfqyh0p";
+    buildInputs = [ go-colortext yaml-v2 ];
+  };
+
+  goreman = buildFromGitHub rec {
+    version = "0.0.8-rc0";
+    rev    = "d3e62509ccf23e47a390447886c51b1d89d0934b";
+    date   = "2016-01-30";
+    owner  = "mattn";
+    repo   = "goreman";
+    sha256 = "153hf4dq4jh1yv35pv30idmxhc917qzl590qy5394l48d4rapgb5";
+    buildInputs = [ go-colortext yaml-v2 godotenv ];
+  };
+
+  # To use upower-notify, the maintainer suggests adding something like this to your configuration.nix:
+  #
+  # service.xserver.displayManager.sessionCommands = ''
+  #   ${pkgs.dunst}/bin/dunst -shrink -geometry 0x0-50-50 -key space & # ...if don't already have a dbus notification display app
+  #   (sleep 3; exec ${pkgs.yeshup}/bin/yeshup ${pkgs.go-upower-notify}/bin/upower-notify) &
+  # '';
+  upower-notify = buildFromGitHub rec {
+    rev    = "14c581e683a7e90ec9fa6d409413c16599a5323c";
+    date   = "2016-03-10";
+    owner  = "omeid";
+    repo   = "upower-notify";
+    sha256 = "16zlvn53p9m10ph8n9gps51fkkvl6sf4afdzni6azk05j0ng49jw";
+    propagatedBuildInputs = [ dbus ];
   };
 }; in self

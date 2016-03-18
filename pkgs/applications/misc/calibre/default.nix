@@ -5,12 +5,12 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.50.1";
+  version = "2.53.0";
   name = "calibre-${version}";
 
   src = fetchurl {
     url = "http://download.calibre-ebook.com/${version}/${name}.tar.xz";
-    sha256 = "0fy5fwj53hl8bcl412d2y61xm1nmkry24dlanj07nn6dhmrs0cm9";
+    sha256 = "0rvfh39a6j5r398p6xzrbzvhxapm1iyhc0d46xk5fwa52kscadhz";
   };
 
   inherit python;

@@ -3,7 +3,8 @@
    (http://pypi.python.org/pypi/setuptools/), which represents a large
    number of Python packages nowadays.  */
 
-{ python, setuptools, unzip, wrapPython, lib, bootstrapped-pip }:
+{ python, setuptools, unzip, wrapPython, lib, bootstrapped-pip
+, ensureNewerSourcesHook }:
 
 { name
 
@@ -41,6 +42,9 @@
 # generated binaries.
 , makeWrapperArgs ? []
 
+# Additional flags to pass to "pip install".
+, installFlags ? []
+
 , ... } @ attrs:
 
 
@@ -60,6 +64,7 @@ python.stdenv.mkDerivation (builtins.removeAttrs attrs ["disabled" "doCheck"] //
   name = namePrefix + name;
 
   buildInputs = [ wrapPython bootstrapped-pip ] ++ buildInputs ++ pythonPath
+    ++ [ (ensureNewerSourcesHook { year = "1980"; }) ]
     ++ (lib.optional (lib.hasSuffix "zip" attrs.src.name or "") unzip);
 
   # propagate python/setuptools to active setup-hook in nix-shell
@@ -93,7 +98,7 @@ python.stdenv.mkDerivation (builtins.removeAttrs attrs ["disabled" "doCheck"] //
     export PYTHONPATH="$out/${python.sitePackages}:$PYTHONPATH"
 
     pushd dist
-    ${bootstrapped-pip}/bin/pip install *.whl --no-index --prefix=$out --no-cache
+    ${bootstrapped-pip}/bin/pip install *.whl --no-index --prefix=$out --no-cache ${toString installFlags}
     popd
 
     runHook postInstall

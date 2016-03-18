@@ -1,5 +1,7 @@
 { stdenv, fetchurl, glib, flex, bison, pkgconfig, libffi, python
-, libintlOrEmpty, autoconf, automake, otool }:
+, libintlOrEmpty, autoconf, automake, otool
+, substituteAll, nixStoreDir ? builtins.storeDir
+}:
 # now that gobjectIntrospection creates large .gir files (eg gtk3 case)
 # it may be worth thinking about using multiple derivation outputs
 # In that case its about 6MB which could be separated
@@ -33,13 +35,17 @@ stdenv.mkDerivation rec {
 
   setupHook = ./setup-hook.sh;
 
-  patches = [ ./absolute_shlib_path.patch ];
+  patches = stdenv.lib.singleton (substituteAll {
+    src = ./absolute_shlib_path.patch;
+    inherit nixStoreDir;
+  });
 
   meta = with stdenv.lib; {
     description = "A middleware layer between C libraries and language bindings";
     homepage    = http://live.gnome.org/GObjectIntrospection;
     maintainers = with maintainers; [ lovek323 urkud lethalman ];
     platforms   = platforms.unix;
+    broken      = stdenv.isDarwin;
 
     longDescription = ''
       GObject introspection is a middleware layer between C libraries (using

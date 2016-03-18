@@ -3,10 +3,10 @@
 
 stdenv.mkDerivation rec {
   name = "simple-scan-${version}";
-  version = "3.19.4";
+  version = "3.19.92";
 
   src = fetchurl {
-    sha256 = "1v9sify1s38qd5sfg26m7sdg9bkrfmai2nijs4wzah7xa9p23c83";
+    sha256 = "1zz6y4cih1v0npxjfxvnqz3bz7i5aripdsfy0hg9mhr1f4r0ig19";
     url = "https://launchpad.net/simple-scan/3.19/${version}/+download/${name}.tar.xz";
   };
 
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   configureFlags = [ "--disable-packagekit" ];
 
   preBuild = ''
-    # Clean up stale generated .c files still referencing packagekit headers:
+    # Clean up stale .c files referencing packagekit headers as of 3.19.91:
     make clean
   '';
 

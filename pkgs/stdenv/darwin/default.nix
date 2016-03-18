@@ -1,5 +1,5 @@
 { system         ? builtins.currentSystem
-, allPackages    ? import ../../top-level/all-packages.nix
+, allPackages    ? import ../../..
 , platform       ? null
 , config         ? {}
 
@@ -22,7 +22,7 @@ let
     (import "${./standard-sandbox.sb}")
   '';
 in rec {
-  allPackages = import ../../top-level/all-packages.nix;
+  allPackages = import ../../..;
 
   commonPreHook = ''
     export NIX_ENFORCE_PURITY=1
@@ -278,7 +278,7 @@ in rec {
       inherit stdenv shell;
       nativeTools = false;
       nativeLibc  = false;
-      inherit (pkgs) coreutils binutils;
+      inherit (pkgs) coreutils binutils gnugrep;
       inherit (pkgs.darwin) dyld;
       cc   = pkgs.llvmPackages.clang-unwrapped;
       libc = pkgs.darwin.Libsystem;

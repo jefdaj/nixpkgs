@@ -248,6 +248,13 @@
       matrix-synapse = 224;
       rspamd = 225;
       rmilter = 226;
+      cfdyndns = 227;
+      gammu-smsd = 228;
+      pdnsd = 229;
+      octoprint = 230;
+      avahi-autoipd = 231;
+      nntp-proxy = 232;
+      mjpg-streamer = 233;
       jeffwiki = 299;
 
       # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
@@ -474,6 +481,9 @@
       matrix-synapse = 224;
       rspamd = 225;
       rmilter = 226;
+      cfdyndns = 227;
+      pdnsd = 229;
+      octoprint = 230;
       jeffwiki = 299;
 
       # When adding a gid, make sure it doesn't match an existing
