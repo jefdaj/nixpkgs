@@ -1,4 +1,5 @@
-{ fetchurl, stdenv, ncurses }:
+{ lib, fetchurl, stdenv, ncurses,
+IOKit }:
 
 stdenv.mkDerivation rec {
   name = "htop-${version}";
@@ -9,13 +10,15 @@ stdenv.mkDerivation rec {
     url = "http://hisham.hm/htop/releases/${version}/${name}.tar.gz";
   };
 
-  buildInputs = [ ncurses ];
+  buildInputs =
+    [ ncurses ] ++
+    lib.optionals stdenv.isDarwin [ IOKit ];
 
   meta = with stdenv.lib; {
     description = "An interactive process viewer for Linux";
-    homepage = http://htop.sourceforge.net;
+    homepage = https://hisham.hm/htop/;
     license = licenses.gpl2Plus;
-    platforms = platforms.linux;
+    platforms = with platforms; linux ++ freebsd ++ openbsd ++ darwin;
     maintainers = with maintainers; [ rob simons relrod nckx ];
   };
 }

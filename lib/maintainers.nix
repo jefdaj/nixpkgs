@@ -12,6 +12,7 @@
   abbradar = "Nikolay Amiantov <ab@fmap.me>";
   aboseley = "Adam Boseley <adam.boseley@gmail.com>";
   adev = "Adrien Devresse <adev@adev.name>";
+  Adjective-Object = "Maxwell Huang-Hobbs <mhuan13@gmail.com>";
   aespinosa = "Allan Espinosa <allan.espinosa@outlook.com>";
   aflatter = "Alexander Flatter <flatter@fastmail.fm>";
   aforemny = "Alexander Foremny <alexanderforemny@googlemail.com>";
@@ -257,6 +258,7 @@
   palo = "Ingolf Wanger <palipalo9@googlemail.com>";
   pashev = "Igor Pashev <pashev.igor@gmail.com>";
   pesterhazy = "Paulus Esterhazy <pesterhazy@gmail.com>";
+  peterhoeg = "Peter Hoeg <peter@hoeg.com>";
   philandstuff = "Philip Potter <philip.g.potter@gmail.com>";
   phile314 = "Philipp Hausmann <nix@314.ch>";
   Phlogistique = "Noé Rubinstein <noe.rubinstein@gmail.com>";
