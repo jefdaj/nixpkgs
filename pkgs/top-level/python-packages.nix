@@ -234,7 +234,7 @@ in modules // {
       sha256 = "1ywimbisgb5g7xl9nrfwcm7dv3j8fsrjfp7bxb3l58zbsrzj6z2s";
     };
 
-    propagatedBuildInputs = with self; [ appdirs colorama dateutil requests2 requests_toolbelt sqlalchemy7 ];
+    propagatedBuildInputs = with self; [ appdirs colorama dateutil requests2 requests_toolbelt sqlalchemy ];
 
     makeWrapperArgs = [ "--prefix LIBFUSE_PATH : ${pkgs.fuse}/lib/libfuse.so" ];
 
@@ -1963,6 +1963,28 @@ in modules // {
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/d/${pname}/${name}.tar.gz";
       sha256 = "0y147zy3jqmk6ly7fbhqmzn1hf41xcb53f2vcc3m8x4ba5d1smfd";
+    };
+  };
+
+  dosage = buildPythonPackage rec {
+    name = "${pname}-${version}";
+    pname = "dosage";
+    version = "2016.03.17";
+    PBR_VERSION = version;
+    src = pkgs.fetchFromGitHub {
+      owner = "webcomics";
+      repo = "dosage";
+      rev = "1af022895e5f86bc43da95754c4c4ed305790f5b";
+      sha256 = "1bkqhlzigy656pam0znp2ddp1y5sqzyhw3c4fyy58spcafldq4j6";
+    };
+    buildInputs = with self; [ pytest ];
+    propagatedBuildInputs = with self; [ requests2 lxml pbr ];
+    # prompt_toolkit doesn't work on 3.5 on OSX.
+    doCheck = !isPy35;
+
+    meta = {
+      description = "A comic strip downloader and archiver";
+      homepage = http://dosage.rocks/;
     };
   };
 
@@ -7167,7 +7189,7 @@ in modules // {
     propagatedBuildInputs = with self; [
       flup
       ldap
-      sqlalchemy7
+      sqlalchemy
     ];
 
     doCheck = true;
@@ -7821,16 +7843,18 @@ in modules // {
   });
 
   distutils_extra = buildPythonPackage rec {
-    name = "distutils-extra-2.26";
+    name = "distutils-extra-${version}";
+    version = "2.39";
 
     src = pkgs.fetchurl {
-      url = "http://launchpad.net/python-distutils-extra/trunk/2.26/+download/python-${name}.tar.gz";
-      sha256 = "11a3d16efffb00c2b50f40c48531dadaf553ed7a36c5621fde437a16ca40f7ea";
+      url = "http://launchpad.net/python-distutils-extra/trunk/${version}/+download/python-${name}.tar.gz";
+      sha256 = "1bv3h2p9ffbzyddhi5sccsfwrm3i6yxzn0m06fdxkj2zsvs28gvj";
     };
 
     meta = {
       homepage = https://launchpad.net/python-distutils-extra;
       description = "Enhancements to Python's distutils";
+      license = licenses.gpl2;
     };
   };
 
@@ -11203,11 +11227,11 @@ in modules // {
   };
 
   llfuse = buildPythonPackage rec {
-    name = "llfuse-0.40";
+    name = "llfuse-1.0";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/l/llfuse/${name}.tar.bz2";
-      sha256 = "0mx87n6j2g63mgiimjqn0gj6jgqfdkc04xkxc56r1azjlqji32zf";
+      md5 = "6e71af191381da135a222e3c0e7569a1";
     };
 
     buildInputs = [ pkgs.pkgconfig pkgs.fuse pkgs.attr ];
@@ -15460,6 +15484,26 @@ in modules // {
       description = "Tiny 'shelve'-like database with concurrency support";
       homepage = https://github.com/vivainio/pickleshare;
       license = licenses.mit;
+    };
+  };
+
+  piep = buildPythonPackage rec {
+    version = "0.8.0";
+    name = "piep-${version}";
+    disabled = isPy3k;
+
+    src = pkgs.fetchurl {
+      url = "http://pypi.python.org/packages/source/p/piep/piep-${version}.tar.gz";
+      sha256 = "1wgkg1kc28jpya5k4zvbc9jmpa60b3d5c3gwxfbp15hw6smyqirj";
+    };
+
+    propagatedBuildInputs = with self; [pygments];
+
+    meta = {
+      description = "Bringing the power of python to stream editing";
+      homepage = https://github.com/timbertson/piep;
+      maintainers = with maintainers; [ gfxmonk ];
+      license = licenses.gpl3;
     };
   };
 
@@ -24194,13 +24238,13 @@ in modules // {
   };
 
   libvirt = let
-    version = "1.3.0";
+    version = "1.3.2";
   in assert version == pkgs.libvirt.version; pkgs.stdenv.mkDerivation rec {
     name = "libvirt-python-${version}";
 
     src = pkgs.fetchurl {
       url = "http://libvirt.org/sources/python/${name}.tar.gz";
-      sha256 = "0z7w79mkx7w322d2mf9d4bz56mmfic3nx0q4bc6fa063aay42z89";
+      sha256 = "1y0b2sglc6q43pw1sr0by5wx8037kvrp2969p69k6mq1g2gawdbd";
     };
 
     buildInputs = with self; [ python pkgs.pkgconfig pkgs.libvirt lxml ];
@@ -24213,25 +24257,29 @@ in modules // {
       homepage = http://www.libvirt.org/;
       description = "libvirt Python bindings";
       license = licenses.lgpl2;
+      maintainers = [ maintainers.fpletz ];
     };
   };
 
   searx = buildPythonPackage rec {
-    name = "searx-0.7.0";
+    name = "searx-0.8.1";
 
     src = pkgs.fetchurl {
-      url = "https://github.com/asciimoo/searx/archive/v0.7.0.tar.gz";
-      sha256 = "0vq2zjdr1c8mr3zkycqq3732zf4pybbbrs3kzplqgf851k9zfpbw";
+      url = "https://github.com/asciimoo/searx/archive/v0.8.1.tar.gz";
+      sha256 = "0z0s9n8iblrw7y5xrh2apzsazkgm4vzmxn0ckw4yfiya9am8zk32";
     };
 
-    propagatedBuildInputs = with self; [ pyyaml lxml grequests flaskbabel flask requests
-      gevent speaklater Babel pytz dateutil pygments ];
+    propagatedBuildInputs = with self; [
+      pyyaml lxml grequests flaskbabel flask requests2
+      gevent speaklater Babel pytz dateutil pygments
+      pyasn1 pyasn1-modules ndg-httpsclient certifi
+    ];
 
     meta = {
       homepage = https://github.com/asciimoo/searx;
       description = "A privacy-respecting, hackable metasearch engine";
       license = licenses.agpl3Plus;
-      maintainers = with maintainers; [ matejc ];
+      maintainers = with maintainers; [ matejc fpletz ];
     };
   };
 
@@ -24316,12 +24364,15 @@ in modules // {
   };
 
   power = buildPythonPackage rec {
-    name = "power-1.2";
+    name = "power-1.4";
 
     src = pkgs.fetchurl {
-      url = "http://pypi.python.org/packages/source/p/power/${name}.tar.gz";
-      sha256 = "09a00af8357f63dbb1a1eb13b82e39ccc0a14d6d2e44e5b235afe60ce8ee8195";
+      url = "https://pypi.python.org/packages/source/p/power/${name}.tar.gz";
+      sha256 = "7d7d60ec332acbe3a7d00379b45e39abf650bf7ee311d61da5ab921f52f060f0";
     };
+
+    # Tests can't work because there is no power information available.
+    doCheck = false;
 
     meta = {
       description = "Cross-platform system power status information";
