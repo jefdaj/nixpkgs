@@ -369,7 +369,9 @@ let
     ShortRead = [ pkgs.zlib ];
     oligo = [ pkgs.zlib ];
     gmapR = [ pkgs.zlib ];
+    ncdf = [ pkgs.netcdf ];
     Rsubread = [ pkgs.zlib ];
+    SemiCompRisks = [ pkgs.gsl_1 ];
     XVector = [ pkgs.zlib ];
     Rsamtools = [ pkgs.zlib ];
     rtracklayer = [ pkgs.zlib ];
@@ -696,14 +698,6 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
-    "spoccutils" # depends on broken package spocc
-    "mapr" # depends on broken package spocc
-    "vmsbase" # broken build
-    "vcfR" # broken build
-    "strataG" # broken build
-    "SSDM" # broken build
-    "SimInf" # broken build
-    "shazam" # broken build
     "rsvg" # broken build
     "Rothermel" # broken build
     "rfPermute" # broken build
@@ -725,6 +719,10 @@ let
     "x13binary" # broken build
     "fds" # broken build
     "exifr" # broken build
+    "TTAinterfaceTrendAnalysis" # depends on broken package euroMix
+    "stylo" # depends on broken package euroMix
+    "stosim" # depends on broken package euroMix
+    "SRRS" # depends on broken package euroMix
     "rite" # depends on broken package euroMix
     "MBCB" # depends on broken package euroMix
     "forensim" # depends on broken package euroMix
@@ -1084,12 +1082,14 @@ let
     "rjags" # broken build
     "proteoQC" # depends on broken package rTANDEM
     "PGA" # depends on broken package rTANDEM
+    "cudatoolkit" # broken build
     "MBESS" # depends on broken package OpenMx
     "IONiseR" # depends on broken package rhdf5
     "DOQTL" # depends on broken package rhdf5
     "DmelSGI" # depends on broken package rhdf5
     "flowDiv" # depends on broken package ncdfFlow
     "ChemmineDrugs" # depends on broken package ChemmineR
+    "nlopt" # broken build
     "stpm" # depends on broken package nloptr
     "sjmisc" # depends on broken package nloptr
     "rstanarm" # depends on broken package nloptr
@@ -1687,6 +1687,8 @@ let
     "Surrogate" # depends on broken package nlopt
     "svglite" # depends on broken package gdtools
     "sybilSBML" # build is broken
+    "synchronicity" # build is broken
+    "synthpop" # build is broken
     "systemfit" # depends on broken package nlopt
     "TcGSA" # depends on broken package nlopt
     "TDMR" # depends on broken package nlopt
