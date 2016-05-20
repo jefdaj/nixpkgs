@@ -369,9 +369,7 @@ let
     ShortRead = [ pkgs.zlib ];
     oligo = [ pkgs.zlib ];
     gmapR = [ pkgs.zlib ];
-    ncdf = [ pkgs.netcdf ];
     Rsubread = [ pkgs.zlib ];
-    SemiCompRisks = [ pkgs.gsl_1 ];
     XVector = [ pkgs.zlib ];
     Rsamtools = [ pkgs.zlib ];
     rtracklayer = [ pkgs.zlib ];
@@ -698,6 +696,81 @@ let
 
   # Packages which cannot be installed due to lack of dependencies or other reasons.
   brokenPackages = [
+    "TED" # depends on broken package animation
+    "streamMOA" # depends on broken package animation
+    "stream" # depends on broken package animation
+    "spdynmod" # depends on broken package animation
+    "treeplyr" # depends on broken package animation
+    "recluster" # depends on broken package animation
+    "geomorph" # depends on broken package animation
+    "phytools" # depends on broken package animation
+    "animation" # broken build
+    "srd" # broken build
+    "paleotree" # broken build
+    "ndtv" # broken build
+    "mvMORPH" # broken build
+    "mptools" # broken build
+    "monogeneaGM" # broken build
+    "molaR" # broken build
+    "idm" # broken build
+    "hisse" # broken build
+    "gfcanalysis" # broken build
+    "evolqg" # broken build
+    "evobiR" # broken build
+    "convevol" # broken build
+    "bayou" # broken build
+    "anim_plots" # broken build
+    "TKF" # broken build
+    "Rphylopars" # broken build
+    "RAM" # broken build
+    "PhySortR" # broken build
+    "MonoPhy" # broken build
+    "Momocs" # broken build
+    "Evomorph" # broken build
+    "PBD" # depends on broken package DDD
+    "DDD" # broken build
+    "BMhyd" # broken build
+    "rscala" # broken build
+    "rgpui" # depends on broken package rgp
+    "rgp" # broken build
+    "qcmetrics" # broken build
+    "lfe" # broken build
+    "interactiveDisplay" # depends on broken package interactiveDisplayBase
+    "RefNet" # depends on broken package interactiveDisplayBase
+    "pwOmics" # depends on broken package interactiveDisplayBase
+    "grasp2db" # depends on broken package interactiveDisplayBase
+    "EnsDb_Rnorvegicus_v79" # depends on broken package interactiveDisplayBase
+    "EnsDb_Rnorvegicus_v75" # depends on broken package interactiveDisplayBase
+    "EnsDb_Mmusculus_v79" # depends on broken package interactiveDisplayBase
+    "EnsDb_Mmusculus_v75" # depends on broken package interactiveDisplayBase
+    "EnsDb_Hsapiens_v79" # depends on broken package interactiveDisplayBase
+    "EnsDb_Hsapiens_v75" # depends on broken package interactiveDisplayBase
+    "ensembldb" # depends on broken package interactiveDisplayBase
+    "AnnotationHubData" # depends on broken package interactiveDisplayBase
+    "AnnotationHub" # depends on broken package interactiveDisplayBase
+    "interactiveDisplayBase" # broken build
+    "h2o" # broken build
+    "funModeling" # broken build
+    "brr" # broken build
+    "bedr" # broken build
+    "Sabermetrics" # broken build
+    "RKEEL" # depends on broken package RKEELjars
+    "RKEELjars" # broken build
+    "RapidPolygonLookup" # depends on broken package PBSmapping
+    "PBSmapping" # broken build
+    "stagePop" # depends on broken package PBSddesolve
+    "PBSddesolve" # broken build
+    "Metab" # broken build
+    "Crossover" # broken build
+    "CardinalWorkflows" # broken build
+    "spoccutils" # depends on broken package spocc
+    "mapr" # depends on broken package spocc
+    "vmsbase" # broken build
+    "vcfR" # broken build
+    "strataG" # broken build
+    "SSDM" # broken build
+    "SimInf" # broken build
+    "shazam" # broken build
     "rsvg" # broken build
     "Rothermel" # broken build
     "rfPermute" # broken build
@@ -719,10 +792,6 @@ let
     "x13binary" # broken build
     "fds" # broken build
     "exifr" # broken build
-    "TTAinterfaceTrendAnalysis" # depends on broken package euroMix
-    "stylo" # depends on broken package euroMix
-    "stosim" # depends on broken package euroMix
-    "SRRS" # depends on broken package euroMix
     "rite" # depends on broken package euroMix
     "MBCB" # depends on broken package euroMix
     "forensim" # depends on broken package euroMix
@@ -1082,14 +1151,12 @@ let
     "rjags" # broken build
     "proteoQC" # depends on broken package rTANDEM
     "PGA" # depends on broken package rTANDEM
-    "cudatoolkit" # broken build
     "MBESS" # depends on broken package OpenMx
     "IONiseR" # depends on broken package rhdf5
     "DOQTL" # depends on broken package rhdf5
     "DmelSGI" # depends on broken package rhdf5
     "flowDiv" # depends on broken package ncdfFlow
     "ChemmineDrugs" # depends on broken package ChemmineR
-    "nlopt" # broken build
     "stpm" # depends on broken package nloptr
     "sjmisc" # depends on broken package nloptr
     "rstanarm" # depends on broken package nloptr
@@ -1687,8 +1754,6 @@ let
     "Surrogate" # depends on broken package nlopt
     "svglite" # depends on broken package gdtools
     "sybilSBML" # build is broken
-    "synchronicity" # build is broken
-    "synthpop" # build is broken
     "systemfit" # depends on broken package nlopt
     "TcGSA" # depends on broken package nlopt
     "TDMR" # depends on broken package nlopt
@@ -1744,7 +1809,7 @@ let
 
     xml2 = old.xml2.overrideDerivation (attrs: {
       preConfigure = ''
-        export LIBXML_INCDIR=${pkgs.libxml2}/include/libxml2
+        export LIBXML_INCDIR=${pkgs.libxml2.dev}/include/libxml2
         patchShebangs configure
         '';
     });
@@ -1816,7 +1881,7 @@ let
     });
 
     devEMF = old.devEMF.overrideDerivation (attrs: {
-      NIX_CFLAGS_LINK = "-L${pkgs.xorg.libXft}/lib -lXft";
+      NIX_CFLAGS_LINK = "-L${pkgs.xorg.libXft.out}/lib -lXft";
     });
 
     slfm = old.slfm.overrideDerivation (attrs: {
