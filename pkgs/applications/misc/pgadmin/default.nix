@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, postgresql, wxGTK, libxml2, libxslt, openssl }:
+{ stdenv, fetchurl, postgresql, wxGTK, libxml2, libxslt, openssl, zlib }:
 
 stdenv.mkDerivation rec {
   name = "pgadmin3-${version}";
@@ -9,11 +9,18 @@ stdenv.mkDerivation rec {
     sha256 = "0gkqpj8cg6jd6yhssrij1cbh960rg9fkjbdzcpryi6axwv0ag7ki";
   };
 
-  buildInputs = [ postgresql wxGTK libxml2 libxslt openssl ];
+  enableParallelBuilding = true;
+
+  buildInputs = [ postgresql wxGTK openssl zlib ];
 
   preConfigure = ''
     substituteInPlace pgadmin/ver_svn.sh --replace "bin/bash" "$shell"
   '';
+
+  configureFlags = [
+    "--with-libxml2=${libxml2}"
+    "--with-libxslt=${libxslt}"
+  ];
 
   meta = with stdenv.lib; { 
     description = "PostgreSQL administration GUI tool";

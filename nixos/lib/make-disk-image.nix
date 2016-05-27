@@ -23,6 +23,8 @@
   postVM ? ""
 
 , name ? "nixos-disk-image"
+
+, format ? "raw"
 }:
 
 with lib;
@@ -32,8 +34,8 @@ pkgs.vmTools.runInLinuxVM (
     { preVM =
         ''
           mkdir $out
-          diskImage=$out/nixos.img
-          ${pkgs.vmTools.qemu}/bin/qemu-img create -f raw $diskImage "${toString diskSize}M"
+          diskImage=$out/nixos.${if format == "qcow2" then "qcow2" else "img"}
+          ${pkgs.vmTools.qemu}/bin/qemu-img create -f ${format} $diskImage "${toString diskSize}M"
           mv closure xchg/
         '';
       buildInputs = [ pkgs.utillinux pkgs.perl pkgs.e2fsprogs pkgs.parted ];
@@ -79,14 +81,14 @@ pkgs.vmTools.runInLinuxVM (
 
       # Register the paths in the Nix database.
       printRegistration=1 perl ${pkgs.pathsFromGraph} /tmp/xchg/closure | \
-          chroot /mnt ${config.nix.package}/bin/nix-store --load-db --option build-users-group ""
+          chroot /mnt ${config.nix.package.out}/bin/nix-store --load-db --option build-users-group ""
 
       # Add missing size/hash fields to the database. FIXME:
       # exportReferencesGraph should provide these directly.
-      chroot /mnt ${config.nix.package}/bin/nix-store --verify --check-contents
+      chroot /mnt ${config.nix.package.out}/bin/nix-store --verify --check-contents
 
       # Create the system profile to allow nixos-rebuild to work.
-      chroot /mnt ${config.nix.package}/bin/nix-env --option build-users-group "" \
+      chroot /mnt ${config.nix.package.out}/bin/nix-env --option build-users-group "" \
           -p /nix/var/nix/profiles/system --set ${config.system.build.toplevel}
 
       # `nixos-rebuild' requires an /etc/NIXOS.

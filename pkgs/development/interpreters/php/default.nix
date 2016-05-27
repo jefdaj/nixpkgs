@@ -30,7 +30,7 @@ let
         # SAPI modules:
 
         apxs2 = {
-          configureFlags = ["--with-apxs2=${apacheHttpd}/bin/apxs"];
+          configureFlags = ["--with-apxs2=${apacheHttpd.dev}/bin/apxs"];
           buildInputs = [apacheHttpd];
         };
 
@@ -44,7 +44,13 @@ let
         };
 
         ldap = {
-          configureFlags = ["--with-ldap=${openldap}"];
+          configureFlags = [
+            "--with-ldap"
+            "LDAP_DIR=${openldap.dev}"
+            "LDAP_INCDIR=${openldap.dev}/include"
+            "LDAP_LIBDIR=${openldap.out}/lib"
+            "--with-ldap-sasl=${cyrus_sasl.dev}"
+            ];
           buildInputs = [openldap cyrus_sasl openssl];
         };
 
@@ -69,7 +75,7 @@ let
 
         libxml2 = {
           configureFlags = [
-            "--with-libxml-dir=${libxml2}"
+            "--with-libxml-dir=${libxml2.dev}"
             ];
           buildInputs = [ libxml2 ];
         };
@@ -148,8 +154,8 @@ let
         };
 
         openssl = {
-          configureFlags = ["--with-openssl=${openssl}"];
-          buildInputs = [openssl];
+          configureFlags = ["--with-openssl"];
+          buildInputs = [openssl openssl.dev];
         };
 
         mbstring = {
@@ -259,14 +265,12 @@ let
             --replace '@PHP_LDFLAGS@' ""
         done
 
-        iniFile=$out/etc/php-recommended.ini
         [[ -z "$libxml2" ]] || export PATH=$PATH:$libxml2/bin
         ./configure --with-config-file-scan-dir=/etc --with-config-file-path=$out/etc --prefix=$out $configureFlags
       '';
 
-      installPhase = ''
-        unset installPhase; installPhase;
-        cp php.ini-production $iniFile
+      postInstall = ''
+        cp php.ini-production $out/etc/php.ini
       '';
 
       src = fetchurl {
@@ -288,18 +292,18 @@ let
 in {
 
   php55 = generic {
-    version = "5.5.33";
-    sha256 = "1a8ac1zcq68irvdffh08cpi4aaaira4hsqwgns7b95pm9pnv3464";
+    version = "5.5.35";
+    sha256 = "1msqh8ii0qwzzcwlwn8f493x2r3hy2djzrrwd5jgs87893b8sr1d";
   };
 
   php56 = generic {
-    version = "5.6.19";
-    sha256 = "0s61fncsdgr1mqgh8jma6pi6xxz4gl350467lk00ls3i97wa691a";
+    version = "5.6.21";
+    sha256 = "144m8xzpqv3pimxh2pjhbk4fy1kch9afkzclcinzv2dnfjspmvdl";
   };
 
   php70 = generic {
-    version = "7.0.2";
-    sha256 = "0di2vallv5kry85l67za25nq4f2hjr8fad5j0c06nb69v7xpa6wv";
+    version = "7.0.5";
+    sha256 = "1s8xnnxwq5big2rnbp3w7zw7wh5d5ra9p2q9bxwylds5wrzsy29c";
   };
 
 }

@@ -2,9 +2,21 @@ self:
 
 with self;
 
+let
+  # Removing recurseForDerivation prevents derivations of aliased attribute
+  # set to appear while listing all the packages available.
+  removeRecurseForDerivations = _n: alias: with lib;
+    if alias.recurseForDerivations or false then
+      removeAttrs alias ["recurseForDerivations"]
+    else alias;
+
+  doNotDisplayTwice = aliases:
+    lib.mapAttrs removeRecurseForDerivations aliases;
+in
+
   ### Deprecated aliases - for backward compatibility
 
-rec {
+doNotDisplayTwice rec {
   accounts-qt = qt5.accounts-qt;  # added 2015-12-19
   adobeReader = adobe-reader;
   aircrackng = aircrack-ng; # added 2016-01-14
@@ -18,10 +30,12 @@ rec {
   bundler_HEAD = bundler; # added 2015-11-15
   cheetahTemplate = pythonPackages.cheetah; # 2015-06-15
   clangAnalyzer = clang-analyzer;  # added 2015-02-20
+  clawsMail = claws-mail; # added 2016-04-29
   conkerorWrapper = conkeror; # added 2015-01
   cool-old-term = cool-retro-term; # added 2015-01-31
   cupsBjnp = cups-bjnp; # added 2016-01-02
   cv = progress; # added 2015-09-06
+  debian_devscripts = debian-devscripts; # added 2016-03-23
   dwarf_fortress = dwarf-fortress; # added 2016-01-23
   dwbWrapper = dwb; # added 2015-01
   enblendenfuse = enblend-enfuse; # 2015-09-30
@@ -31,6 +45,7 @@ rec {
   firefoxWrapper = firefox;           # 2015-09
   fuse_exfat = exfat;                   # 2015-09-11
   gettextWithExpat = gettext; # 2016-02-19
+  git-hub = gitAndTools.git-hub; # added 2016-04-29
   grantlee5 = qt5.grantlee;  # added 2015-12-19
   gupnptools = gupnp-tools;  # added 2015-12-19
   htmlTidy = html-tidy;  # added 2014-12-06
@@ -39,6 +54,9 @@ rec {
   joseki = apache-jena-fuseki; # added 2016-02-28
   jquery_ui = jquery-ui;  # added 2014-09-07
   libdbusmenu_qt5 = qt5.libdbusmenu;  # added 2015-12-19
+  libcap_manpages = libcap.doc; # added 2016-04-29
+  libcap_pam = if stdenv.isLinux then libcap.pam else null; # added 2016-04-29
+  libcap_progs = libcap.out; # added 2016-04-29
   libtidy = html-tidy;  # added 2014-12-21
   links = links2; # added 2016-01-31
   lttngTools = lttng-tools;  # added 2014-07-31
@@ -46,6 +64,7 @@ rec {
   manpages = man-pages; # added 2015-12-06
   midoriWrapper = midori; # added 2015-01
   mlt-qt5 = qt5.mlt;  # added 2015-12-19
+  module_init_tools = kmod; # added 2016-04-22
   mssys = ms-sys; # added 2015-12-13
   multipath_tools = multipath-tools;  # added 2016-01-21
   mupen64plus1_5 = mupen64plus; # added 2016-02-12
@@ -80,6 +99,7 @@ rec {
   system_config_printer = system-config-printer;  # added 2016-01-03
   telepathy_qt5 = qt5.telepathy;  # added 2015-12-19
   tftp_hpa = tftp-hpa; # added 2015-04-03
+  usb_modeswitch = usb-modeswitch; # added 2016-05-10
   vimbWrapper = vimb; # added 2015-01
   vimprobable2Wrapper = vimprobable2; # added 2015-01
   virtviewer = virt-viewer; # added 2015-12-24

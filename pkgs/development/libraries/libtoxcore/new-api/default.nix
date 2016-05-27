@@ -2,13 +2,13 @@
 , libvpx, check, libconfig, pkgconfig }:
 
 stdenv.mkDerivation rec {
-  name = "tox-core-dev-20160131";
+  name = "tox-core-dev-20160319";
 
   src = fetchFromGitHub {
     owner  = "irungentoo";
     repo   = "toxcore";
-    rev    = "94cc8b11ff473064526737936f64b6f9a19c239d";
-    sha256 = "0njara08p5vmhs6kp04b7gxw8l6xrlmwnlb76n2g96v0rn0i9k2w";
+    rev    = "532629d486e3361c7d8d95b38293cc7d61dc4ee5";
+    sha256 = "0x8mjrjiafgia9vy7w4zhfzicr2fljx8xgm2ppi4kva2r2z1wm2f";
   };
 
   NIX_LDFLAGS = "-lgcc_s";
@@ -23,8 +23,8 @@ stdenv.mkDerivation rec {
   '';
 
   configureFlags = [
-    "--with-libsodium-headers=${libsodium}/include"
-    "--with-libsodium-libs=${libsodium}/lib"
+    "--with-libsodium-headers=${libsodium.dev}/include"
+    "--with-libsodium-libs=${libsodium.out}/lib"
     "--enable-ntox"
     "--enable-daemon"
   ];

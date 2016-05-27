@@ -1,5 +1,5 @@
 { stdenv, fetchurl, glib, flex, bison, pkgconfig, libffi, python
-, libintlOrEmpty, autoconf, automake, otool
+, libintlOrEmpty, cctools
 , substituteAll, nixStoreDir ? builtins.storeDir
 }:
 # now that gobjectIntrospection creates large .gir files (eg gtk3 case)
@@ -7,31 +7,33 @@
 # In that case its about 6MB which could be separated
 
 let
-  ver_maj = "1.46";
+  ver_maj = "1.48";
   ver_min = "0";
 in
+with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "gobject-introspection-${ver_maj}.${ver_min}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gobject-introspection/${ver_maj}/${name}.tar.xz";
-    sha256 = "6658bd3c2b8813eb3e2511ee153238d09ace9d309e4574af27443d87423e4233";
+    sha256 = "0xsqwxhfqzr79av89mg766kxpb2i41bd0vwspk01xjdzrnn5l9zs";
   };
 
-  buildInputs = [ flex bison pkgconfig python ]
-    ++ libintlOrEmpty
-    ++ stdenv.lib.optional stdenv.isDarwin otool;
-  propagatedBuildInputs = [ libffi glib ];
+  outputs = [ "dev" "out" ];
+  outputBin = "dev";
+  outputMan = "dev"; # tiny pages
 
-  # Tests depend on cairo, which is undesirable (it pulls in lots of
-  # other dependencies).
-  configureFlags = [ "--disable-tests" ];
+  buildInputs = [ flex bison pkgconfig python setupHook/*move .gir*/ ]
+    ++ libintlOrEmpty
+    ++ stdenv.lib.optional stdenv.isDarwin cctools;
+  propagatedBuildInputs = [ libffi glib ];
 
   preConfigure = ''
     sed 's|/usr/bin/env ||' -i tools/g-ir-tool-template.in
   '';
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  # outputs TODO: share/gobject-introspection-1.0/tests is needed during build
+  # by pygobject3 (and maybe others), but it's only searched in $out
 
   setupHook = ./setup-hook.sh;
 
@@ -45,7 +47,6 @@ stdenv.mkDerivation rec {
     homepage    = http://live.gnome.org/GObjectIntrospection;
     maintainers = with maintainers; [ lovek323 urkud lethalman ];
     platforms   = platforms.unix;
-    broken      = stdenv.isDarwin;
 
     longDescription = ''
       GObject introspection is a middleware layer between C libraries (using

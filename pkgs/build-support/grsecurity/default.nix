@@ -8,12 +8,15 @@ let
     config = {
       mode = "auto";
       sysctl = false;
+      denyChrootCaps = false;
       denyChrootChmod = false;
       denyUSB = false;
       restrictProc = false;
       restrictProcWithGroup = true;
       unrestrictProcGid = 121; # Ugh, an awful hack. See grsecurity NixOS gid
       disableRBAC = false;
+      disableSimultConnect = false;
+      redistKernel = true;
       verboseVersion = false;
       kernelExtraConfig = "";
     } // grsecOptions.config;
@@ -90,6 +93,16 @@ let
         GRKERNSEC y
         ${grsecMainConfig}
 
+        # Disable features rendered useless by redistributing the kernel
+        ${optionalString cfg.config.redistKernel ''
+          GRKERNSEC_RANDSTRUCT n
+          GRKERNSEC_HIDESYM n
+          ''}
+
+        # The paxmarks mechanism relies on ELF header markings, but the default
+        # grsecurity configuration only enables xattr markings
+        PAX_PT_PAX_FLAGS y
+
         ${if cfg.config.restrictProc then
             "GRKERNSEC_PROC_USER y"
           else
@@ -100,9 +113,11 @@ let
         }
 
         GRKERNSEC_SYSCTL ${boolToKernOpt cfg.config.sysctl}
+        GRKERNSEC_CHROOT_CAPS ${boolToKernOpt cfg.config.denyChrootCaps}
         GRKERNSEC_CHROOT_CHMOD ${boolToKernOpt cfg.config.denyChrootChmod}
         GRKERNSEC_DENYUSB ${boolToKernOpt cfg.config.denyUSB}
         GRKERNSEC_NO_RBAC ${boolToKernOpt cfg.config.disableRBAC}
+        GRKERNSEC_NO_SIMULT_CONNECT ${boolToKernOpt cfg.config.disableSimultConnect}
 
         ${cfg.config.kernelExtraConfig}
       '';
@@ -114,15 +129,10 @@ let
          "-${grkern.grversion}-${grkern.revision}";
 
     grsecurityOverrider = args: grkern: {
-      # Apparently as of gcc 4.6, gcc-plugin headers (which are needed by PaX plugins)
-      # include libgmp headers, so we need these extra tweaks
-      buildInputs = args.buildInputs ++ [ pkgs.gmp ];
-      preConfigure = ''
-        ${args.preConfigure or ""}
-        sed -i 's|-I|-I${pkgs.gmp}/include -I|' scripts/gcc-plugin.sh
-        sed -i 's|HOST_EXTRACFLAGS +=|HOST_EXTRACFLAGS += -I${pkgs.gmp}/include|' tools/gcc/Makefile
-        sed -i 's|HOST_EXTRACXXFLAGS +=|HOST_EXTRACXXFLAGS += -I${pkgs.gmp}/include|' tools/gcc/Makefile
-        rm localversion-grsec
+      # additional build inputs for gcc plugins, required by some PaX/grsec features
+      nativeBuildInputs = args.nativeBuildInputs ++ (with pkgs; [ gmp libmpc mpfr ]);
+
+      preConfigure = (args.preConfigure or "") + ''
         echo ${localver grkern} > localversion-grsec
       '';
     };

@@ -1,10 +1,10 @@
 {stdenv, makeWrapper, fetchurl, perl, openssl, perlPackages }:
 
 stdenv.mkDerivation rec {
-  name = "imapsync-1.644";
+  name = "imapsync-1.684";
   src = fetchurl {
     url = "https://fedorahosted.org/released/imapsync/${name}.tgz";
-    sha256 = "1lni950qyp841277dnzb43pxpzqyfcl6sachd8j6a0j08826gfky";
+    sha256 = "1ilqdaabh6xiwpjfdg2mrhygvjlxj6jdkmqjqadq5z29172hji5b";
   };
 
   patchPhase = ''
@@ -18,7 +18,10 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ makeWrapper ];
 
   buildInputs = with perlPackages; [ perl openssl MailIMAPClient TermReadKey
-    IOSocketSSL DigestHMAC URI FileCopyRecursive IOTee UnicodeString ];
+    IOSocketSSL DigestHMAC URI FileCopyRecursive IOTee UnicodeString
+    DataUniqid JSONWebToken TestMockGuard LWP CryptOpenSSLRSA
+    LWPProtocolHttps
+  ];
 
   meta = with stdenv.lib; {
     homepage = http://www.linux-france.org/prj/imapsync/;

@@ -3,7 +3,8 @@
 , ApplicationServices, cf-private }:
 
 let
-  version = "3.7.1";
+  # if you bump version, update pkgs.tortoisehg too or ping maintainer
+  version = "3.8.1";
   name = "mercurial-${version}";
 in
 
@@ -12,7 +13,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://mercurial.selenic.com/release/${name}.tar.gz";
-    sha256 = "1vfgqlb8z2k1vcx2nvcianxmml79cqqqncchw6aj40sa8hgpvlwn";
+    sha256 = "156m6269xdqq7mpw01c6b065k29xnb8b9lyzn1b0nlz5il2izkps";
   };
 
   inherit python; # pass it so that the same version can be used in hg2git
@@ -67,5 +68,6 @@ stdenv.mkDerivation {
     downloadPage = "http://mercurial.selenic.com/release/";
     license = stdenv.lib.licenses.gpl2;
     maintainers = [ stdenv.lib.maintainers.eelco ];
+    updateWalker = true;
   };
 }

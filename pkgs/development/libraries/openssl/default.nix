@@ -5,7 +5,7 @@ with stdenv.lib;
 
 let
 
-  opensslCrossSystem = stdenv.cross.openssl.system or 
+  opensslCrossSystem = stdenv.cross.openssl.system or
     (throw "openssl needs its platform name cross building");
 
   common = { version, sha256 }: stdenv.mkDerivation rec {
@@ -16,14 +16,15 @@ let
       inherit sha256;
     };
 
-    outputs = [ "out" "man" ];
-
     patches =
       [ ./use-etc-ssl-certs.patch ]
       ++ optional stdenv.isCygwin ./1.0.1-cygwin64.patch
       ++ optional
            (versionOlder version "1.0.2" && (stdenv.isDarwin || (stdenv ? cross && stdenv.cross.libc == "libSystem")))
            ./darwin-arch.patch;
+
+  outputs = [ "dev" "out" "man" "bin" ];
+  setOutputFlags = false;
 
     nativeBuildInputs = [ perl ];
     buildInputs = stdenv.lib.optional withCryptodev cryptodevHeaders;
@@ -44,9 +45,7 @@ let
       "-DUSE_CRYPTODEV_DIGESTS"
     ];
 
-    makeFlags = [
-      "MANDIR=$(out)/share/man"
-    ];
+  makeFlags = [ "MANDIR=$(man)/share/man" ];
 
     # Parallel building is broken in OpenSSL.
     enableParallelBuilding = false;
@@ -58,14 +57,20 @@ let
           rm "$out/lib/"*.a
       fi
 
+    mkdir -p $bin
+    mv $out/bin $bin/
+
+    mkdir $dev
+    mv $out/include $dev/
+
       # remove dependency on Perl at runtime
-      rm -r $out/etc/ssl/misc $out/bin/c_rehash
+    rm -r $out/etc/ssl/misc
 
       rmdir $out/etc/ssl/{certs,private}
     '';
 
     postFixup = ''
-      # Check to make sure we don't depend on perl
+    # Check to make sure the main output doesn't depend on perl
       if grep -r '${perl}' $out; then
         echo "Found an erroneous dependency on perl ^^^" >&2
         exit 1
@@ -100,13 +105,13 @@ let
 in {
 
   openssl_1_0_1 = common {
-    version = "1.0.1r";
-    sha256 = "0iik7a3b0mrfrxzngdf7ywfscg9inbw77y0jp2ccw0gdap9xhjvq";
+    version = "1.0.1t";
+    sha256 = "4a6ee491a2fdb22e519c76fdc2a628bb3cec12762cd456861d207996c8a07088";
   };
 
-  openssl_1_0_2 = lowPrio (common {
-    version = "1.0.2f";
-    sha256 = "932b4ee4def2b434f85435d9e3e19ca8ba99ce9a065a61524b429a9d5e9b2e9c";
-  });
+  openssl_1_0_2 = common {
+    version = "1.0.2h";
+    sha256 = "1d4007e53aad94a5b2002fe045ee7bb0b3d98f1a47f8b2bc851dcd1c74332919";
+  };
 
 }

@@ -58,7 +58,7 @@ stdenv.mkDerivation rec {
     sed -i 's,/usr/share/zoneinfo/,${tzdata}/share/zoneinfo/,' src/time/zoneinfo_unix.go
 
     # Find the loader dynamically
-    LOADER="$(find ${libc}/lib -name ld-linux\* | head -n 1)"
+    LOADER="$(find ${libc.out or libc}/lib -name ld-linux\* | head -n 1)"
 
     # Replace references to the loader
     find src/cmd -name asm.c -exec sed -i "s,/lib/ld-linux.*\.so\.[0-9],$LOADER," {} \;
@@ -87,6 +87,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./remove-tools-1.4.patch
+    ./new-binutils.patch
   ];
 
   GOOS = if stdenv.isDarwin then "darwin" else "linux";

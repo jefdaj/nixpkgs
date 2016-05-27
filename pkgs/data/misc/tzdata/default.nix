@@ -2,28 +2,30 @@
 
 stdenv.mkDerivation rec {
   name = "tzdata-${version}";
-  version = "2016b";
+  version = "2016d";
 
   srcs =
     [ (fetchurl {
         url = "http://www.iana.org/time-zones/repository/releases/tzdata${version}.tar.gz";
-        sha256 = "6392091d92556a32de488ea06a055c51bc46b7d8046c8a677f0ccfe286b3dbdc";
+        sha256 = "1d51y1cmp2mhfmk51pagw7p15vrnf269xn1bb19n1mzgl3xlsmfr";
       })
       (fetchurl {
         url = "http://www.iana.org/time-zones/repository/releases/tzcode${version}.tar.gz";
-        sha256 = "e935c4fe78b5c5da3791f58f3ab7f07fb059a7c71d6b62b69ef345211ae5dfa7";
+        sha256 = "1jp06jd3vpsh38549xnx0wnxadrnwvvcg7vnwh4y3xxfhxpkvwx8";
       })
     ];
 
   sourceRoot = ".";
-  outputs = [ "out" "lib" ];
+
+  outputs = [ "out" "man" "dev" ];
+  propagatedBuildOutputs = [];
 
   makeFlags = [
     "TOPDIR=$(out)"
     "TZDIR=$(out)/share/zoneinfo"
     "ETCDIR=$(TMPDIR)/etc"
-    "LIBDIR=$(lib)/lib"
-    "MANDIR=$(TMPDIR)/man"
+    "LIBDIR=$(dev)/lib"
+    "MANDIR=$(man)/man"
     "AWK=awk"
     "CFLAGS=-DHAVE_LINK=0"
   ];
@@ -34,8 +36,8 @@ stdenv.mkDerivation rec {
       ln -s . $out/share/zoneinfo/posix
       mv $out/share/zoneinfo-leaps $out/share/zoneinfo/right
 
-      mkdir -p "$lib/include"
-      cp tzfile.h "$lib/include/tzfile.h"
+      mkdir -p "$dev/include"
+      cp tzfile.h "$dev/include/tzfile.h"
     '';
 
   meta = {

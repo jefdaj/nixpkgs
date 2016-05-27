@@ -165,7 +165,7 @@ sub pciCheck {
         ) )
     {
         # we need e.g. brcmfmac43602-pcie.bin
-        push @imports, "<nixos/modules/hardware/network/broadcom-43xx.nix>";
+        push @imports, "<nixpkgs/nixos/modules/hardware/network/broadcom-43xx.nix>";
     }
 
     # Can't rely on $module here, since the module may not be loaded
@@ -474,7 +474,7 @@ my $hwConfig = <<EOF;
   boot.kernelModules = [$kernelModules ];
   boot.extraModulePackages = [$modulePackages ];
 $fsAndSwap
-  nix.maxJobs = $cpus;
+  nix.maxJobs = lib.mkDefault $cpus;
 ${\join "", (map { "  $_\n" } (uniq @attrs))}}
 EOF
 

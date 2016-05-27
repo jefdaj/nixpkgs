@@ -1,6 +1,6 @@
 { lib, stdenv, fetchurl, pkgconfig, libtool
 , bzip2, zlib, libX11, libXext, libXt, fontconfig, freetype, ghostscript, libjpeg
-, lcms2, openexr, libpng, librsvg, libtiff, libxml2
+, lcms2, openexr, libpng, librsvg, libtiff, libxml2, openjpeg, libwebp
 }:
 
 let
@@ -13,7 +13,7 @@ in
 
 stdenv.mkDerivation rec {
   name = "imagemagick-${version}";
-  version = "6.9.2-0";
+  version = "6.9.3-9";
 
   src = fetchurl {
     urls = [
@@ -21,8 +21,10 @@ stdenv.mkDerivation rec {
       # the original source above removes tarballs quickly
       "http://distfiles.macports.org/ImageMagick/ImageMagick-${version}.tar.xz"
     ];
-    sha256 = "17ir8bw1j7g7srqmsz3rx780sgnc21zfn0kwyj78iazrywldx8h7";
+    sha256 = "0q19jgn1iv7zqrw8ibxp4z57iihrc9kyb09k2wnspcacs6vrvinf";
   };
+
+  patches = [ ./imagetragick.patch ];
 
   outputs = [ "out" "doc" ];
 
@@ -39,13 +41,14 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ pkgconfig libtool zlib fontconfig freetype ghostscript libjpeg
-      openexr libpng librsvg libtiff libxml2
+      openexr libpng librsvg libtiff libxml2 openjpeg libwebp
     ];
 
   propagatedBuildInputs =
-    [ bzip2 freetype libjpeg libX11 libXext libXt lcms2 ];
+    [ bzip2 freetype libjpeg libX11 libXext libXt lcms2 libwebp ];
 
   postInstall = ''
+
     (cd "$out/include" && ln -s ImageMagick* ImageMagick)
   '' + lib.optionalString (ghostscript != null) ''
     for la in $out/lib/*.la; do

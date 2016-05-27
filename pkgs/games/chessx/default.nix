@@ -1,4 +1,4 @@
-{ stdenv, pkgconfig, zlib, qtbase, qtsvg, qttools, qtmultimedia, fetchurl }:
+{ stdenv, pkgconfig, zlib, qtbase, qtsvg, qttools, qtmultimedia, qmakeHook, fetchurl }:
 stdenv.mkDerivation rec {
   name = "chessx-${version}";
   version = "1.3.2";
@@ -6,9 +6,6 @@ stdenv.mkDerivation rec {
     url = "mirror://sourceforge/chessx/chessx-${version}.tgz";
     sha256 = "b136cf56d37d34867cdb9538176e1703b14f61b3384885b6f100580d0af0a3ff";
   };
-  preConfigure = ''
-    qmake -spec linux-g++ chessx.pro
-  '';
   buildInputs = [
    stdenv
    pkgconfig
@@ -17,12 +14,15 @@ stdenv.mkDerivation rec {
    qttools
    qtmultimedia
    zlib
+   qmakeHook
   ];
 
   enableParallelBuilding = true;
   installPhase = ''
       mkdir -p "$out/bin"
+      mkdir -p "$out/share/applications"
       cp -pr release/chessx "$out/bin"
+      cp -pr unix/chessx.desktop "$out/share/applications"
   '';
 
   meta = with stdenv.lib; {

@@ -50,7 +50,7 @@ let
               doCheck = false;
               buildTools = drv.buildTools or [] ++ [ makeWrapper ];
               postInstall =
-                let bins = lib.makeSearchPath "bin" [ nodejs self.elm-make ];
+                let bins = lib.makeBinPath [ nodejs self.elm-make ];
                 in ''
                   wrapProgram $out/bin/elm-repl \
                     --prefix PATH ':' ${bins}
@@ -61,6 +61,9 @@ let
       in elmPkgs // {
         inherit elmPkgs;
         elmVersion = elmRelease.version;
+
+        # To unbreak elm-compiler
+        language-ecmascript = self.language-ecmascript_0_17_0_2;
       };
   };
 in hsPkgs.elmPkgs // {

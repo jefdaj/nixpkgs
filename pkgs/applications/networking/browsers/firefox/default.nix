@@ -18,14 +18,14 @@ assert stdenv.cc ? libc && stdenv.cc.libc != null;
 
 let
 
-common = { pname, version, sha256 }: stdenv.mkDerivation rec {
+common = { pname, version, sha512 }: stdenv.mkDerivation rec {
   name = "${pname}-unwrapped-${version}";
 
   src = fetchurl {
     url =
       let ext = if lib.versionAtLeast version "41.0" then "xz" else "bz2";
-      in "http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${version}/source/firefox-${version}.source.tar.${ext}";
-    inherit sha256;
+      in "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.${ext}";
+    inherit sha512;
   };
 
   buildInputs =
@@ -35,7 +35,7 @@ common = { pname, version, sha256 }: stdenv.mkDerivation rec {
       alsaLib nspr nss libnotify xorg.pixman yasm mesa
       xorg.libXScrnSaver xorg.scrnsaverproto pysqlite
       xorg.libXext xorg.xextproto sqlite unzip makeWrapper
-      hunspell libevent libstartup_notification libvpx /* cairo */
+      hunspell libevent libstartup_notification /* libvpx */ /* cairo */
       gstreamer gst_plugins_base icu libpng jemalloc
       libpulseaudio # only headers are needed
     ]
@@ -50,7 +50,7 @@ common = { pname, version, sha256 }: stdenv.mkDerivation rec {
       "--with-system-nspr"
       "--with-system-nss"
       "--with-system-libevent"
-      "--with-system-libvpx"
+      #"--with-system-libvpx" # needs 1.5.0
       "--with-system-png" # needs APNG support
       "--with-system-icu"
       "--enable-system-ffi"
@@ -69,6 +69,7 @@ common = { pname, version, sha256 }: stdenv.mkDerivation rec {
       "--disable-updater"
       "--enable-jemalloc"
       "--disable-gconf"
+      "--enable-default-toolkit=cairo-gtk2"
     ]
     ++ lib.optional enableGTK3 "--enable-default-toolkit=cairo-gtk3"
     ++ (if debugBuild then [ "--enable-debug" "--enable-profiling" ]
@@ -81,13 +82,9 @@ common = { pname, version, sha256 }: stdenv.mkDerivation rec {
 
   preConfigure =
     ''
+      configureScript="$(realpath ./configure)"
       mkdir ../objdir
       cd ../objdir
-      if [ -e ../${pname}-${version} ]; then
-        configureScript=../${pname}-${version}/configure
-      else
-        configureScript=../mozilla-*/configure
-      fi
     '';
 
   preInstall =
@@ -126,6 +123,7 @@ common = { pname, version, sha256 }: stdenv.mkDerivation rec {
   passthru = {
     inherit gtk nspr version;
     isFirefox3Like = true;
+    browserName = pname;
   };
 };
 
@@ -133,14 +131,14 @@ in {
 
   firefox-unwrapped = common {
     pname = "firefox";
-    version = "45.0";
-    sha256 = "1wbrygxj285vs5qbpv3cq26w36bd533779mgi8d0gpxin44hzarn";
+    version = "46.0.1";
+    sha512 = "c58642774f93ceaef4f99bc3fe578db6e4f6de7f1d23080da97b61bc4fc6b516ce99fa04368893c0fa2cb9cd0b36e96955656daa97d0bd0d8f4da6a2d364cb98";
   };
 
   firefox-esr-unwrapped = common {
     pname = "firefox-esr";
-    version = "38.6.1esr";
-    sha256 = "1zyhzczhknplxfmk2r7cczavbsml8ckyimibj2sphwdc300ls5wi";
+    version = "45.1.1esr";
+    sha512 = "ee6bccdf01450c5b371e31c35f5bb084ad49f796fcc9cf3a346646972044ad85ce198cc34b697c32e2d3ad1e25955ef5b91b68790704ecaa4de9d3a412914fc7";
   };
 
 }

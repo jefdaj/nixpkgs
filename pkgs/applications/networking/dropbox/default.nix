@@ -1,7 +1,7 @@
-{ stdenv, fetchurl, makeDesktopItem, makeWrapper, patchelf
+{ stdenv, fetchurl, makeDesktopItem, patchelf
 , dbus_libs, gcc, glib, libdrm, libffi, libICE, libSM
 , libX11, libXmu, ncurses, popt, qt5, zlib
-, qtbase, qtdeclarative, qtwebkit
+, qtbase, qtdeclarative, qtwebkit, makeQtWrapper
 }:
 
 # this package contains the daemon version of dropbox
@@ -20,11 +20,11 @@
 
 let
   # NOTE: When updating, please also update in current stable, as older versions stop working
-  version = "3.14.7";
+  version = "3.18.1";
   sha256 =
     {
-      "x86_64-linux" = "1pwmghpr0kyca2biysyk90kk9k6ffv4i95vs5rq96vc0zbckws6n";
-      "i686-linux" = "08yqrxh09cfd80kbiq1f2sirx9s85acij4khpklvvwrnf2x1i1zm";
+      "x86_64-linux" = "1qdahr8xzk3zrrv89335l3aa2gfgjn1ymfixj9zgipv34grkjghm";
+      "i686-linux" = "015bjkr2dwyac410i398qm1v60rqln539wcj5f25q776haycbcji";
     }."${stdenv.system}" or (throw "system ${stdenv.system} not supported");
 
   arch =
@@ -36,7 +36,7 @@ let
   # relative location where the dropbox libraries are stored
   appdir = "opt/dropbox";
 
-  ldpath = stdenv.lib.makeSearchPath "lib"
+  ldpath = stdenv.lib.makeLibraryPath
     [
       dbus_libs gcc.cc glib libdrm libffi libICE libSM libX11 libXmu
       ncurses popt qtbase qtdeclarative qtwebkit zlib
@@ -62,7 +62,7 @@ in stdenv.mkDerivation {
 
   sourceRoot = ".dropbox-dist";
 
-  buildInputs = [ makeWrapper patchelf ];
+  nativeBuildInputs = [ makeQtWrapper patchelf ];
   dontPatchELF = true; # patchelf invoked explicitly below
   dontStrip = true; # already done
 
@@ -102,7 +102,7 @@ in stdenv.mkDerivation {
 
     mkdir -p "$out/bin"
     RPATH="${ldpath}:$out/${appdir}"
-    makeWrapper "$out/${appdir}/dropbox" "$out/bin/dropbox" \
+    makeQtWrapper "$out/${appdir}/dropbox" "$out/bin/dropbox" \
       --prefix LD_LIBRARY_PATH : "$RPATH"
   '';
 
@@ -151,5 +151,6 @@ in stdenv.mkDerivation {
     description = "Online stored folders (daemon version)";
     maintainers = with stdenv.lib.maintainers; [ ttuegel ];
     platforms = [ "i686-linux" "x86_64-linux" ];
+    license = stdenv.lib.licenses.unfree;
   };
 }

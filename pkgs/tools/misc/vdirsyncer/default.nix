@@ -3,18 +3,17 @@
 # Packaging documentation at:
 # https://github.com/untitaker/vdirsyncer/blob/master/docs/packaging.rst
 pythonPackages.buildPythonApplication rec {
-  version = "0.9.2";
+  version = "0.10.0";
   name = "vdirsyncer-${version}";
   namePrefix = "";
 
   src = fetchurl {
-    url = "https://pypi.python.org/packages/source/v/vdirsyncer/${name}.tar.gz";
-    sha256 = "1g1107cz4sk41d2z6k6pn9n2fzd26m72j8aj33zn483vfvmyrc4q";
+    url = "https://pypi.python.org/packages/0b/fb/c42223e1e9169e4770194e62143d431755724b080d8cb77f14705b634815/vdirsyncer-0.10.0.tar.gz";
+    sha256 = "1gf86sbd6w0w4zayh9r3irlp5jwrzbjikjc0vs5zkdpa5c199f78";
   };
 
   propagatedBuildInputs = with pythonPackages; [
     click click-log click-threading
-    lxml
     requests_toolbelt
     requests2
     atomicwrites
@@ -29,9 +28,9 @@ pythonPackages.buildPythonApplication rec {
   '';
 
   meta = with stdenv.lib; {
-    homepage = https://github.com/untitaker/vdirsyncer;
+    homepage = https://github.com/pimutils/vdirsyncer;
     description = "Synchronize calendars and contacts";
-    maintainers = with maintainers; [ matthiasbeyer jgeerds ];
+    maintainers = with maintainers; [ matthiasbeyer jgeerds DamienCassou ];
     platforms = platforms.all;
     license = licenses.mit;
   };

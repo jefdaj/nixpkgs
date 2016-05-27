@@ -340,4 +340,16 @@ rec {
     http://repo.steampowered.com/steamrt/
     https://abbradar.net/steamrt/
   ];
+
+  # Python PyPI mirrors
+  pypi = [
+    https://pypi.io/packages/source/
+  ];
+
+  # Mozilla projects.
+  mozilla = [
+    http://download.cdn.mozilla.net/pub/mozilla.org/
+    https://archive.mozilla.org/pub/
+  ];
+
 }

@@ -7,16 +7,16 @@ let
 
 in 
 stdenv.mkDerivation rec {
-  version = "8.0.0.20160204";
+  version = "8.0.1";
   name = "ghc-${version}";
 
   src = fetchurl {
-    url = "https://downloads.haskell.org/~ghc/8.0.1-rc2/${name}-src.tar.xz";
-    sha256 = "0v8pciva93i4a6h0l76vq6bbvrg76b1y4awwbxcg3m9gnqkvmy2k";
+    url = "https://downloads.haskell.org/~ghc/8.0.1/${name}-src.tar.xz";
+    sha256 = "0riyry246a6km4mw1q9iiw6p75ww2f8s81i34g151zwwdygk7qpf";
   };
 
   patches = [
-    ./dont-pass-linker-flags-via-response-files.patch   # https://github.com/NixOS/nixpkgs/issues/10752
+    ./ghc-8.x-dont-pass-linker-flags-via-response-files.patch  # https://github.com/NixOS/nixpkgs/issues/10752
   ];
 
   buildInputs = [ ghc perl hscolour ];
@@ -33,8 +33,8 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--with-gcc=${stdenv.cc}/bin/cc"
-    "--with-gmp-includes=${gmp}/include" "--with-gmp-libraries=${gmp}/lib"
-    "--with-curses-includes=${ncurses}/include" "--with-curses-libraries=${ncurses}/lib"
+    "--with-gmp-includes=${gmp}/include" "--with-gmp-libraries=${gmp.out}/lib"
+    "--with-curses-includes=${ncurses}/include" "--with-curses-libraries=${ncurses.out}/lib"
   ] ++ stdenv.lib.optional stdenv.isDarwin [
     "--with-iconv-includes=${libiconv}/include" "--with-iconv-libraries=${libiconv}/lib"
   ];

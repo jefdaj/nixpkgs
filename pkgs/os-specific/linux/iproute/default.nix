@@ -3,14 +3,20 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "iproute2-4.3.0";
+  name = "iproute2-4.5.0";
 
   src = fetchurl {
     url = "mirror://kernel/linux/utils/net/iproute2/${name}.tar.xz";
-    sha256 = "159988vv3fd78bzhisfl1dl4dd7km3vjzs2d8899a0vcvn412fzh";
+    sha256 = "0jj9phsi8m2sbnz7bbh9cf9vckm67hs62ab5srdwnrg4acpjj59z";
   };
 
-  patches = lib.optionals enableFan [ ./ubuntu-fan.patch ];
+  patches = lib.optionals enableFan [
+    # These patches were pulled from:
+    # https://launchpad.net/ubuntu/xenial/+source/iproute2
+    ./1000-ubuntu-poc-fan-driver.patch
+    ./1001-ubuntu-poc-fan-driver-v3.patch
+    ./1002-ubuntu-poc-fan-driver-vxlan.patch
+  ];
 
   preConfigure = ''
     patchShebangs ./configure

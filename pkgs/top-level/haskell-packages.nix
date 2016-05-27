@@ -371,7 +371,28 @@ rec {
     lts-5_8 = packages.ghc7103.override {
       packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.8.nix { };
     };
-    lts-5 = packages.lts-5_8;
+    lts-5_9 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.9.nix { };
+    };
+    lts-5_10 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.10.nix { };
+    };
+    lts-5_11 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.11.nix { };
+    };
+    lts-5_12 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.12.nix { };
+    };
+    lts-5_13 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.13.nix { };
+    };
+    lts-5_14 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.14.nix { };
+    };
+    lts-5_15 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.15.nix { };
+    };
+    lts-5 = packages.lts-5_15;
 
     lts = packages.lts-5;
   };

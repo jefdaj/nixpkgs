@@ -25,6 +25,8 @@ let
   jobs =
     { tarball = import ./make-tarball.nix { inherit pkgs nixpkgs officialRelease; };
 
+      metrics = import ./metrics.nix { inherit pkgs nixpkgs; };
+
       manual = import ../../doc;
       lib-tests = import ../../lib/tests/release.nix { inherit nixpkgs; };
 
@@ -33,6 +35,7 @@ let
           meta.description = "Release-critical builds for the Nixpkgs unstable channel";
           constituents =
             [ jobs.tarball
+              jobs.metrics
               jobs.manual
               jobs.lib-tests
               jobs.stdenv.x86_64-linux
@@ -93,7 +96,6 @@ let
       ddrescue = linux;
       dhcp = linux;
       dico = linux;
-      dietlibc = linux;
       diffutils = all;
       disnix = all;
       disnixos = linux;
@@ -117,7 +119,6 @@ let
       gajim = linux;
       gawk = all;
       gcc = linux;
-      gcc44 = linux;
       gcj = linux;
       ghostscript = linux;
       ghostscriptX = linux;
@@ -165,7 +166,6 @@ let
       mupen64plus = linux;
       mutt = linux;
       nano = allBut cygwin;
-      ncat = linux;
       netcat = all;
       nss_ldap = linux;
       nssmdns = linux;
@@ -182,6 +182,7 @@ let
       pythonFull = linux;
       sbcl = linux;
       qt3 = linux;
+      qt4_clang = ["i686-linux"];
       quake3demo = linux;
       reiserfsprogs = linux;
       rubber = allBut cygwin;
@@ -258,7 +259,10 @@ let
 
       perlPackages = { };
 
-      pythonPackages = { };
+      pythonPackages = {
+        pandas = unix;
+        scikitlearn = unix;
+      };
       python2Packages = { };
       python27Packages = { };
       python3Packages = { };
@@ -322,9 +326,6 @@ let
       };
 
       linuxPackages_testing = { };
-      linuxPackages_grsec_stable_desktop = { };
-      linuxPackages_grsec_stable_server = { };
-      linuxPackages_grsec_stable_server_xen = { };
       linuxPackages_grsec_testing_desktop = { };
       linuxPackages_grsec_testing_server = { };
       linuxPackages_grsec_testing_server_xen = { };

@@ -5,14 +5,16 @@ let
   apparmorEnabled = config.security.apparmor.enable;
   dnscrypt-proxy = pkgs.dnscrypt-proxy;
   cfg = config.services.dnscrypt-proxy;
-  resolverListFile = "${dnscrypt-proxy}/share/dnscrypt-proxy/dnscrypt-resolvers.csv";
+
   localAddress = "${cfg.localAddress}:${toString cfg.localPort}";
+
   daemonArgs =
     [ "--local-address=${localAddress}"
       (optionalString cfg.tcpOnly "--tcp-only")
       (optionalString cfg.ephemeralKeys "-E")
     ]
     ++ resolverArgs;
+
   resolverArgs = if (cfg.customResolver != null)
     then
       [ "--resolver-address=${cfg.customResolver.address}:${toString cfg.customResolver.port}"
@@ -20,7 +22,7 @@ let
         "--provider-key=${cfg.customResolver.key}"
       ]
     else
-      [ "--resolvers-list=${resolverListFile}"
+      [ "--resolvers-list=${cfg.resolverList}"
         "--resolver-name=${toString cfg.resolverName}"
       ];
 in
@@ -50,7 +52,7 @@ in
           services.dnsmasq.resolveLocalQueries = true; # this is the default
         }
         </programlisting>
-     ''; };
+      ''; };
       localAddress = mkOption {
         default = "127.0.0.1";
         type = types.string;
@@ -71,14 +73,26 @@ in
         '';
       };
       resolverName = mkOption {
-        default = "cisco";
+        default = "dnscrypt.eu-nl";
         type = types.nullOr types.string;
         description = ''
-          The name of the upstream DNSCrypt resolver to use. See
-          <filename>${resolverListFile}</filename> for alternative resolvers
-          (e.g., if you are concerned about logging and/or server
-          location).
+          The name of the upstream DNSCrypt resolver to use, taken from the
+          list named in the <literal>resolverList</literal> option.
+          The default resolver is located in Holland, supports DNS security
+          extensions, and claims to not keep logs.
         '';
+      };
+      resolverList = mkOption {
+        description = ''
+          The list of upstream DNSCrypt resolvers. By default, we use the most
+          recent list published by upstream.
+        '';
+        example = literalExample "${pkgs.dnscrypt-proxy}/share/dnscrypt-proxy/dnscrypt-resolvers.csv";
+        default = pkgs.fetchurl {
+          url = "https://raw.githubusercontent.com/jedisct1/dnscrypt-proxy/master/dnscrypt-resolvers.csv";
+          sha256 = "07kbbisrvrqdxif3061hxj3whin3llg4nh50ln7prisi2vbd76xd";
+        };
+        defaultText = "pkgs.fetchurl { url = ...; sha256 = ...; }";
       };
       customResolver = mkOption {
         default = null;
@@ -148,7 +162,7 @@ in
         /etc/group r,
         ${config.environment.etc."nsswitch.conf".source} r,
 
-        ${pkgs.glibc}/lib/*.so mr,
+        ${pkgs.glibc.out}/lib/*.so mr,
         ${pkgs.tzdata}/share/zoneinfo/** r,
 
         network inet stream,
@@ -156,25 +170,26 @@ in
         network inet dgram,
         network inet6 dgram,
 
-        ${pkgs.gcc.cc}/lib/libssp.so.* mr,
-        ${pkgs.libsodium}/lib/libsodium.so.* mr,
+        ${pkgs.gcc.cc.lib}/lib/libssp.so.* mr,
+        ${pkgs.libsodium.out}/lib/libsodium.so.* mr,
         ${pkgs.systemd}/lib/libsystemd.so.* mr,
-        ${pkgs.xz}/lib/liblzma.so.* mr,
-        ${pkgs.libgcrypt}/lib/libgcrypt.so.* mr,
-        ${pkgs.libgpgerror}/lib/libgpg-error.so.* mr,
-        ${pkgs.libcap}/lib/libcap.so.* mr,
+        ${pkgs.xz.out}/lib/liblzma.so.* mr,
+        ${pkgs.libgcrypt.out}/lib/libgcrypt.so.* mr,
+        ${pkgs.libgpgerror.out}/lib/libgpg-error.so.* mr,
+        ${pkgs.libcap.lib}/lib/libcap.so.* mr,
         ${pkgs.lz4}/lib/liblz4.so.* mr,
-        ${pkgs.attr}/lib/libattr.so.* mr,
+        ${pkgs.attr.out}/lib/libattr.so.* mr,
 
-        ${resolverListFile} r,
+        ${cfg.resolverList} r,
       }
     ''));
 
-    users.extraUsers.dnscrypt-proxy = {
-      uid = config.ids.uids.dnscrypt-proxy;
+    users.users.dnscrypt-proxy = {
       description = "dnscrypt-proxy daemon user";
+      isSystemUser = true;
+      group = "dnscrypt-proxy";
     };
-    users.extraGroups.dnscrypt-proxy.gid = config.ids.gids.dnscrypt-proxy;
+    users.groups.dnscrypt-proxy = {};
 
     systemd.sockets.dnscrypt-proxy = {
       description = "dnscrypt-proxy listening socket";
@@ -187,16 +202,21 @@ in
 
     systemd.services.dnscrypt-proxy = {
       description = "dnscrypt-proxy daemon";
+
       after = [ "network.target" ] ++ optional apparmorEnabled "apparmor.service";
       requires = [ "dnscrypt-proxy.socket "] ++ optional apparmorEnabled "apparmor.service";
+
       serviceConfig = {
         Type = "simple";
         NonBlocking = "true";
         ExecStart = "${dnscrypt-proxy}/bin/dnscrypt-proxy ${toString daemonArgs}";
+
         User = "dnscrypt-proxy";
         Group = "dnscrypt-proxy";
+
         PrivateTmp = true;
         PrivateDevices = true;
+        ProtectHome = true;
       };
     };
   };
