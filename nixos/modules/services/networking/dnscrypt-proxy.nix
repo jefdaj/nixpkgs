@@ -90,7 +90,7 @@ in
         example = literalExample "${pkgs.dnscrypt-proxy}/share/dnscrypt-proxy/dnscrypt-resolvers.csv";
         default = pkgs.fetchurl {
           url = "https://raw.githubusercontent.com/jedisct1/dnscrypt-proxy/master/dnscrypt-resolvers.csv";
-          sha256 = "07kbbisrvrqdxif3061hxj3whin3llg4nh50ln7prisi2vbd76xd";
+          sha256 = "0lac20qhcgjxxiiz8jzcn3hkqj4ywl58hahp5n2i6vf9akfyqp7c";
         };
         defaultText = "pkgs.fetchurl { url = ...; sha256 = ...; }";
       };
@@ -162,7 +162,7 @@ in
         /etc/group r,
         ${config.environment.etc."nsswitch.conf".source} r,
 
-        ${pkgs.glibc.out}/lib/*.so mr,
+        ${getLib pkgs.glibc}/lib/*.so mr,
         ${pkgs.tzdata}/share/zoneinfo/** r,
 
         network inet stream,
@@ -170,15 +170,15 @@ in
         network inet dgram,
         network inet6 dgram,
 
-        ${pkgs.gcc.cc.lib}/lib/libssp.so.* mr,
-        ${pkgs.libsodium.out}/lib/libsodium.so.* mr,
-        ${pkgs.systemd}/lib/libsystemd.so.* mr,
-        ${pkgs.xz.out}/lib/liblzma.so.* mr,
-        ${pkgs.libgcrypt.out}/lib/libgcrypt.so.* mr,
-        ${pkgs.libgpgerror.out}/lib/libgpg-error.so.* mr,
-        ${pkgs.libcap.lib}/lib/libcap.so.* mr,
-        ${pkgs.lz4}/lib/liblz4.so.* mr,
-        ${pkgs.attr.out}/lib/libattr.so.* mr,
+        ${getLib pkgs.gcc.cc}/lib/libssp.so.* mr,
+        ${getLib pkgs.libsodium}/lib/libsodium.so.* mr,
+        ${getLib pkgs.systemd}/lib/libsystemd.so.* mr,
+        ${getLib pkgs.xz}/lib/liblzma.so.* mr,
+        ${getLib pkgs.libgcrypt}/lib/libgcrypt.so.* mr,
+        ${getLib pkgs.libgpgerror}/lib/libgpg-error.so.* mr,
+        ${getLib pkgs.libcap}/lib/libcap.so.* mr,
+        ${getLib pkgs.lz4}/lib/liblz4.so.* mr,
+        ${getLib pkgs.attr}/lib/libattr.so.* mr,
 
         ${cfg.resolverList} r,
       }

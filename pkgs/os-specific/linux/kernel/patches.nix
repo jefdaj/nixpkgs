@@ -22,8 +22,11 @@ let
     assert kversion == kernel.version;
     { name = "grsecurity-${grversion}-${kversion}";
       inherit grversion kernel patches kversion revision;
+      # When updating versions/hashes, ALWAYS use the official version; we use
+      # this mirror only because upstream removes sources files immediately upon
+      # releasing a new version ...
       patch = fetchurl {
-        url = "https://grsecurity.net/${branch}/grsecurity-${grversion}-${kversion}-${revision}.patch";
+        url = "https://raw.githubusercontent.com/slashbeast/grsecurity-scrape/master/test/grsecurity-${grversion}-${kversion}-${revision}.patch";
         inherit sha256;
       };
       features.grsecurity = true;
@@ -85,42 +88,19 @@ rec {
     sha256 = "00b1rqgd4yr206dxp4mcymr56ymbjcjfa4m82pxw73khj032qw3j";
   };
 
-  grsecurity_3_14 = grsecPatch
-    { kernel    = pkgs.grsecurity_base_linux_3_14;
-      patches   = [ grsecurity_fix_path_3_14 ];
-      kversion  = "3.14.51";
-      revision  = "201508181951";
-      branch    = "stable";
-      sha256    = "1sp1gwa7ahzflq7ayb51bg52abrn5zx1hb3pff3axpjqq7vfai6f";
-    };
+  grsecurity_3_14 = throw "grsecurity stable is no longer supported";
 
-  grsecurity_4_4 = grsecPatch
-    { kernel    = pkgs.grsecurity_base_linux_4_4;
-      patches   = [ grsecurity_fix_path_4_4 ];
-      kversion  = "4.4.5";
-      revision  = "201603131305";
-      sha256    = "04k4nhshl6r5n41ha5620s7cd70dmmmvyf9mnn5359jr1720kxpf";
-    };
+  grsecurity_4_4 = throw "grsecurity stable is no longer supported";
 
   grsecurity_4_5 = grsecPatch
     { kernel    = pkgs.grsecurity_base_linux_4_5;
       patches   = [ grsecurity_fix_path_4_5 ];
-      kversion  = "4.5.3";
-      revision  = "201605080858";
-      sha256    = "0m6x45n9ayn4022r64dx7lxfxg3s632hlrr0260ac9gc0abyk06j";
+      kversion  = "4.5.5";
+      revision  = "201605211442";
+      sha256    = "15bg2j6y9jxjdcgxlbdj1g1wwf5afm3yzjczh79dj3v8z2hwz097";
     };
 
   grsecurity_latest = grsecurity_4_5;
-
-  grsecurity_fix_path_3_14 =
-    { name = "grsecurity-fix-path-3.14";
-      patch = ./grsecurity-path-3.14.patch;
-    };
-
-  grsecurity_fix_path_4_4 =
-    { name = "grsecurity-fix-path-4.4";
-      patch = ./grsecurity-path-4.4.patch;
-    };
 
   grsecurity_fix_path_4_5 =
     { name = "grsecurity-fix-path-4.5";

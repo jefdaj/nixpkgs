@@ -266,6 +266,8 @@
       emby = 242;
       graylog = 243;
       sniproxy = 244;
+      nzbget = 245;
+      mosquitto = 246;
       jeffwiki = 299;
 
       # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
@@ -503,6 +505,8 @@
       factorio = 241;
       emby = 242;
       sniproxy = 244;
+      nzbget = 245;
+      mosquitto = 246;
       jeffwiki = 299;
 
       # When adding a gid, make sure it doesn't match an existing

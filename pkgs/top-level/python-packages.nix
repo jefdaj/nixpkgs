@@ -247,6 +247,8 @@ in modules // {
 
   pygame = callPackage ../development/python-modules/pygame { };
 
+  pygame-git = callPackage ../development/python-modules/pygame/git.nix { };
+
   pygobject = callPackage ../development/python-modules/pygobject { };
 
   pygobject3 = callPackage ../development/python-modules/pygobject/3.nix { };
@@ -267,6 +269,7 @@ in modules // {
   pyqt5 = pkgs.qt55.callPackage ../development/python-modules/pyqt/5.x.nix {
     sip = self.sip_4_16;
     pythonDBus = self.dbus;
+    python = self.python;
   };
 
   pyside = callPackage ../development/python-modules/pyside { };
@@ -369,8 +372,29 @@ in modules // {
     };
   };
 
+  acme_0_5_0 = buildPythonPackage rec {
+    version = "0.5.0";
+    name = "acme-${version}";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "letsencrypt";
+      repo = "letsencrypt";
+      rev = "v${version}";
+      sha256 = "0x098cdyfgqvh7x5d3sz56qjpjyg5b4fl82086sm43d8mbz0h5rm";
+    };
+
+    propagatedBuildInputs = with self; [
+      cryptography pyasn1 pyopenssl pyRFC3339 pytz requests2 six werkzeug mock
+      ndg-httpsclient
+    ];
+
+    buildInputs = with self; [ nose ];
+
+    sourceRoot = "letsencrypt-v${version}-src/acme";
+  };
+
   acme = buildPythonPackage rec {
-    inherit (pkgs.letsencrypt) src version;
+    inherit (pkgs.certbot) src version;
 
     name = "acme-${version}";
 
@@ -385,13 +409,13 @@ in modules // {
 
   acme-tiny = buildPythonPackage rec {
     name = "acme-tiny-${version}";
-    version = "20151229";
-    rev = "f61f72c212cea27f388eb4a26ede0d65035bdb53";
+    version = "2016-03-26";
 
-    src = pkgs.fetchgit {
-      inherit rev;
-      url = "https://github.com/diafygi/acme-tiny.git";
-      sha256 = "dde59354e483bdff3dfd06717c094889ae673efb568e40b150b4695b0c539649";
+    src = pkgs.fetchFromGitHub {
+      sha256 = "0ngmr3kxcvlqa9mrv3gx0rg4r67xvdjplqfminxliri3ipak853g";
+      rev = "7a5a2558c8d6e5ab2a59b9fec9633d9e63127971";
+      repo = "acme-tiny";
+      owner = "diafygi";
     };
 
     # source doesn't have any python "packaging" as such
@@ -402,7 +426,6 @@ in modules // {
 
     patchPhase = ''
       substituteInPlace acme_tiny.py --replace "openssl" "${pkgs.openssl.bin}/bin/openssl"
-      substituteInPlace letsencrypt/le_util.py --replace '"sw_vers"' '"/usr/bin/sw_vers"'
     '';
 
     installPhase = ''
@@ -671,7 +694,7 @@ in modules // {
     '';
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -1740,7 +1763,7 @@ in modules // {
       homepage = http://crummy.com/software/BeautifulSoup/bs4/;
       description = "HTML and XML parser";
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -1757,7 +1780,7 @@ in modules // {
       homepage = http://crummy.com/software/BeautifulSoup/bs4/;
       description = "HTML and XML parser";
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
 
     disabled = isPy3k;
@@ -1791,7 +1814,7 @@ in modules // {
 
     meta = {
       description = "A Session and Caching library with WSGI Middleware";
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -2509,7 +2532,7 @@ in modules // {
      meta = {
        description = "UNKNOWN";
        homepage = "UNKNOWN";
-       maintainers = with maintainers; [ iElectric ];
+       maintainers = with maintainers; [ domenkozar ];
      };
    };
 
@@ -2624,7 +2647,7 @@ in modules // {
     };
 
     propagatedBuildInputs = [ self.botocore self.jmespath ] ++
-                            (if isPy3k then [] else [self.futures_2_2]);
+                            (if isPy3k then [] else [self.futures]);
     buildInputs = [ self.docutils self.nose self.mock ];
     checkPhase = ''
       runHook preCheck
@@ -3558,7 +3581,7 @@ in modules // {
     propagatedBuildInputs = with self; [ self.translationstring self.iso8601 ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -3853,7 +3876,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -4230,7 +4253,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -4245,7 +4268,7 @@ in modules // {
     buildInputs = with self; [ pycparser mock pytest py ] ++ optionals (!isPyPy) [ cffi ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       description = "Modern password hashing for your software and your servers";
       license = licenses.asl20;
       homepage = https://github.com/pyca/bcrypt/;
@@ -4268,7 +4291,7 @@ in modules // {
     '';
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       homepage = https://cffi.readthedocs.org/;
       license = with licenses; [ mit ];
       description = "Foreign Function Interface for Python calling C code";
@@ -4334,7 +4357,7 @@ in modules // {
       description = "C parser in Python";
       homepage = https://github.com/eliben/pycparser;
       license = licenses.bsd3;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -4358,7 +4381,7 @@ in modules // {
         self.selenium;
 
     meta = {
-      maintainers = with maintainers; [ iElectric lovek323 madjar ];
+      maintainers = with maintainers; [ domenkozar lovek323 madjar ];
       platforms = platforms.unix;
     };
   };
@@ -4387,7 +4410,7 @@ in modules // {
       description = "pytest plugin with mechanisms for caching across test runs";
     };
   };
-  
+
   pytestdjango = buildPythonPackage rec {
     name = "pytest-django-${version}";
     version = "2.9.1";
@@ -4396,7 +4419,7 @@ in modules // {
       url = "mirror://pypi/p/pytest-django/${name}.tar.gz";
       sha256 = "1mmc7zsz3dlhs6sx4sppkj1vgshabi362r1a8b8wpj1qfximpqcb";
     };
-    
+
     # doing this to allow depending packages to find
     # pytest's binaries
     pytest = self.pytest;
@@ -5120,7 +5143,7 @@ in modules // {
       ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -5147,7 +5170,7 @@ in modules // {
       ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -5170,7 +5193,7 @@ in modules // {
     '';
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -5901,17 +5924,43 @@ in modules // {
   };
 
   fake_factory = buildPythonPackage rec {
-    name = "fake-factory-0.2";
+    name = "fake-factory-${version}";
+    version = "0.5.7";
+
     src = pkgs.fetchurl {
-      url = mirror://pypi/f/fake-factory/fake-factory-0.2.tar.gz;
-      sha256 = "0qdmk8p4anrj9mf95dh9v7bkhv1pz69hvhlw380kj4iz7b44b6zn";
+      url = "mirror://pypi/f/fake-factory/${name}.tar.gz";
+      sha256 = "1chmarnrdzn4r017n8qlic0m0bbnhw04s3hkwribjvm3mqpb6pa0";
     };
+
+    propagatedBuildInputs = with self; [ six dateutil ipaddress mock ];
+    checkPhase = ''
+      ${python.interpreter} -m unittest faker.tests
+    '';
+
     meta = {
       description = "A Python package that generates fake data for you";
       homepage    = https://pypi.python.org/pypi/fake-factory;
       license     = licenses.mit;
       maintainers = with maintainers; [ lovek323 ];
       platforms   = platforms.unix;
+    };
+  };
+
+  factory_boy = buildPythonPackage rec {
+    name = "factory_boy-${version}";
+    version = "2.6.1";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/f/factory_boy/${name}.tar.gz";
+      sha256 = "0a21f8kq917fj8xgmyp6gy8vcrlzzgwn80qas0d76h3vjbdy0bdq";
+    };
+
+    propagatedBuildInputs = with self; [ fake_factory ];
+
+    meta = {
+      description = "A Python package to create factories for complex objects";
+      homepage    = https://github.com/rbarrois/factory_boy;
+      license     = licenses.mit;
     };
   };
 
@@ -6251,12 +6300,12 @@ in modules // {
   };
 
   GitPython = buildPythonPackage rec {
-    version = "1.0.1";
+    version = "2.0.2";
     name = "GitPython-${version}";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/G/GitPython/GitPython-${version}.tar.gz";
-      sha256 = "0q7plxnbbkp5dd0k73736l7gf932a89yy920yrgl8amfpixw324w";
+      sha256 = "18842123a88rihgh84rmjabmbn3zq1jv0227ypcpsxc5smxzws6i";
     };
 
     buildInputs = with self; [ mock nose ];
@@ -6656,6 +6705,31 @@ in modules // {
     meta = with stdenv.lib; {
       description = "A python wrapper for the various Internet Archive APIs";
       homepage = "https://github.com/jjjake/internetarchive";
+    };
+  };
+
+  jug = buildPythonPackage rec {
+    version = "1.2.1";
+    name = "jug-${version}";
+    buildInputs = with self; [ nose numpy ];
+    propagatedBuildInputs = with self; [
+      pyyaml
+      redis
+      six
+      modules.sqlite3
+      pkgs.zlib
+    ];
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/J/Jug/Jug-${version}.tar.gz";
+      sha256 = "0sg3arfsmf1g4cqfdah3g6lqxj10v5780grlsaln6wj3yclp5gyx";
+    };
+
+    meta = {
+      description = "A Task-Based Parallelization Framework";
+      license = licenses.mit;
+      url = https://jug.readthedocs.org/;
+      maintainers = with maintainers; [ luispedro ];
     };
   };
 
@@ -7234,7 +7308,7 @@ in modules // {
     };
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -7505,7 +7579,7 @@ in modules // {
     ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
 
@@ -7527,7 +7601,7 @@ in modules // {
     propagatedBuildInputs = with self; [ beaker pyramid ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       platforms = platforms.all;
       broken = true;
     };
@@ -7550,7 +7624,7 @@ in modules // {
     ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -7568,7 +7642,7 @@ in modules // {
     propagatedBuildInputs = with self; [ jinja2 pyramid ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -7611,7 +7685,7 @@ in modules // {
     propagatedBuildInputs = with self; [ pyramid ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -7627,7 +7701,7 @@ in modules // {
 
     propagatedBuildInputs = with self; [ transaction pyramid ];
     meta = {
-      maintainers = with maintainers; [ garbas iElectric matejc ];
+      maintainers = with maintainers; [ garbas domenkozar matejc ];
       platforms = platforms.all;
     };
   };
@@ -7726,7 +7800,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -7848,7 +7922,7 @@ in modules // {
     buildInputs = with self; [ zope_interface zodb ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -7864,7 +7938,7 @@ in modules // {
     buildInputs = with self; [ zope_interface zope_location zope_schema ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -7894,7 +7968,7 @@ in modules // {
     buildInputs = with self; [ nose mock ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       description = "A simple statsd client";
       license = licenses.mit;
       homepage = https://github.com/jsocol/pystatsd;
@@ -7910,14 +7984,25 @@ in modules // {
   };
 
   py3status = buildPythonPackage rec {
-    name = "py3status-2.8";
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/py3status/${name}.tar.gz";
-      sha256 = "1aq4l1lj6j54a8mh9y3yscbxv41bbhz89fiwnydj2gx0md5sq5v5";
+    version = "2.9";
+    name = "py3status-${version}";
+    src = pkgs.fetchFromGitHub {
+      owner = "ultrabug";
+      repo = "py3status";
+      rev = version;
+      sha256 = "1nvdqwhgk0zff5kspgrh5c5vg1vdnz6gpjplbqi3nz41qws48f1y";
     };
     propagatedBuildInputs = with self; [ requests2 ];
     prePatch = ''
       sed -i -e "s|\[\"acpi\"|\[\"${pkgs.acpi}/bin/acpi\"|" py3status/modules/battery_level.py
+      sed -i -e "s|notify-send|${pkgs.libnotify}/bin/notify-send|" py3status/modules/battery_level.py
+      sed -i -e "s|/usr/bin/whoami|${pkgs.coreutils}/bin/whoami|" py3status/modules/external_script.py
+      sed -i -e "s|'amixer|'${pkgs.alsaUtils}/bin/amixer|" py3status/modules/volume_status.py
+      sed -i -e "s|'i3-nagbar|'${pkgs.i3}/bin/i3-nagbar|" py3status/modules/pomodoro.py
+      sed -i -e "s|'free|'${pkgs.procps}/bin/free|" py3status/modules/sysdata.py
+      sed -i -e "s|'sensors|'${pkgs.lm_sensors}/bin/sensors|" py3status/modules/sysdata.py
+      sed -i -e "s|'setxkbmap|'${pkgs.xorg.setxkbmap}/bin/setxkbmap|" py3status/modules/keyboard_layout.py
+      sed -i -e "s|'xset|'${pkgs.xorg.xset}/bin/xset|" py3status/modules/keyboard_layout.py
     '';
     meta = {
       maintainers = with maintainers; [ garbas ];
@@ -7954,7 +8039,7 @@ in modules // {
     propagatedBuildInputs = with self; [ pyramid zodb zodburi ZEO ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -7971,7 +8056,7 @@ in modules // {
     propagatedBuildInputs = with self; [ repoze_sendmail ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -8008,7 +8093,7 @@ in modules // {
     buildInputs = with self; [ transaction ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -8024,7 +8109,7 @@ in modules // {
     buildInputs = with self; [ zodb mock ZEO ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -8093,7 +8178,7 @@ in modules // {
     ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -8142,7 +8227,7 @@ in modules // {
     };
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -8160,7 +8245,7 @@ in modules // {
     propagatedBuildInputs = with self; [ zope_interface sphinx ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -8270,7 +8355,7 @@ in modules // {
     buildInputs = with self; [ zope_testing ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -8304,7 +8389,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -8324,7 +8409,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-       maintainers = with maintainers; [ garbas iElectric ];
+       maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -8371,7 +8456,7 @@ in modules // {
     };
 
     propagatedBuildInputs = with self; [
-      pyGtkGlade pkgs.libtorrentRasterbar twisted Mako chardet pyxdg self.pyopenssl modules.curses
+      pyGtkGlade pkgs.libtorrentRasterbar twisted Mako chardet pyxdg self.pyopenssl modules.curses service-identity
     ];
 
     nativeBuildInputs = [ pkgs.intltool ];
@@ -8387,7 +8472,7 @@ in modules // {
       homepage = http://deluge-torrent.org;
       description = "Torrent client";
       license = licenses.gpl3Plus;
-      maintainers = with maintainers; [ iElectric ebzzry ];
+      maintainers = with maintainers; [ domenkozar ebzzry ];
       platforms = platforms.all;
     };
   };
@@ -8407,7 +8492,7 @@ in modules // {
       homepage = http://freedesktop.org/wiki/Software/pyxdg;
       description = "Contains implementations of freedesktop.org standards";
       license = licenses.lgpl2;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -8423,7 +8508,7 @@ in modules // {
       homepage = https://github.com/chardet/chardet;
       description = "Universal encoding detector";
       license = licenses.lgpl2;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -8949,11 +9034,11 @@ in modules // {
 
   SPARQLWrapper = buildPythonPackage rec {
     name = "SPARQLWrapper-${version}";
-    version = "1.7.4";
+    version = "1.7.6";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/S/SPARQLWrapper/SPARQLWrapper-${version}.tar.gz";
-      sha256 = "1dpwwlcdk4m8wr3d9lb24g1xcvs202c0ir4q3jcijy88is3bvgmp";
+      sha256 = "1y12hpsfjd779yi29bhvl6g4vszadjvd8jw38z5rg77b034vxjnw";
     };
 
     # break circular dependency loop
@@ -9271,7 +9356,7 @@ in modules // {
       homepage = http://code.google.com/p/feedparser/;
       description = "Universal feed parser";
       license = licenses.bsd2;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -9641,7 +9726,7 @@ in modules // {
       homepage = http://flexget.com/;
       description = "Multipurpose automation tool for content like torrents";
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -9694,7 +9779,7 @@ in modules // {
       homepage = https://github.com/ckreutzer/python-tvrage;
       description = "Client interface for tvrage.com's XML-based api feeds";
       license = licenses.bsd3;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -9777,7 +9862,7 @@ in modules // {
       homepage = https://github.com/Julian/jsonschema;
       description = "An implementation of JSON Schema validation for Python";
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -10644,7 +10729,7 @@ in modules // {
         major web browsers.
       '';
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric prikhi ];
+      maintainers = with maintainers; [ domenkozar prikhi ];
     };
   });
 
@@ -11458,7 +11543,6 @@ in modules // {
     };
   };
 
-
   jsonpath_rw = buildPythonPackage rec {
     name = "jsonpath-rw-${version}";
     version = "1.4.0";
@@ -12025,7 +12109,7 @@ in modules // {
       description = "Super-fast templating language";
       homepage = http://www.makotemplates.org;
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -12043,7 +12127,7 @@ in modules // {
       description = "Implements a XML/HTML/XHTML Markup safe string";
       homepage = http://dev.pocoo.org;
       license = licenses.bsd3;
-      maintainers = with maintainers; [ iElectric garbas ];
+      maintainers = with maintainers; [ domenkozar garbas ];
     };
   };
 
@@ -12688,7 +12772,7 @@ in modules // {
                             (optionals isPy26 [ importlib ordereddict ]);
 
     meta = {
-      homepage = https://github.com/iElectric/mr.bob.git;
+      homepage = https://github.com/domenkozar/mr.bob.git;
       description = "A tool to generate code skeletons from templates";
     };
   };
@@ -12751,7 +12835,7 @@ in modules // {
       homepage = http://bmc.github.com/munkres/;
       description = "Munkres algorithm for the Assignment Problem";
       license = licenses.bsd3;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -12772,7 +12856,7 @@ in modules // {
       homepage = http://alastair/python-musicbrainz-ngs;
       description = "Python bindings for musicbrainz NGS webservice";
       license = licenses.bsd2;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -13011,7 +13095,7 @@ in modules // {
     };
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.linux;
     };
   };
@@ -13161,7 +13245,7 @@ in modules // {
     name = "slixmpp-${version}";
     version = "1.1";
 
-    disabled = (!isPy34);
+    disabled = pythonOlder "3.4";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/s/slixmpp/${name}.tar.gz";
@@ -13827,6 +13911,25 @@ in modules // {
       '';
       license = licenses.bsd2;
       maintainers = with maintainers; [ fuuzetsu ];
+    };
+  };
+
+  livestreamer-curses = buildPythonPackage rec {
+    version = "1.5.2";
+    name = "livestreamer-curses-${version}";
+    disabled = isPyPy;
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/gapato/livestreamer-curses/archive/v${version}.tar.gz";
+      sha256 = "1v49sym6mrci9dxy0a7cpbp4bv6fg2ijj6rwk4wzg18c2x4qzkhn";
+    };
+
+    propagatedBuildInputs = with self; [ curses livestreamer ];
+
+    meta = {
+      homepage = https://github.com/gapato/livestreamer-curses;
+      description = "Curses frontend for livestreamer";
+      license = licenses.mit;
     };
   };
 
@@ -15959,7 +16062,7 @@ in modules // {
     propagatedBuildInputs = with self; [ pytz ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.linux;
     };
   };
@@ -16512,6 +16615,7 @@ in modules // {
   });
 
   protobuf = self.protobuf2_6;
+  protobuf3_0 = (self.protobufBuild pkgs.protobuf3_0).override { doCheck = false; };
   protobuf2_6 = self.protobufBuild pkgs.protobuf2_6;
   protobuf2_5 = self.protobufBuild pkgs.protobuf2_5;
   protobufBuild = protobuf: buildPythonPackage rec {
@@ -16581,26 +16685,20 @@ in modules // {
   });
 
   psycopg2 = buildPythonPackage rec {
-    name = "psycopg2-2.5.4";
+    name = "psycopg2-2.6.1";
     disabled = isPyPy;
-
-    # error: invalid command 'test'
-    doCheck = false;
-
     src = pkgs.fetchurl {
       url = "mirror://pypi/p/psycopg2/${name}.tar.gz";
-      sha256 = "07ivzl7bq8bjcq5n90w4bsl29gjfm5l8yamw0paxh25si8r3zfi4";
+      sha256 = "0k4hshvrwsh8yagydyxgmd0pjm29lwdxkngcq9fzfzkmpsxrmkva";
     };
-
     buildInputs = optional stdenv.isDarwin pkgs.openssl;
     propagatedBuildInputs = with self; [ pkgs.postgresql ];
-
+    doCheck = false;
     meta = {
       description = "PostgreSQL database adapter for the Python programming language";
       license = with licenses; [ gpl2 zpt20 ];
     };
   };
-
 
   publicsuffix = buildPythonPackage rec {
     name = "publicsuffix-${version}";
@@ -18007,7 +18105,7 @@ in modules // {
       homepage = http://www.dalkescientific.om/Python/PyRSS2Gen.html;
       description = "Library for generating RSS 2.0 feeds";
       license = licenses.bsd2;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -18137,7 +18235,7 @@ in modules // {
       homepage = http://github.com/ericflo/pynzb;
       description = "Unified API for parsing NZB files";
       license = licenses.bsd3;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -18156,7 +18254,7 @@ in modules // {
       homepage = http://code.google.com/p/python-progressbar/;
       description = "Text progressbar library for python";
       license = licenses.lgpl3Plus;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   });
 
@@ -18904,7 +19002,7 @@ in modules // {
     disabled = isPy3k;
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -20176,7 +20274,7 @@ in modules // {
   setuptools_scm_18 = self.setuptools_scm.override rec {
     name = "setuptools_scm-${version}";
     version = "1.8.0";
-    
+
     # tests fail: ImportError: cannot import name 'find_files'
     disabled = isPy35;
 
@@ -20380,7 +20478,7 @@ in modules // {
       description = "Yet another simple static gallery generator";
       homepage = http://sigal.saimon.org/en/latest/index.html;
       license = licenses.mit;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -20793,7 +20891,7 @@ in modules // {
     buildInputs = with self; [ pillow nose_progressive nose mock blessings ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -20816,7 +20914,7 @@ in modules // {
     propagatedBuildInputs = with self; [ pillow blessings args ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -20836,7 +20934,7 @@ in modules // {
     buildInputs = with self; [ pytest py mock pkgs.glibcLocales ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -20855,7 +20953,7 @@ in modules // {
     doCheck = !isPy3k;
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -20873,7 +20971,7 @@ in modules // {
     propagatedBuildInputs = with self; [ modules.curses ];
 
     meta = {
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -22961,7 +23059,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-       maintainers = with maintainers; [ garbas iElectric ];
+       maintainers = with maintainers; [ garbas domenkozar ];
        platforms = platforms.all;
     };
   };
@@ -23235,7 +23333,7 @@ in modules // {
     propagatedBuildInputs = with self; [ six webob ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
     };
   };
 
@@ -24002,7 +24100,7 @@ in modules // {
     propagatedBuildInputs = with self; [ sqlalchemy transaction ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -24383,7 +24481,7 @@ in modules // {
     propagatedBuildInputs = with self; [ pep8 ];
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -24419,7 +24517,7 @@ in modules // {
     };
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -24502,7 +24600,7 @@ in modules // {
     doCheck = false;
 
     meta = {
-      maintainers = with maintainers; [ garbas iElectric ];
+      maintainers = with maintainers; [ garbas domenkozar ];
       platforms = platforms.all;
     };
   };
@@ -24597,7 +24695,7 @@ in modules // {
       homepage = http://pypi.python.org/pypi/Unidecode/;
       description = "ASCII transliterations of Unicode text";
       license = licenses.gpl2;
-      maintainers = with maintainers; [ iElectric ];
+      maintainers = with maintainers; [ domenkozar ];
     };
   };
 
@@ -26115,14 +26213,14 @@ in modules // {
   };
 
   neovim = buildPythonPackage rec {
-    version = "0.1.7";
+    version = "0.1.8";
     name = "neovim-${version}";
 
     disabled = isPy35;
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/n/neovim/${name}.tar.gz";
-      sha256 = "0il6h9qpy9rkgz16yn2bhhg5f23w41wvm9ivlscx5l55llq9sd9q";
+      sha256 = "06g84f0l208jrc1iqa4vk9kgwr77z1ya8cq39cygpq88yjj28whi";
     };
 
     propagatedBuildInputs = with self; [ msgpack ]
@@ -26310,7 +26408,7 @@ in modules // {
     version = "0.9";
 
     namePrefix = "";
-    disabled = (!isPy34);
+    disabled = pythonOlder "3.4";
 
     buildInputs = with self; [ pytest ];
     propagatedBuildInputs = with self ; [ aiodns slixmpp pyinotify potr ];
@@ -26608,6 +26706,28 @@ in modules // {
       license = licenses.mit;
       maintainers = [ maintainers.makefu ];
     };
+  };
+
+  xgboost = buildPythonPackage rec {
+    name = "xgboost-${version}";
+
+    inherit (pkgs.xgboost) version src meta;
+
+    propagatedBuildInputs = with self; [ scipy ];
+    buildInputs = with self; [ nose ];
+
+    postPatch = ''
+      cd python-package
+
+      cat <<EOF >xgboost/libpath.py
+      def find_lib_path():
+        return ["${pkgs.xgboost}/lib/libxgboost.so"]
+      EOF
+    '';
+
+    postInstall = ''
+      rm -rf $out/xgboost
+    '';
   };
 
   xkcdpass = buildPythonPackage rec {
@@ -27132,6 +27252,54 @@ in modules // {
     };
   };
 
+  Keras = buildPythonPackage rec {
+    name = "Keras-${version}";
+    version = "1.0.3";
+    disabled = isPy3k;
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/k/keras/${name}.tar.gz";
+      sha256 = "0wi826bvifvy12w490ghj1g45z5xb83q2cadqh425sg56p98khaq";
+    };
+
+    propagatedBuildInputs = with self; [
+      six Theano pyyaml
+    ];
+
+    meta = {
+      description = "Deep Learning library for Theano and TensorFlow";
+      homepage = "https://keras.io";
+      license = licenses.mit;
+      maintainers = with maintainers; [ NikolaMandic ];
+    };
+  };
+
+  Lasagne = buildPythonPackage rec {
+    name = "Lasagne-${version}";
+    version = "0.1";
+    disabled = isPy3k;
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/l/lasagne/${name}.tar.gz";
+      sha256 = "0cqj86rdm6c7y5vq3i13qy76fg5xi3yjp4r0hpqy8hvynv54wqrw";
+    };
+
+    propagatedBuildInputs = with self; [
+      numpy 
+      Theano
+    ];
+
+    # there are no tests
+    doCheck = false;
+
+    meta = {
+      description = "Lightweight library to build and train neural networks in Theano";
+      homepage = "https://github.com/Lasagne/Lasagne";
+      maintainers = with maintainers; [ NikolaMandic ];
+      license = licenses.mit;
+    };
+  };
+
   sigtools = buildPythonPackage rec {
     name = "sigtools-${version}";
     version = "1.1a3";
@@ -27208,4 +27376,123 @@ in modules // {
       license = licenses.wtfpl;
     };
   };
+
+  # tensorflow is built from a downloaded wheel, because the upstream
+  # project's build system is an arcane beast based on
+  # bazel. Untangling it and building the wheel from source is an open
+  # problem.
+
+  tensorflow = self.tensorflowNoGpuSupport;
+
+  tensorflowNoGpuSupport = buildPythonPackage rec {
+    name = "tensorflow";
+    version = "0.8.0";
+    format = "wheel";
+
+    src = pkgs.fetchurl {
+      url = "https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-${version}-cp27-none-linux_x86_64.whl";
+      sha256 = "07lb6rknngq9bicd7z1q9caiqxlqn4fdx8q24s3rqvv9wi79szws";
+    };
+
+    propagatedBuildInputs = with self; [ numpy six protobuf3_0 pkgs.swig ];
+
+    preFixup = ''
+      RPATH="${stdenv.lib.makeLibraryPath [ pkgs.gcc.cc.lib pkgs.zlib ]}"
+      find $out -name '*.so' -exec patchelf --set-rpath "$RPATH" {} \;
+    '';
+
+    doCheck = false;
+
+    meta = {
+      description = "TensorFlow helps the tensors flow (no gpu support)";
+      homepage = http://tensorflow.org;
+      license = licenses.asl20;
+    };
+  };
+
+  simpleai = buildPythonPackage rec {
+     version = "0.7.11";
+     name = "simpleai-${version}";
+
+     src = pkgs.fetchurl {
+       url= "https://pypi.python.org/packages/source/s/simpleai/${name}.tar.gz";
+       sha256 = "03frjc5jxsz9xm24jz7qa4hcp0dicgazrxkdsa2rsnir672lwkwz";
+     };
+
+     propagatedBuildInputs = with self; [ numpy ];
+
+     disabled = isPy3k;
+
+     #No tests in archive
+     doCheck = false;
+
+     meta = {
+       homepage = https://github.com/simpleai-team/simpleai;
+       description = "This lib implements many of the artificial intelligence algorithms described on the book 'Artificial Intelligence, a Modern Approach'";
+       maintainers = with maintainers; [ NikolaMandic ];
+     };
+  };
+
+  tvdb_api = buildPythonPackage rec {
+    name = "tvdb_api-${version}";
+    version = "1.10";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/t/tvdb_api/${name}.tar.gz";
+      sha256 = "0hq887yb3rwc0rcw32lh7xdkk9bbrqy274aspzqkd6f7dyhp73ih";
+    };
+
+    disabled = isPy3k;
+
+    meta = {
+      description = "Simple to use TVDB (thetvdb.com) API in Python.";
+      homepage = "https://github.com/dbr/tvdb_api";
+      license = licenses.unlicense;
+      maintainers = with maintainers; [ peterhoeg ];
+    };
+  };
+
+  tvnamer = buildPythonPackage rec {
+    name = "tvnamer-${version}";
+    version = "2.3";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/t/tvnamer/${name}.tar.gz";
+      sha256 = "15i6qvhwhcx08c96xx3s2841yc7k8gxrqqvhw908c11g0045c2r3";
+    };
+
+    propagatedBuildInputs = with self; [
+      tvdb_api
+    ];
+
+    # tvdb_api isn't working with Python 3
+    disabled = isPy3k;
+
+    meta = {
+      description = "Automatic TV episode file renamer, uses data from thetvdb.com via tvdb_api.";
+      homepage = "https://github.com/dbr/tvnamer";
+      license = licenses.unlicense;
+      maintainers = with maintainers; [ peterhoeg ];
+    };
+  };
+
+  pybrain = buildPythonPackage rec {
+    name = "pybrain-${version}";
+    version = "0.3.3";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/pybrain/pybrain/archive/${version}.tar.gz";
+      sha256 = "114m99vsrps2gjqfm3i3kxx4nibjhjdzphsy2bhrxa5q3h2q14dz";
+    };
+
+    propagatedBuildInputs = with self; [ scipy ];
+
+    meta = {
+      homepage = "http://pybrain.org/";
+      description = "Modular Machine Learning Library for Python";
+      license = licenses.bsd3;
+      maintainers = with maintainers; [ NikolaMandic ];
+    };
+  };
+
 }
