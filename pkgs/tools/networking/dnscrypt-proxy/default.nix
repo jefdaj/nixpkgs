@@ -11,19 +11,20 @@ stdenv.mkDerivation rec {
     sha256 = "16lif3qhyfjpgg54vjlwpslxk90akmbhlpnn1szxm628bmpw6nl9";
   };
 
-  configureFlags = ''
-    ${optionalString stdenv.isLinux "--with-systemd"}
-  '';
+  configureFlags = optional stdenv.isLinux "--with-systemd";
 
   nativeBuildInputs = [ pkgconfig ];
 
   buildInputs = [ libsodium ] ++ optional stdenv.isLinux systemd;
+
+  outputs = [ "out" "man" ];
 
   meta = {
     description = "A tool for securing communications between a client and a DNS resolver";
     homepage = https://dnscrypt.org/;
     license = licenses.isc;
     maintainers = with maintainers; [ joachifm jgeerds ];
-    platforms = platforms.all;
+    # upstream claims OSX support, but Hydra fails
+    platforms = with platforms; allBut [ darwin ];
   };
 }

@@ -72,7 +72,7 @@ let
       run_progs=$(grep -v '^[[:space:]]*#' $out/* | grep 'RUN+="[^/$]' |
         sed -e 's/.*RUN+="\([^ "]*\)[ "].*/\1/' | uniq)
       for i in $import_progs $run_progs; do
-        if [[ ! -x ${pkgs.udev}/lib/udev/$i && ! $i =~ socket:.* ]]; then
+        if [[ ! -x ${udev}/lib/udev/$i && ! $i =~ socket:.* ]]; then
           echo "FAIL"
           echo "$i is called in udev rules but not installed by udev"
           exit 1
@@ -193,6 +193,7 @@ in
           <filename><replaceable>pkg</replaceable>/lib/udev/rules.d</filename>
           will be included.
         '';
+        apply = map getBin;
       };
 
       path = mkOption {

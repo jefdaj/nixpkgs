@@ -1,7 +1,7 @@
 { stdenv, fetchurl, intltool, pkgconfig, fetchpatch, jansson
 # deadbeef can use either gtk2 or gtk3
 , gtk2Support ? false, gtk2 ? null
-, gtk3Support ? true, gtk3 ? null, gsettings_desktop_schemas ? null, makeWrapper ? null
+, gtk3Support ? true, gtk3 ? null, gsettings_desktop_schemas ? null, wrapGAppsHook ? null
 # input plugins
 , vorbisSupport ? true, libvorbis ? null
 , mp123Support ? true, libmad ? null
@@ -30,7 +30,7 @@
 
 assert gtk2Support || gtk3Support;
 assert gtk2Support -> gtk2 != null;
-assert gtk3Support -> gtk3 != null && gsettings_desktop_schemas != null && makeWrapper != null;
+assert gtk3Support -> gtk3 != null && gsettings_desktop_schemas != null && wrapGAppsHook != null;
 assert vorbisSupport -> libvorbis != null;
 assert mp123Support -> libmad != null;
 assert flacSupport -> flac != null;
@@ -53,11 +53,11 @@ assert remoteSupport -> curl != null;
 
 stdenv.mkDerivation rec {
   name = "deadbeef-${version}";
-  version = "0.7.0";
+  version = "0.7.2";
 
   src = fetchurl {
     url = "mirror://sourceforge/project/deadbeef/${name}.tar.bz2";
-    sha256 = "0s6qip1zs83pig75pnd30ayiv1dbbj7s72px9mr31f4m0v86kaqx";
+    sha256 = "0rwdxxn7h94vlgblbkswyvj6pm82488v8x5nrmlrcsbzjjf2pccw";
   };
 
   buildInputs = with stdenv.lib; [ jansson ]
@@ -85,21 +85,16 @@ stdenv.mkDerivation rec {
     ;
 
   nativeBuildInputs = with stdenv.lib; [ intltool pkgconfig ]
-    ++ optional gtk3Support makeWrapper;
+    ++ optional gtk3Support wrapGAppsHook;
 
   enableParallelBuilding = true;
 
-  postInstall = if !gtk3Support then "" else ''
-    wrapProgram "$out/bin/deadbeef" \
-      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
-  '';
-
   meta = with stdenv.lib; {
     description = "Ultimate Music Player for GNU/Linux";
-    homepage = http://deadbeef.sourceforge.net/;
+    homepage = "http://deadbeef.sourceforge.net/";
     license = licenses.gpl2;
     platforms = platforms.linux;
     maintainers = [ maintainers.abbradar ];
-    repositories.git = https://github.com/Alexey-Yakovenko/deadbeef;
+    repositories.git = "https://github.com/Alexey-Yakovenko/deadbeef";
   };
 }

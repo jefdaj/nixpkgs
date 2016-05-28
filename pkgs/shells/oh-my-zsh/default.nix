@@ -7,12 +7,12 @@
 
 stdenv.mkDerivation rec {
   name = "oh-my-zsh-git-${version}";
-  version = "2016-03-11";
+  version = "2016-04-20";
 
   src = fetchgit {
     url = "https://github.com/robbyrussell/oh-my-zsh";
-    rev = "83cf8dc16f51babbb0193c5b97e568739c1f40de";
-    sha256 = "0lxs7c89c7ib7a1rfsdpc30gxi2q35mapcv2q44rlclv26nikkjv";
+    rev = "1b1315a777328095cd8b5f364fd4345eeae7c4bf";
+    sha256 = "0q3w96a9rjxmqknycxjqjs5mi0q2mark8yrfim7snxrf9ajv0ypk";
   };
 
   phases = "installPhase";

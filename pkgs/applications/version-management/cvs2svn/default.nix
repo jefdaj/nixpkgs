@@ -10,12 +10,12 @@ stdenv.mkDerivation rec {
 
   buildInputs = [python makeWrapper];
 
-  buildPhase = "true";
+  dontBuild = true;
   installPhase = ''
     python ./setup.py install --prefix=$out
     for i in bzr svn git; do
       wrapProgram $out/bin/cvs2$i \
-          --prefix PATH : "${lib.makeSearchPath "bin" [ cvs ]}" \
+          --prefix PATH : "${lib.makeBinPath [ cvs ]}" \
           --set PYTHONPATH "$(toPythonPath $out):$PYTHONPATH"
     done
   '';

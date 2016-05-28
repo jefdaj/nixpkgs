@@ -26,11 +26,20 @@ let
       inherit sha256;
     };
 
+  # Can't do separate $lib and $bin, as libs reference bins
+  outputs = [ "dev" "out" "man" ];
+
     buildInputs = [ zlib apr aprutil sqlite ]
       ++ stdenv.lib.optional httpSupport serf
       ++ stdenv.lib.optional pythonBindings python
       ++ stdenv.lib.optional perlBindings perl
       ++ stdenv.lib.optional saslSupport sasl;
+
+    patches = [ ./apr-1.patch ];
+
+    # SVN build seems broken on gcc5:
+    # https://gcc.gnu.org/gcc-5/porting_to.html
+    CPPFLAGS = "-P";
 
     configureFlags = ''
       ${if bdbSupport then "--with-berkeley-db" else "--without-berkeley-db"}
@@ -65,6 +74,12 @@ let
 
       mkdir -p $out/share/bash-completion/completions
       cp tools/client-side/bash_completion $out/share/bash-completion/completions/subversion
+
+    for f in $out/lib/*.la; do
+      substituteInPlace $f --replace "${expat.dev}/lib" "${expat.out}/lib"
+      substituteInPlace $f --replace "${zlib.dev}/lib" "${zlib.out}/lib"
+      substituteInPlace $f --replace "${sqlite.dev}/lib" "${sqlite.out}/lib"
+    done
     '';
 
     inherit perlBindings pythonBindings;
@@ -88,13 +103,13 @@ let
 in {
 
   subversion18 = common {
-    version = "1.8.15";
-    sha256 = "0b68rjy1sjd66nqcswrm1bhda3vk2ngkgs6drcanmzbcd3vs366g";
+    version = "1.8.16";
+    sha256 = "0imkxn25n6sbcgfldrx4z29npjprb1lxjm5fb89q4297161nx3zi";
   };
 
   subversion19 = common {
-    version = "1.9.3";
-    sha256 = "8bbf6bb125003d88ee1c22935a36b7b1ab7d957e0c8b5fbfe5cb6310b6e86ae0";
+    version = "1.9.4";
+    sha256 = "16cjkvvq628hbznkhqkppzs8nifcr7k43s5y4c32cgwqmgigjrqj";
   };
 
 }

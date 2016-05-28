@@ -20,14 +20,14 @@ stdenv.mkDerivation rec {
     export ANT_HOME=${ant}
 
     export BOOST_INCLUDEDIR=${boost.dev}/include
-    export BOOST_LIBRARYDIR=${boost.lib}/lib
+    export BOOST_LIBRARYDIR=${boost.out}/lib
     export OPENSSL_ROOT_DIR=${openssl}
 
     substituteInPlace cpp/cmake/FindValgrind.cmake \
       --replace "/usr/local" "${valgrind}"
 
     substituteInPlace cpp/CMakeLists.txt \
-      --replace '"/lib64" "/usr/lib64"' '"${attr}/lib" "${fuse}/lib"'
+      --replace '"/lib64" "/usr/lib64"' '"${attr.out}/lib" "${fuse}/lib"'
 
     export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${fuse}/include"
     export NIX_CFLAGS_LINK="$NIX_CFLAGS_LINK -L${fuse}/lib"

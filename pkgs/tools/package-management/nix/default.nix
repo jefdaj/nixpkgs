@@ -9,7 +9,7 @@ let
   common = { name, src }: stdenv.mkDerivation rec {
     inherit name src;
 
-    outputs = [ "out" "doc" ];
+    outputs = [ "dev" "out" "man" "doc" ];
 
     nativeBuildInputs = [ perl pkgconfig ];
 
@@ -22,8 +22,8 @@ let
     # would end up using the wrong bzip2 when cross-compiling.
     # XXX: The right thing would be to reinstate `--with-bzip2' in Nix.
     postUnpack =
-      '' export CPATH="${bzip2}/include"
-         export LIBRARY_PATH="${bzip2}/lib"
+      '' export CPATH="${bzip2.dev}/include"
+         export LIBRARY_PATH="${bzip2.out}/lib"
          export CXXFLAGS="-Wno-error=reserved-user-defined-literal"
       '';
 
@@ -97,10 +97,10 @@ in rec {
   };
 
   nixUnstable = lib.lowPrio (common rec {
-    name = "nix-1.12pre4509_69f28eb";
+    name = "nix-1.12pre4523_3b81b26";
     src = fetchurl {
-      url = "http://hydra.nixos.org/build/33307573/download/4/${name}.tar.xz";
-      sha256 = "0i8l9vlcrhmlq8f7hx3x083lpmp903xy0zbr4gsdc9365j9vlgqk";
+      url = "http://hydra.nixos.org/build/33598573/download/4/${name}.tar.xz";
+      sha256 = "0469zv09m85824w4vqj2ag0nciq51xvrvsys7bd5v4nrxihk9991";
     };
   });
 

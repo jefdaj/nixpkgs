@@ -12,11 +12,11 @@ in
 with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "lxc-${version}";
-  version = "1.1.5";
+  version = "2.0.1";
 
   src = fetchurl {
     url = "https://linuxcontainers.org/downloads/lxc/lxc-${version}.tar.gz";
-    sha256 = "1gnhgs4i2zamfdydj895inr9i072658wd47nf1ryw5710hdsv24m";
+    sha256 = "0l4fs6ckvip5akfa0vbjfk34ddvcv0c84mmpj9yrcfl67qwn31z9";
   };
 
   nativeBuildInputs = [
@@ -29,10 +29,6 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./support-db2x.patch
-    (fetchpatch {
-      url = "https://github.com/lxc/lxc/commit/3db8dd39a797f87f8b348f1b6b44953a25f3f170.patch";
-      sha256 = "0scbzm9dqqhqsl0ri8da8a34r4qj9ph0cg68l9s7gw01vpvqbs8l";
-    })
   ];
 
   XML_CATALOG_FILES = "${docbook_xml_dtd_45}/xml/dtd/docbook/catalog.xml";
@@ -40,7 +36,6 @@ stdenv.mkDerivation rec {
   configureFlags = [
     "--localstatedir=/var"
     "--sysconfdir=/etc"
-    "--enable-doc"
     "--disable-api-docs"
     "--with-init-script=none"
     "--with-distro=nixos" # just to be sure it is "unknown"
@@ -85,6 +80,6 @@ stdenv.mkDerivation rec {
     '';
 
     platforms = platforms.linux;
-    maintainers = with maintainers; [ simons wkennington globin fpletz ];
+    maintainers = with maintainers; [ wkennington globin fpletz ];
   };
 }

@@ -17,7 +17,7 @@ composableDerivation.composableDerivation {} {
             /* perl TODO export these (SWIG only if its present) HAVE_PERL=1 HAVE_PERL_DEVEL=1 HAVE_PERL_SWIG=1 */
           };
 
-  buildInputs = [ (pcre.override { unicodeSupport = true; })
+  buildInputs = [ pcre
                    openssl readline libxml2 ]; # optional python perl php java ?
 
   cfg = {
@@ -25,15 +25,14 @@ composableDerivation.composableDerivation {} {
     javaSupport = true;
   };
 
-  configurePhase = ":";
-  buildPhase = ":";
-  
+  dontBuild = true;
+
   installPhase = ''
     mkdir $TMP/build
     sh monetdb-install.sh --build=$TMP/build --prefix=$out --enable-sql --enable-xquery
   '';
 
-  meta = { 
+  meta = {
     description = "A open-source database system for high-performance applications in data mining, OLAP, GIS, XML Query, text and multimedia retrieval";
     homepage = http://monetdb.cwi.nl/;
     license = "MonetDB Public License"; # very similar to Mozilla public license (MPL) Version see 1.1 http://monetdb.cwi.nl/Legal/MonetDBLicense-1.1.html 

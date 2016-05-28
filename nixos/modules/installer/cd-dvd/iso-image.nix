@@ -79,7 +79,7 @@ let
     echo "options init=${config.system.build.toplevel}/init ${toString config.boot.kernelParams} nomodeset" >> $out/loader/entries/nixos-livecd-nomodeset.conf
 
     echo "default nixos-livecd" > $out/loader/loader.conf
-    echo "timeout ${builtins.toString config.boot.loader.gummiboot.timeout}" >> $out/loader/loader.conf
+    echo "timeout ${builtins.toString config.boot.loader.timeout}" >> $out/loader/loader.conf
   '';
 
   efiImg = pkgs.runCommand "efi-image_eltorito" { buildInputs = [ pkgs.mtools pkgs.libfaketime ]; }
@@ -364,12 +364,12 @@ in
       ''
         # After booting, register the contents of the Nix store on the
         # CD in the Nix database in the tmpfs.
-        ${config.nix.package}/bin/nix-store --load-db < /nix/store/nix-path-registration
+        ${config.nix.package.out}/bin/nix-store --load-db < /nix/store/nix-path-registration
 
         # nixos-rebuild also requires a "system" profile and an
         # /etc/NIXOS tag.
         touch /etc/NIXOS
-        ${config.nix.package}/bin/nix-env -p /nix/var/nix/profiles/system --set /run/current-system
+        ${config.nix.package.out}/bin/nix-env -p /nix/var/nix/profiles/system --set /run/current-system
       '';
 
     # Add vfat support to the initrd to enable people to copy the

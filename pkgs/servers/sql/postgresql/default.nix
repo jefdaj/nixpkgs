@@ -10,7 +10,8 @@ let
       inherit sha256;
     };
 
-    outputs = [ "out" "doc" ];
+    outputs = [ "out" "lib" "doc" ];
+    setOutputFlags = false; # $out retains configureFlags :-/
 
     buildInputs =
       [ zlib readline openssl ]
@@ -20,24 +21,38 @@ let
 
     makeFlags = [ "world" ];
 
-    configureFlags =
-      [ "--with-openssl" ]
+    configureFlags = [
+      "--with-openssl"
+      "--sysconfdir=/etc"
+      "--libdir=$(lib)/lib"
+    ]
       ++ lib.optional (stdenv.isDarwin)  "--with-uuid=e2fs"
       ++ lib.optional (!stdenv.isDarwin) "--with-ossp-uuid";
 
     patches =
       [ (if lib.versionAtLeast version "9.4" then ./disable-resolve_symlinks-94.patch else ./disable-resolve_symlinks.patch)
         ./less-is-more.patch
+        ./hardcode-pgxs-path.patch
       ];
 
     installTargets = [ "install-world" ];
 
     LC_ALL = "C";
 
+    postConfigure =
+      ''
+        # Hardcode the path to pgxs so pg_config returns the path in $out
+        substituteInPlace "src/bin/pg_config/pg_config.c" --replace HARDCODED_PGXS_PATH $out/lib
+      '';
+
     postInstall =
       ''
+        moveToOutput "lib/pgxs" "$out" # looks strange, but not deleting it
+        moveToOutput "lib/*.a" "$out"
+        moveToOutput "lib/libecpg*" "$out"
+
         # Prevent a retained dependency on gcc-wrapper.
-        substituteInPlace $out/lib/pgxs/src/Makefile.global --replace ${stdenv.cc}/bin/ld ld
+        substituteInPlace "$out/lib/pgxs/src/Makefile.global" --replace ${stdenv.cc}/bin/ld ld
       '';
 
     disallowedReferences = [ stdenv.cc ];

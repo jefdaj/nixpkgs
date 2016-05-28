@@ -67,7 +67,7 @@ stdenv.mkDerivation rec {
              "--with-gif=no" "--with-tiff=no" ];
 
   NIX_CFLAGS_COMPILE = stdenv.lib.optionalString (stdenv.isDarwin && withX)
-    "-I${cairo}/include/cairo";
+    "-I${cairo.dev}/include/cairo";
 
   postInstall = ''
     mkdir -p $out/share/emacs/site-lisp/
@@ -83,7 +83,7 @@ stdenv.mkDerivation rec {
     description = "GNU Emacs 24, the extensible, customizable text editor";
     homepage    = http://www.gnu.org/software/emacs/;
     license     = licenses.gpl3Plus;
-    maintainers = with maintainers; [ chaoflow lovek323 simons the-kenny jwiegley ];
+    maintainers = with maintainers; [ chaoflow lovek323 peti the-kenny jwiegley ];
     platforms   = platforms.all;
 
     longDescription = ''

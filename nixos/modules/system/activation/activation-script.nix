@@ -12,7 +12,7 @@ let
     '';
   });
 
-  path =
+  path = map getBin
     [ pkgs.coreutils pkgs.gnugrep pkgs.findutils
       pkgs.glibc # needed for getent
       pkgs.shadow

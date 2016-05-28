@@ -1,9 +1,10 @@
-{ stdenv, fetchurl, buildPythonPackage, pkgconfig, smpeg, libX11
+{ stdenv, lib, fetchurl, buildPythonPackage, python, smpeg, libX11
 , SDL, SDL_image, SDL_mixer, SDL_ttf, libpng, libjpeg, portmidi, isPy3k,
 }:
 
-buildPythonPackage {
-  name = "pygame-1.9.1";
+buildPythonPackage rec {
+  name = "pygame-${version}";
+  version = "1.9.1";
 
   src = fetchurl {
     url = "http://www.pygame.org/ftp/pygame-1.9.1release.tar.gz";
@@ -11,27 +12,38 @@ buildPythonPackage {
   };
 
   buildInputs = [
-    pkgconfig SDL SDL_image SDL_mixer SDL_ttf libpng libjpeg
+    SDL SDL_image SDL_mixer SDL_ttf libpng libjpeg
     smpeg portmidi libX11
   ];
 
-  # /nix/store/94kswjlwqnc0k2bnwgx7ckx0w2kqzaxj-stdenv/setup: line 73: python: command not found
+  # http://ubuntuforums.org/showthread.php?t=1960262
   disabled = isPy3k;
+
+  # Tests fail because of no audio device and display.
+  doCheck = false;
 
   patches = [ ./pygame-v4l.patch ];
 
   preConfigure = ''
-    for i in ${SDL_image} ${SDL_mixer} ${SDL_ttf} ${libpng} ${libjpeg} ${portmidi} ${libX11}; do
-      sed -e "/origincdirs =/a'$i/include'," -i config_unix.py
-      sed -e "/origlibdirs =/aoriglibdirs += '$i/lib'," -i config_unix.py
-    done
-
-    LOCALBASE=/ python config.py
+    sed \
+      -e "s/^origincdirs = .*/origincdirs = []/" \
+      -e "s/^origlibdirs = .*/origlibdirs = []/" \
+      -e "/\/include\/smpeg/d" \
+      -i config_unix.py
+    ${lib.concatMapStrings (dep: ''
+      sed \
+        -e "/^origincdirs =/aorigincdirs += ['${lib.getDev dep}/include']" \
+        -e "/^origlibdirs =/aoriglibdirs += ['${lib.getLib dep}/lib']" \
+        -i config_unix.py
+      '') buildInputs
+    }
+    LOCALBASE=/ ${python.interpreter} config.py
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Python library for games";
     homepage = "http://www.pygame.org/";
-    license = stdenv.lib.licenses.lgpl21Plus;
+    license = licenses.lgpl21Plus;
+    platforms = platforms.linux;
   };
 }

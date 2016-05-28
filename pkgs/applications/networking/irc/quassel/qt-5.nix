@@ -1,12 +1,11 @@
 { monolithic ? true # build monolithic Quassel
 , daemon ? false # build Quassel daemon
 , client ? false # build Quassel client
-, previews ? false # enable webpage previews on hovering over URLs
 , tag ? "" # tag added to the package name
 , static ? false # link statically
 
 , stdenv, fetchurl, cmake, makeWrapper, dconf
-, qtbase, qtscript, qtwebkit
+, qtbase, qtscript
 , phonon, libdbusmenu, qca-qt5
 
 , withKDE ? stdenv.isLinux # enable KDE integration
@@ -33,32 +32,22 @@ assert !buildClient -> !withKDE; # KDE is used by the client only
 
 let
   edf = flag: feature: [("-D" + feature + (if flag then "=ON" else "=OFF"))];
+  source = import ./source.nix { inherit fetchurl; };
 
 in with stdenv; mkDerivation rec {
+  inherit (source) src version;
 
-  version = "0.12.3";
   name = "quassel${tag}-${version}";
 
-  src = fetchurl {
-    url = "http://quassel-irc.org/pub/quassel-${version}.tar.bz2";
-    sha256 = "15vqjiw38mifvnc95bhvy0zl23xxldkwg2byx9xqbyw8rfgggmkb";
-  };
-
-  patches = [
-    # fix build with Qt 5.5
-    (fetchurl {
-      url = "https://github.com/quassel/quassel/commit/078477395aaec1edee90922037ebc8a36b072d90.patch";
-      sha256 = "1njwnay7pjjw0g7m0x5cwvck8xcznc7jbdfyhbrd121nc7jgpbc5";
-    })
-  ];
-
   enableParallelBuilding = true;
+
+  # Prevent ``undefined reference to `qt_version_tag''' in SSL check
+  NIX_CFLAGS_COMPILE = [ "-DQT_NO_VERSION_TAGGING=1" ];
 
   buildInputs =
        [ cmake makeWrapper qtbase ]
     ++ lib.optionals buildCore [qtscript qca-qt5]
     ++ lib.optionals buildClient [libdbusmenu phonon]
-    ++ lib.optionals (buildClient && previews) [qtwebkit]
     ++ lib.optionals (buildClient && withKDE) [
       extra-cmake-modules kconfigwidgets kcoreaddons
       knotifications knotifyconfig ktextwidgets kwidgetsaddons
@@ -73,8 +62,7 @@ in with stdenv; mkDerivation rec {
     ++ edf monolithic "WANT_MONO"
     ++ edf daemon "WANT_CORE"
     ++ edf client "WANT_QTCLIENT"
-    ++ edf withKDE "WITH_KDE"
-    ++ edf previews "WITH_WEBKIT";
+    ++ edf withKDE "WITH_KDE";
 
   preFixup =
     lib.optionalString buildClient ''

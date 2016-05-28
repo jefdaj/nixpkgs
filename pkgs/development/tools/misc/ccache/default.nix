@@ -2,21 +2,12 @@
 
 let ccache = stdenv.mkDerivation rec {
   name = "ccache-${version}";
-  version = "3.2.4";
+  version = "3.2.5";
 
   src = fetchurl {
-    sha256 = "0pga3hvd80f2p7mz88jmmbwzxh4vn5ihyjx5f6na8y2fclzsjg8w";
+    sha256 = "11db1g109g0g5si0s50yd99ja5f8j4asxb081clvx78r9d9i2w0i";
     url = "mirror://samba/ccache/${name}.tar.xz";
   };
-
-  patches = [
-    (fetchpatch {
-      sha256 = "1gwnxx1w2nx1szi0v5vgwcx9i23pxygkqqnrawhal68qgz5c34wh";
-      name = "dont-update-manifest-in-readonly-modes.patch";
-      # The primary git.samba.org doesn't seem to like our curl much...
-      url = "https://github.com/jrosdahl/ccache/commit/a7ab503f07e31ebeaaec34fbaa30e264308a299d.patch";
-    })
-  ];
 
   buildInputs = [ zlib ];
 
@@ -29,9 +20,14 @@ let ccache = stdenv.mkDerivation rec {
   passthru = {
     # A derivation that provides gcc and g++ commands, but that
     # will end up calling ccache for the given cacheDir
-    links = extraConfig: (runCommand "ccache-links"
-      { passthru.gcc = gcc; passthru.isGNU = true; }
-      ''
+    links = extraConfig: stdenv.mkDerivation rec {
+      name = "ccache-links";
+      passthru = {
+        inherit gcc;
+        isGNU = true;
+      };
+      inherit (gcc.cc) lib;
+      buildCommand = ''
         mkdir -p $out/bin
         if [ -x "${gcc.cc}/bin/gcc" ]; then
           cat > $out/bin/gcc << EOF
@@ -57,7 +53,8 @@ let ccache = stdenv.mkDerivation rec {
         for file in $(ls ${gcc.cc} | grep -vw bin); do
           ln -s ${gcc.cc}/$file $out/$file
         done
-      '');
+      '';
+    };
   };
 
   meta = with stdenv.lib; {

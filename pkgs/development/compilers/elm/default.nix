@@ -1,5 +1,11 @@
 { lib, stdenv, buildEnv, haskell, nodejs, fetchurl, fetchpatch, makeWrapper }:
 
+# To update:
+# 1) Update versions in ./update-elm.rb and run it.
+# 2) Checkout elm-reactor and run `elm-package install -y` inside.
+# 3) Run ./elm2nix.rb in elm-reactor's directory.
+# 4) Move the resulting 'package.nix' to 'packages/elm-reactor-elm.nix'.
+
 let
   makeElmStuff = deps:
     let json = builtins.toJSON (lib.mapAttrs (name: info: info.version) deps);
@@ -50,7 +56,7 @@ let
               doCheck = false;
               buildTools = drv.buildTools or [] ++ [ makeWrapper ];
               postInstall =
-                let bins = lib.makeSearchPath "bin" [ nodejs self.elm-make ];
+                let bins = lib.makeBinPath [ nodejs self.elm-make ];
                 in ''
                   wrapProgram $out/bin/elm-repl \
                     --prefix PATH ':' ${bins}

@@ -50,16 +50,9 @@ stdenv.mkDerivation rec {
     sed -i -e "s/\(am_libgettextlib_la_OBJECTS = \)error.lo/\\1/" gettext-tools/gnulib-lib/Makefile.in
   '';
 
-  buildInputs = [ xz ] ++ lib.optional (!stdenv.isLinux) libiconv;
+  buildInputs = [ xz xz.bin libiconv ];
 
   enableParallelBuilding = true;
-
-  crossAttrs = {
-    buildInputs = lib.optional (stdenv ? ccCross && stdenv.ccCross.libc ? libiconv)
-      stdenv.ccCross.libc.libiconv.crossDrv;
-    # Gettext fails to guess the cross compiler
-    configureFlags = "CXX=${stdenv.cross.config}-g++";
-  };
 
   meta = {
     description = "Well integrated set of translation tools and documentation";

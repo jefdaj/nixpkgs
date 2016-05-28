@@ -2,6 +2,7 @@
 , openssl, pcre, boost, judy, bison, libxml2
 , libaio, libevent, groff, jemalloc, cracklib, systemd, numactl, perl
 , fixDarwinDylibNames, cctools, CoreServices
+, makeWrapper
 }:
 
 with stdenv.lib;
@@ -19,7 +20,9 @@ stdenv.mkDerivation rec {
     # temporary due to https://mariadb.atlassian.net/browse/MDEV-9000
     (if stdenv.is64bit then snappy else null)
     pcre libxml2 boost judy bison libevent cracklib
-  ] ++ stdenv.lib.optionals stdenv.isLinux [ jemalloc libaio systemd numactl ]
+    makeWrapper
+  ] ++ stdenv.lib.optionals stdenv.isLinux [ jemalloc libaio systemd ]
+    ++ stdenv.lib.optionals (stdenv.isLinux && !stdenv.isArm) [ numactl ]
     ++ stdenv.lib.optionals stdenv.isDarwin [ perl fixDarwinDylibNames cctools CoreServices ];
 
   patches = stdenv.lib.optional stdenv.isDarwin ./my_context_asm.patch;
@@ -60,13 +63,15 @@ stdenv.mkDerivation rec {
   ] ++ stdenv.lib.optionals stdenv.isDarwin [
     "-DWITHOUT_OQGRAPH_STORAGE_ENGINE=1"
     "-DWITHOUT_TOKUDB=1"
-    "-DCURSES_LIBRARY=${ncurses}/lib/libncurses.dylib"
+    "-DCURSES_LIBRARY=${ncurses.out}/lib/libncurses.dylib"
   ];
 
   # fails to find lex_token.h sometimes
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   outputs = [ "out" "lib" ];
+  setOutputFlags = false;
+  moveToDev = false;
 
   prePatch = ''
     substituteInPlace cmake/libutils.cmake \
@@ -89,6 +94,10 @@ stdenv.mkDerivation rec {
     substituteInPlace $out/bin/mysql_install_db \
       --replace basedir=\"\" basedir=\"$out\"
 
+    # Wrap mysqld with --basedir, but as last flag
+    wrapProgram $out/bin/mysqld 
+    sed -i "s,\(^exec.*$\),\1 --basedir=$out,g" $out/bin/mysqld
+
     # Remove superfluous files
     rm -r $out/mysql-test $out/sql-bench $out/data # Don't need testing data
     rm $out/share/man/man1/mysql-test-run.pl.1
@@ -101,19 +110,10 @@ stdenv.mkDerivation rec {
     mv $out/lib $lib
     mv $out/include $lib
 
-  ''
-  + stdenv.lib.optionalString stdenv.isDarwin ''
-    # Fix library rpaths
-    # TODO: put this in the stdenv to prepare for wide usage of multi-output derivations
-    for file in $(grep -rl $out/lib $lib); do
-      install_name_tool -delete_rpath $out/lib -add_rpath $lib $file
-    done
-
-  '' + ''
     # Fix the mysql_config
     sed -i $out/bin/mysql_config \
-      -e 's,-lz,-L${zlib}/lib -lz,g' \
-      -e 's,-lssl,-L${openssl}/lib -lssl,g'
+      -e 's,-lz,-L${zlib.out}/lib -lz,g' \
+      -e 's,-lssl,-L${openssl.out}/lib -lssl,g'
 
     # Add mysql_config to libs since configure scripts use it
     mkdir -p $lib/bin

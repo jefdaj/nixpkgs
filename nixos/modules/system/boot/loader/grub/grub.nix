@@ -48,17 +48,18 @@ let
       bootPath = args.path;
       storePath = config.boot.loader.grub.storePath;
       bootloaderId = if args.efiBootloaderId == null then "NixOS${efiSysMountPoint'}" else args.efiBootloaderId;
+      timeout = if config.boot.loader.timeout == null then -1 else config.boot.loader.timeout;
       inherit efiSysMountPoint;
       inherit (args) devices;
       inherit (efi) canTouchEfiVariables;
       inherit (cfg)
         version extraConfig extraPerEntryConfig extraEntries
-        extraEntriesBeforeNixOS extraPrepareConfig configurationLimit copyKernels timeout
+        extraEntriesBeforeNixOS extraPrepareConfig configurationLimit copyKernels
         default fsIdentifier efiSupport gfxmodeEfi gfxmodeBios;
-      path = (makeSearchPath "bin" ([
+      path = (makeBinPath ([
         pkgs.coreutils pkgs.gnused pkgs.gnugrep pkgs.findutils pkgs.diffutils pkgs.btrfs-progs
         pkgs.utillinux ] ++ (if cfg.efiSupport && (cfg.version == 2) then [pkgs.efibootmgr ] else [])
-      )) + ":" + (makeSearchPath "sbin" [
+      )) + ":" + (makeSearchPathOutput "bin" "sbin" [
         pkgs.mdadm pkgs.utillinux
       ]);
     });
@@ -313,14 +314,6 @@ in
         '';
       };
 
-      timeout = mkOption {
-        default = if (config.boot.loader.timeout != null) then config.boot.loader.timeout else -1;
-        type = types.int;
-        description = ''
-          Timeout (in seconds) until GRUB boots the default menu item.
-        '';
-      };
-
       default = mkOption {
         default = 0;
         type = types.int;
@@ -499,7 +492,7 @@ in
         }
       ] ++ flip map args.devices (device: {
         assertion = device == "nodev" || hasPrefix "/" device;
-        message = "GRUB devices must be absolute paths, not ${dev} in ${args.path}";
+        message = "GRUB devices must be absolute paths, not ${device} in ${args.path}";
       }));
     })
 

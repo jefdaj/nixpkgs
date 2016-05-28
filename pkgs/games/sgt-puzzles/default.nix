@@ -1,15 +1,14 @@
-{stdenv, gtk, pkgconfig, libX11, perl, fetchsvn}:
+{stdenv, gtk3, pkgconfig, libX11, perl, fetchurl, automake115x, autoconf}:
 let
-  version = "10286";
+  version = "20160429.b31155b";
   buildInputs = [
-    gtk pkgconfig libX11 perl
+    gtk3 pkgconfig libX11 perl automake115x autoconf
   ];
 in
 stdenv.mkDerivation {
-  src = fetchsvn {
-   url = svn://svn.tartarus.org/sgt/puzzles;
-   rev = version;
-   sha256 = "1mp1s33hjikby7jy6bcjwyzkdwlw1bw9dcc4cg5d80wmzkb0sqv0";
+  src = fetchurl {
+   url = "http://www.chiark.greenend.org.uk/~sgtatham/puzzles/puzzles-${version}.tar.gz";
+   sha256 = "0y807srhf6571ijdwpa493qzsx161f0a1pmh2qi44f6ixfcrkgzi";
   };
   name = "sgt-puzzles-r" + version;
   inherit buildInputs;
@@ -18,6 +17,15 @@ stdenv.mkDerivation {
     mkdir -p "$out"/{bin,share/doc/sgtpuzzles}
     cp gamedesc.txt LICENCE README "$out/share/doc/sgtpuzzles"
     cp LICENCE "$out/share/doc/sgtpuzzles/LICENSE"
+  '';
+  # SGT Puzzles use generic names like net, map, etc.
+  # Create symlinks with sgt-puzzle- prefix for possibility of
+  # disambiguation
+  postInstall = ''
+    (
+      cd "$out"/bin ;
+      for i in *; do ln -s "$i" "sgt-puzzle-$i"; done
+    )
   '';
   preConfigure = ''
     perl mkfiles.pl
@@ -31,5 +39,6 @@ stdenv.mkDerivation {
     license = stdenv.lib.licenses.mit ;
     maintainers = [stdenv.lib.maintainers.raskin];
     platforms = stdenv.lib.platforms.linux;
+    homepage = "http://www.chiark.greenend.org.uk/~sgtatham/puzzles/";
   };
 }

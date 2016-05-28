@@ -66,7 +66,7 @@ stdenv.mkDerivation {
       ${lib.optionalString bazaarSupport ''--prefix PATH : ${bazaar}/bin \''}
       ${lib.optionalString cvsSupport ''--prefix PATH : ${cvs}/bin \''}
       ${lib.optionalString cvsSupport ''--prefix PATH : ${cvsps}/bin \''}
-      ${lib.optionalString subversionSupport ''--prefix PATH : ${subversion}/bin \''}
+      ${lib.optionalString subversionSupport ''--prefix PATH : ${subversion.out}/bin \''}
       ${lib.optionalString mercurialSupport ''--prefix PATH : ${mercurial}/bin \''}
       ${lib.concatMapStrings (x: "--prefix PATH : ${x}/bin ") extraUtils}
     done
@@ -86,6 +86,6 @@ stdenv.mkDerivation {
     license = stdenv.lib.licenses.gpl2Plus;
 
     platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    maintainers = [ stdenv.lib.maintainers.peti ];
   };
 }

@@ -8,12 +8,12 @@ let
 
   setuidWrapper = pkgs.stdenv.mkDerivation {
     name = "setuid-wrapper";
-    buildCommand = ''
+    unpackPhase = "true";
+    installPhase = ''
       mkdir -p $out/bin
       cp ${./setuid-wrapper.c} setuid-wrapper.c
       gcc -Wall -O2 -DWRAPPER_DIR=\"${wrapperDir}\" \
           setuid-wrapper.c -o $out/bin/setuid-wrapper
-      strip -S $out/bin/setuid-wrapper
     '';
   };
 
@@ -96,7 +96,7 @@ in
           }:
 
           ''
-            if ! source=${if source != "" then source else "$(PATH=$SETUID_PATH type -tP ${program})"}; then
+            if ! source=${if source != "" then source else "$(readlink -f $(PATH=$SETUID_PATH type -tP ${program}))"}; then
                 # If we can't find the program, fall back to the
                 # system profile.
                 source=/nix/var/nix/profiles/default/bin/${program}

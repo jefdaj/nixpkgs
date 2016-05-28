@@ -12,18 +12,18 @@
 buildPythonApplication rec {
 
   name = "youtube-dl-${version}";
-  version = "2016.02.13";
+  version = "2016.04.19";
 
   src = fetchurl {
-    url = "http://yt-dl.org/downloads/${stdenv.lib.getVersion name}/${name}.tar.gz";
-    sha256 = "0d6ml6nas0pnp6is73fn326ayxkdmxvarzyr96qd6gyjm9icpdcb";
+    url = "http://yt-dl.org/downloads/${version}/${name}.tar.gz";
+    sha256 = "09ba62900703a1439659a5394d802c7b03fd3a7b35d604e94a256ae9ccd1b6a0";
   };
 
   buildInputs = [ makeWrapper zip pandoc ];
 
   # Ensure ffmpeg is available in $PATH for post-processing & transcoding support.
   postInstall = stdenv.lib.optionalString (ffmpeg != null)
-    ''wrapProgram $out/bin/youtube-dl --prefix PATH : "${ffmpeg}/bin"'';
+    ''wrapProgram $out/bin/youtube-dl --prefix PATH : "${ffmpeg.bin}/bin"'';
 
   # Requires network
   doCheck = false;
@@ -40,6 +40,6 @@ buildPythonApplication rec {
     '';
     license = licenses.publicDomain;
     platforms = with platforms; linux ++ darwin;
-    maintainers = with maintainers; [ bluescreen303 simons phreedom AndersonTorres fuuzetsu ];
+    maintainers = with maintainers; [ bluescreen303 phreedom AndersonTorres fuuzetsu ];
   };
 }

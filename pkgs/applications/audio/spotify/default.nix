@@ -1,11 +1,11 @@
-{ fetchurl, stdenv, dpkg, xorg, alsaLib, makeWrapper, openssl_1_0_1, freetype
+{ fetchurl, stdenv, dpkg, xorg, alsaLib, makeWrapper, openssl, freetype
 , glib, pango, cairo, atk, gdk_pixbuf, gtk, cups, nspr, nss, libpng, GConf
-, libgcrypt, udev, fontconfig, dbus, expat, ffmpeg_0_10, curl, zlib, gnome }:
+, libgcrypt, libudev, fontconfig, dbus, expat, ffmpeg_0_10, curl, zlib, gnome }:
 
 assert stdenv.system == "x86_64-linux";
 
 let
-  version = "1.0.25.127.g58007b4c-22";
+  version = "1.0.28.89.gf959d4ce-37";
 
   deps = [
     alsaLib
@@ -27,7 +27,7 @@ let
     nss
     pango
     stdenv.cc.cc
-    udev
+    libudev
     xorg.libX11
     xorg.libXcomposite
     xorg.libXcursor
@@ -50,7 +50,7 @@ stdenv.mkDerivation {
   src =
     fetchurl {
       url = "http://repository-origin.spotify.com/pool/non-free/s/spotify-client/spotify-client_${version}_amd64.deb";
-      sha256 = "1fxps0ls0g4idw10la3qrpmp2jn85lkm3xj4nam4ycx0jj8g1v2p";
+      sha256 = "06v6fmjn0zi1riqhbmwkrq4m1q1vs95p348i8c12hqvsrp0g2qy5";
     };
 
   buildInputs = [ dpkg makeWrapper ];
@@ -68,10 +68,10 @@ stdenv.mkDerivation {
       # Work around Spotify referring to a specific minor version of
       # OpenSSL.
 
-      ln -s ${openssl_1_0_1}/lib/libssl.so $libdir/libssl.so.1.0.0
-      ln -s ${openssl_1_0_1}/lib/libcrypto.so $libdir/libcrypto.so.1.0.0
-      ln -s ${nspr}/lib/libnspr4.so $libdir/libnspr4.so
-      ln -s ${nspr}/lib/libplc4.so $libdir/libplc4.so
+      ln -s ${openssl.out}/lib/libssl.so $libdir/libssl.so.1.0.0
+      ln -s ${openssl.out}/lib/libcrypto.so $libdir/libcrypto.so.1.0.0
+      ln -s ${nspr.out}/lib/libnspr4.so $libdir/libnspr4.so
+      ln -s ${nspr.out}/lib/libplc4.so $libdir/libplc4.so
 
       rpath="$out/share/spotify:$libdir"
 
@@ -104,6 +104,6 @@ stdenv.mkDerivation {
     homepage = https://www.spotify.com/;
     description = "Play music from the Spotify music service";
     license = stdenv.lib.licenses.unfree;
-    maintainers = with stdenv.lib.maintainers; [ eelco ftrvxmtrx ];
+    maintainers = with stdenv.lib.maintainers; [ eelco ftrvxmtrx sheenobu ];
   };
 }

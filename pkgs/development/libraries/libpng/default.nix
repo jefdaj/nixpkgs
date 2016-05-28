@@ -18,12 +18,19 @@ in stdenv.mkDerivation rec {
     url = "mirror://sourceforge/libpng/libpng-${version}.tar.xz";
     inherit sha256;
   };
-
   postPatch = whenPatched "gunzip < ${patch_src} | patch -Np1";
+
+  outputs = [ "dev" "out" "man" ];
 
   propagatedBuildInputs = [ zlib ];
 
-  doCheck = true;
+  preConfigure = "export bin=$dev";
+
+  # it's hard to cross-run tests and some check programs didn't compile anyway
+  makeFlags = stdenv.lib.optional (!doCheck) "check_PROGRAMS=";
+  doCheck = ! stdenv ? cross;
+
+  postInstall = ''mv "$out/bin" "$dev/bin"'';
 
   passthru = { inherit zlib; };
 

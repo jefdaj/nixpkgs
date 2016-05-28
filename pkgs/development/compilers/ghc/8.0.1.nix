@@ -5,18 +5,18 @@
 let
   inherit (bootPkgs) ghc;
 
-in 
+in
 stdenv.mkDerivation rec {
-  version = "8.0.0.20160204";
+  version = "8.0.1";
   name = "ghc-${version}";
 
   src = fetchurl {
-    url = "https://downloads.haskell.org/~ghc/8.0.1-rc2/${name}-src.tar.xz";
-    sha256 = "0v8pciva93i4a6h0l76vq6bbvrg76b1y4awwbxcg3m9gnqkvmy2k";
+    url = "https://downloads.haskell.org/~ghc/8.0.1/${name}-src.tar.xz";
+    sha256 = "1lniqy29djhjkddnailpaqhlqh4ld2mqvb1fxgxw1qqjhz6j1ywh";
   };
 
   patches = [
-    ./dont-pass-linker-flags-via-response-files.patch   # https://github.com/NixOS/nixpkgs/issues/10752
+    ./ghc-8.x-dont-pass-linker-flags-via-response-files.patch  # https://github.com/NixOS/nixpkgs/issues/10752
   ];
 
   buildInputs = [ ghc perl hscolour ];
@@ -33,8 +33,8 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--with-gcc=${stdenv.cc}/bin/cc"
-    "--with-gmp-includes=${gmp}/include" "--with-gmp-libraries=${gmp}/lib"
-    "--with-curses-includes=${ncurses}/include" "--with-curses-libraries=${ncurses}/lib"
+    "--with-gmp-includes=${gmp}/include" "--with-gmp-libraries=${gmp.out}/lib"
+    "--with-curses-includes=${ncurses}/include" "--with-curses-libraries=${ncurses.out}/lib"
   ] ++ stdenv.lib.optional stdenv.isDarwin [
     "--with-iconv-includes=${libiconv}/include" "--with-iconv-libraries=${libiconv}/lib"
   ];
@@ -62,7 +62,7 @@ stdenv.mkDerivation rec {
   meta = {
     homepage = "http://haskell.org/ghc";
     description = "The Glasgow Haskell Compiler";
-    maintainers = with stdenv.lib.maintainers; [ marcweber andres simons ];
+    maintainers = with stdenv.lib.maintainers; [ marcweber andres peti ];
     inherit (ghc.meta) license platforms;
   };
 

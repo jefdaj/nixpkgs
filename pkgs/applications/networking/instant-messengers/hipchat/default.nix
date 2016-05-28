@@ -1,12 +1,13 @@
 { stdenv, fetchurl, xorg, freetype, fontconfig, openssl, glib, nss, nspr, expat
 , alsaLib, dbus, zlib, libxml2, libxslt, makeWrapper, xkeyboard_config, systemd
-, mesa_noglu, xcbutilkeysyms }:
+, mesa_noglu, xcbutilkeysyms, xdg_utils }:
 
 let
 
-  version = "4.0.1631";
+  version = "4.0.1641";
 
-  rpath = stdenv.lib.makeSearchPath "lib" [
+  rpath = stdenv.lib.makeLibraryPath [
+    xdg_utils
     xorg.libXext
     xorg.libSM
     xorg.libICE
@@ -36,13 +37,13 @@ let
     xcbutilkeysyms
     systemd
     mesa_noglu
-  ] + ":${stdenv.cc.cc}/lib64";
+  ] + ":${stdenv.cc.cc.lib}/lib64";
 
   src =
     if stdenv.system == "x86_64-linux" then
       fetchurl {
         url = "https://atlassian.artifactoryonline.com/atlassian/hipchat-apt-client/pool/HipChat4-${version}-Linux.deb";
-        sha256 = "1ip79zq7j7842sf254296wvvd236w7c764r8wgjdyxzqyvfjfd81";
+        sha256 = "15xy89qmldp1zs3f809b8sayvawc7sz24l0718iib83g5jzvivsm";
       }
     else
       throw "HipChat is not supported on ${stdenv.system}";
@@ -69,6 +70,8 @@ stdenv.mkDerivation {
         patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $file || true
         patchelf --set-rpath ${rpath}:$out/libexec/hipchat/lib:\$ORIGIN $file || true
     done
+
+    patchShebangs $d/linuxbrowserlaunch.sh
 
     substituteInPlace $out/share/applications/hipchat4.desktop \
       --replace /opt/HipChat4/bin/HipChat4 $out/bin/hipchat

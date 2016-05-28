@@ -1,20 +1,13 @@
 { stdenv, fetchurl, perl, unzip }:
-let
-  s = # Generated upstream information
-  rec {
-    baseName="zpaq";
-    version="707";
-    name="${baseName}-${version}";
-    hash="0xbisphv318a33px47vriirdp2jhf99y6hx6gcbfhbhkaqpggjg3";
-    url="http://mattmahoney.net/dc/zpaq707.zip";
-    sha256="0xbisphv318a33px47vriirdp2jhf99y6hx6gcbfhbhkaqpggjg3";
-  };
-in
-stdenv.mkDerivation {
-  inherit (s) name version;
+stdenv.mkDerivation rec {
+  name = "zpaq-${version}";
+  version = "7.13";
 
-  src = fetchurl {
-    inherit (s) url sha256;
+  src = let
+    mungedVersion = with stdenv.lib; concatStrings (splitString "." version);
+  in fetchurl {
+    sha256 = "06fry12c92nxds2m5cd69h0cpxvp0mxhssagmjiwxpmgn57wy84i";
+    url = "http://mattmahoney.net/dc/zpaq${mungedVersion}.zip";
   };
 
   sourceRoot = ".";
@@ -39,11 +32,10 @@ stdenv.mkDerivation {
   installFlags = [ "PREFIX=$(out)" ];
 
   meta = with stdenv.lib; {
-    inherit (s) version;
     description = "Incremental journaling backup utility and archiver";
+    homepage = http://mattmahoney.net/dc/zpaq.html;
     license = licenses.gpl3Plus ;
     maintainers = with maintainers; [ raskin nckx ];
     platforms = platforms.linux;
-    homepage = "http://mattmahoney.net/dc/zpaq.html";
   };
 }

@@ -62,10 +62,10 @@ in
 
           # Register the paths in the Nix database.
           printRegistration=1 perl ${pkgs.pathsFromGraph} /tmp/xchg/closure | \
-              chroot /mnt ${config.nix.package}/bin/nix-store --load-db --option build-users-group ""
+              chroot /mnt ${config.nix.package.out}/bin/nix-store --load-db --option build-users-group ""
 
           # Create the system profile to allow nixos-rebuild to work.
-          chroot /mnt ${config.nix.package}/bin/nix-env \
+          chroot /mnt ${config.nix.package.out}/bin/nix-env \
               -p /nix/var/nix/profiles/system --set ${config.system.build.toplevel} \
               --option build-users-group ""
 
@@ -94,7 +94,7 @@ in
 
   # Generate a GRUB menu.  Amazon's pv-grub uses this to boot our kernel/initrd.
   boot.loader.grub.device = "/dev/vda";
-  boot.loader.grub.timeout = 0;
+  boot.loader.timeout = 0;
 
   # Don't put old configurations in the GRUB menu.  The user has no
   # way to select them anyway.

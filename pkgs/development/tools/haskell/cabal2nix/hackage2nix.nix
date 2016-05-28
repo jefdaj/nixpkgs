@@ -7,12 +7,12 @@
 
 mkDerivation rec {
   pname = "hackage2nix";
-  version = "20160308";
+  version = "20160406";
   src = fetchFromGitHub {
     owner = "nixos";
     repo = "cabal2nix";
     rev = "v${version}";
-    sha256 = "02lj3x0rgpxvaimwbbjjgwm4ka0wkk4x5h35jjygz6bkr5lv3m52";
+    sha256 = "02dn2zllanf3rl16ny17j80h7p6gcdqkhadh3ypkr38gd9w16pc6";
   };
   postUnpack = "sourceRoot+=/${pname}";
   isLibrary = false;
@@ -32,5 +32,5 @@ mkDerivation rec {
   homepage = "https://github.com/nixos/cabal2nix#readme";
   description = "Convert Cabal files into Nix build instructions";
   license = stdenv.lib.licenses.bsd3;
-  maintainers = with stdenv.lib.maintainers; [ simons ];
+  maintainers = with stdenv.lib.maintainers; [ peti ];
 }

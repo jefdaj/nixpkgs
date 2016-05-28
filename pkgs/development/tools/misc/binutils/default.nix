@@ -2,7 +2,7 @@
 , cross ? null, gold ? true, bison ? null
 }:
 
-let basename = "binutils-2.23.1"; in
+let basename = "binutils-2.26"; in
 
 with { inherit (stdenv.lib) optional optionals optionalString; };
 
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnu/binutils/${basename}.tar.bz2";
-    sha256 = "06bs5v5ndb4g5qx96d52lc818gkbskd1m0sz57314v887sqfbcia";
+    sha256 = "1ngc2h3knhiw8s22l8y6afycfaxr5grviqy7mwvm4bsl14cf9b62";
   };
 
   patches = [
@@ -31,10 +31,18 @@ stdenv.mkDerivation rec {
     # Always add PaX flags section to ELF files.
     # This is needed, for instance, so that running "ldd" on a binary that is
     # PaX-marked to disable mprotect doesn't fail with permission denied.
-    ./pt-pax-flags-20121023.patch
+    ./pt-pax-flags.patch
+
+    # Bug fix backported from binutils master.
+    ./fix-bsymbolic.patch
+
+   # Bug fix backported from binutils master.
+    ./fix-update-symbol-version.patch
   ];
 
-  nativeBuildInputs = optional gold bison;
+  outputs = (optional (cross == null) "dev") ++ [ "out" "info" ];
+
+  nativeBuildInputs = [ bison ];
   buildInputs = [ zlib ];
 
   inherit noSysDirs;
@@ -66,6 +74,8 @@ stdenv.mkDerivation rec {
     ++ optional (stdenv.system == "i686-linux") "--enable-targets=x86_64-linux-gnu";
 
   enableParallelBuilding = true;
+
+  postFixup = optionalString (cross == null) "ln -s $out/bin $dev/bin"; # tools needed for development
 
   meta = with stdenv.lib; {
     description = "Tools for manipulating binaries (linker, assembler, etc.)";

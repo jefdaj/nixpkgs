@@ -30,13 +30,13 @@ stdenv.mkDerivation rec {
     wrapProgram "$out/bin/gitg" \
       --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH" \
       --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gtk3}/share:${gnome3.gnome_themes_standard}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
+      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gtk3.out}/share:${gnome3.gnome_themes_standard}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
   '';
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/action/show/Apps/Gitg;
     description = "GNOME GUI client to view git repositories";
-    maintainers = with maintainers; [ iElectric ];
+    maintainers = with maintainers; [ domenkozar ];
     license = licenses.gpl2;
     platforms = platforms.linux;
   };

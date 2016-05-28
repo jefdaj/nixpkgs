@@ -2,12 +2,14 @@
 
 stdenv.mkDerivation rec {
   name = "autogen-${version}";
-  version = "5.18.6";
+  version = "5.18.7";
 
   src = fetchurl {
-    url = "mirror://gnu/autogen/rel${version}/autogen-${version}.tar.xz";
-    sha256 = "0sfmmy19k9z0j3f738fyk6ljf6b66410cvd5zzyplxi2683j10qs";
+    url = "mirror://gnu/autogen/autogen-${version}.tar.xz";
+    sha256 = "01d4m8ckww12sy50vgyxlnz83z9dxqpyqp153cscncc9w6jq19d7";
   };
+
+  outputs = [ "dev" "bin" "lib" "out" "man" "info" ];
 
   nativeBuildInputs = [ which pkgconfig perl ];
   buildInputs = [ guile libxml2 ];
@@ -18,6 +20,17 @@ stdenv.mkDerivation rec {
     sed -i "s,sed '.*-I.*',sed 's/\\\(^\\\| \\\)-I/\\\1/g',g" configure
 
     substituteInPlace pkg/libopts/mklibsrc.sh --replace /tmp $TMPDIR
+  '';
+
+  postInstall = ''
+    mkdir -p $dev/bin
+    mv $bin/bin/autoopts-config $dev/bin
+
+    for f in $lib/lib/autogen/tpl-config.tlib $out/share/autogen/tpl-config.tlib; do
+      sed -e "s|$dev/include|/no-such-autogen-include-path|" -i $f
+      sed -e "s|$bin/bin|/no-such-autogen-bin-path|" -i $f
+      sed -e "s|$lib/lib|/no-such-autogen-lib-path|" -i $f
+    done
   '';
 
   #doCheck = true; # 2 tests fail because of missing /dev/tty

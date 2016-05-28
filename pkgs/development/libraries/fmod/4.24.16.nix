@@ -5,7 +5,7 @@ let
   bits = stdenv.lib.optionalString (stdenv.system == "x86_64-linux") "64";
 
   libPath = stdenv.lib.makeLibraryPath
-    [ stdenv.cc.libc stdenv.cc.cc ] + ":${stdenv.cc.cc}/lib64";
+    [ stdenv.cc.libc stdenv.cc.cc ] + ":${stdenv.cc.cc.lib}/lib64";
   patchLib = x: "patchelf --set-rpath ${libPath} ${x}";
 
   src =
@@ -29,10 +29,9 @@ stdenv.mkDerivation rec {
 
   dontStrip = true;
   dontPatchELF = true;
+  dontBuild = true;
 
   makeFlags = [ "DESTLIBDIR=$(out)/lib" "DESTHDRDIR=$(out)/include" ];
-
-  buildPhase = "true";
 
   preInstall = ''
     mkdir -p $out/lib

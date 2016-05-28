@@ -1,4 +1,5 @@
-{ lib, buildFHSUserEnv, steam
+{ stdenv, lib, writeScript, buildFHSUserEnv, steam
+, steam-runtime, steam-runtime-i686 ? null
 , withJava ? false
 , withPrimus ? false
 , nativeOnly ? false
@@ -6,51 +7,60 @@
 , newStdcpp ? false
 }:
 
-buildFHSUserEnv {
+let
+  commonTargetPkgs = pkgs: with pkgs; [
+    steamPackages.steam-fonts
+    # Errors in output without those
+    pciutils
+    python2
+    # Games' dependencies
+    xlibs.xrandr
+    which
+    # Needed by gdialog, including in the steam-runtime
+    perl
+    # Open URLs
+    xdg_utils
+  ];
+
+in buildFHSUserEnv rec {
   name = "steam";
 
   targetPkgs = pkgs: with pkgs; [
-      steamPackages.steam
-      steamPackages.steam-fonts
-      # License agreement
-      gnome3.zenity
-      # Errors in output without those
-      pciutils
-      python2
-      # Games' dependencies
-      xlibs.xrandr
-      which
-      # Needed by gdialog, including in the steam-runtime
-      perl
-    ]
+    steamPackages.steam
+    # License agreement
+    gnome3.zenity
+  ] ++ commonTargetPkgs pkgs
     ++ lib.optional withJava jdk
-    ++ lib.optional withPrimus primus
-    ;
+    ++ lib.optional withPrimus (primus.override {
+         stdenv = overrideInStdenv stdenv [ useOldCXXAbi ];
+         stdenv_i686 = overrideInStdenv pkgsi686Linux.stdenv [ useOldCXXAbi ];
+       });
 
   multiPkgs = pkgs: with pkgs; [
-      # These are required by steam with proper errors
-      xlibs.libXcomposite
-      xlibs.libXtst
-      xlibs.libXrandr
-      xlibs.libXext
-      xlibs.libX11
-      xlibs.libXfixes
+    # These are required by steam with proper errors
+    xlibs.libXcomposite
+    xlibs.libXtst
+    xlibs.libXrandr
+    xlibs.libXext
+    xlibs.libX11
+    xlibs.libXfixes
 
-      # Not formally in runtime but needed by some games
-      gst_all_1.gstreamer
-      gst_all_1.gst-plugins-ugly
-      libdrm
+    # Not formally in runtime but needed by some games
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-ugly
+    libdrm
 
-      (steamPackages.steam-runtime-wrapped.override {
-        inherit nativeOnly runtimeOnly newStdcpp;
-      })
-    ];
+    (steamPackages.steam-runtime-wrapped.override {
+      inherit nativeOnly runtimeOnly newStdcpp;
+    })
+  ];
 
   extraBuildCommands = ''
     mkdir -p steamrt
-
-    ln -s ../lib64/steam-runtime steamrt/amd64
-    ln -s ../lib32/steam-runtime steamrt/i386
+    ln -s ../lib/steam-runtime steamrt/${steam-runtime.arch}
+    ${lib.optionalString (steam-runtime-i686 != null) ''
+      ln -s ../lib32/steam-runtime steamrt/${steam-runtime-i686.arch}
+    ''}
   '';
 
   extraInstallCommands = ''
@@ -65,4 +75,26 @@ buildFHSUserEnv {
   '';
 
   runScript = "steam";
+
+  passthru.run = buildFHSUserEnv {
+    name = "steam-run";
+
+    targetPkgs = commonTargetPkgs;
+    inherit multiPkgs extraBuildCommands;
+
+    runScript =
+      let ldPath = map (x: "/steamrt/${steam-runtime.arch}/" + x) steam-runtime.libs
+                 ++ lib.optionals (steam-runtime-i686 != null) (map (x: "/steamrt/${steam-runtime-i686.arch}/" + x) steam-runtime-i686.libs);
+      in writeScript "steam-run" ''
+        #!${stdenv.shell}
+        run="$1"
+        if [ "$run" = "" ]; then
+          echo "Usage: steam-run command-to-run args..." >&2
+          exit 1
+        fi
+        shift
+        export LD_LIBRARY_PATH=${lib.concatStringsSep ":" ldPath}:$LD_LIBRARY_PATH
+        exec "$run" "$@"
+      '';
+  };
 }

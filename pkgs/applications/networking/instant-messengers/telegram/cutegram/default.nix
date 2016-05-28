@@ -2,8 +2,8 @@
 , qtbase, qtmultimedia, qtquick1, qtquickcontrols
 , qtimageformats, qtgraphicaleffects
 , telegram-qml, libqtelegram-aseman-edition
-, gst_plugins_base, gst_plugins_good, gst_plugins_bad, gst_plugins_ugly
-, makeQtWrapper }:
+, gst_all_1
+, makeQtWrapper, qmakeHook }:
 
 stdenv.mkDerivation rec {
   name = "cutegram-${meta.version}";
@@ -18,13 +18,16 @@ stdenv.mkDerivation rec {
   [ qtbase qtmultimedia qtquick1 qtquickcontrols
     qtimageformats qtgraphicaleffects
     telegram-qml libqtelegram-aseman-edition 
-    gst_plugins_base gst_plugins_good gst_plugins_bad gst_plugins_ugly ];
-  nativeBuildInputs = [ makeQtWrapper ];
-  enableParallelBuild = true;
+  ] ++ (with gst_all_1; [ gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly ]);
 
-  configurePhase = "qmake -r PREFIX=$out";
+  nativeBuildInputs = [ makeQtWrapper qmakeHook ];
 
-  fixupPhase = "wrapQtProgram $out/bin/cutegram";
+  enableParallelBuilding = true;
+
+  fixupPhase = ''
+    wrapQtProgram $out/bin/cutegram \
+      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0"
+  '';
 
   meta = with stdenv.lib; {
     version = "2.7.1";
@@ -32,6 +35,7 @@ stdenv.mkDerivation rec {
     homepage = "http://aseman.co/en/products/cutegram/";
     license = licenses.gpl3;
     maintainers = with maintainers; [ profpatsch AndersonTorres ];
+    platforms = platforms.linux;
   };
 }
 #TODO: appindicator, for system tray plugin (by @profpatsch)

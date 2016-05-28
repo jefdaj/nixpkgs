@@ -3,14 +3,14 @@
 stdenv.mkDerivation rec {
 
   name = "doxygen-1.8.11";
-  
+
   src = fetchurl {
     url = "ftp://ftp.stack.nl/pub/users/dimitri/${name}.src.tar.gz";
     sha256 = "0ja02pm3fpfhc5dkry00kq8mn141cqvdqqpmms373ncbwi38pl35";
   };
 
   nativeBuildInputs = [ cmake ];
-  
+
   buildInputs =
     [ perl python flex bison ]
     ++ stdenv.lib.optional (qt4 != null) qt4
@@ -18,7 +18,11 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optionals stdenv.isDarwin [ CoreServices libiconv ];
 
   cmakeFlags =
+    [ "-DICONV_INCLUDE_DIR=${libiconv}/include" ] ++
     stdenv.lib.optional (qt4 != null) "-Dbuild_wizard=YES";
+
+  NIX_CFLAGS_COMPILE =
+    stdenv.lib.optional stdenv.isDarwin "-mmacosx-version-min=10.9";
 
   enableParallelBuilding = true;
 
@@ -35,7 +39,6 @@ stdenv.mkDerivation rec {
       manual (in LaTeX) from a set of documented source files.
     '';
 
-    maintainers = [stdenv.lib.maintainers.simons];
     platforms = if qt4 != null then stdenv.lib.platforms.linux else stdenv.lib.platforms.unix;
   };
 }

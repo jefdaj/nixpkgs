@@ -29,12 +29,12 @@ stdenv.mkDerivation rec {
     dpkg-deb -x ${src} ./
   '';
 
-  buildPhase = "true";
+  dontBuild = true;
 
   installPhase = ''
     mkdir -p "$out/bin"
     cp -a usr/* "$out/"
-    interpreter="$(echo ${stdenv.glibc}/lib/ld-linux*)"
+    interpreter="$(echo ${stdenv.glibc.out}/lib/ld-linux*)"
     patchelf --set-interpreter "$interpreter" "$out/bin/xidel"
     patchelf --set-rpath "${stdenv.lib.makeLibraryPath [stdenv.glibc]}" "$out/bin/xidel"
   '';

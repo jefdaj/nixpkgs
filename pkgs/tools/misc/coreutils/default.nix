@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, perl, gmp ? null
+{ lib, stdenv, fetchurl, perl, xz, gmp ? null
 , aclSupport ? false, acl ? null
 , selinuxSupport? false, libselinux ? null, libsepol ? null
 , autoconf, automake114x, texinfo
@@ -27,9 +27,11 @@ let
       sed '2i echo Skipping cp sparse test && exit 0' -i ./tests/cp/sparse.sh
     '';
 
+    outputs = [ "out" "info" ];
+
+    nativeBuildInputs = [ perl xz.bin ];
     configureFlags = optionalString stdenv.isSunOS "ac_cv_func_inotify_init=no";
 
-    nativeBuildInputs = [ perl ];
     buildInputs = [ gmp ]
       ++ optional aclSupport acl
       ++ optionals stdenv.isCygwin [ autoconf automake114x texinfo ]   # due to patch
@@ -66,7 +68,8 @@ let
     # (http://thread.gmane.org/gmane.comp.gnu.core-utils.bugs/19025),
     # Darwin (http://thread.gmane.org/gmane.comp.gnu.core-utils.bugs/19351),
     # and {Open,Free}BSD.
-    doCheck = stdenv ? glibc;
+    # With non-standard storeDir: https://github.com/NixOS/nix/issues/512
+    doCheck = stdenv ? glibc && builtins.storeDir == "/nix/store";
 
     # Saw random failures like ‘help2man: can't get '--help' info from
     # man/sha512sum.td/sha512sum’.

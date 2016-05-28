@@ -27,6 +27,7 @@ stdenv.mkDerivation {
     in ''
       {
         pandoc '${inputFile}' -w docbook ${optionalString useChapters "--chapters"} \
+          --smart \
           | sed -e 's|<ulink url=|<link xlink:href=|' \
               -e 's|</ulink>|</link>|' \
               -e 's|<sect. id=|<section xml:id=|' \
@@ -48,9 +49,12 @@ stdenv.mkDerivation {
       useChapters = true;
     }
   + toDocbook {
-      inputFile = ./haskell-users-guide.md;
-      outputFile = "haskell-users-guide.xml";
-      useChapters = true;
+      inputFile = ./languages-frameworks/python.md;
+      outputFile = "./languages-frameworks/python.xml";
+    }
+  + toDocbook {
+      inputFile = ./languages-frameworks/haskell.md;
+      outputFile = "./languages-frameworks/haskell.xml";
     }
   + toDocbook {
       inputFile = ./../pkgs/development/idris-modules/README.md;
@@ -63,9 +67,9 @@ stdenv.mkDerivation {
   + ''
     echo ${nixpkgsVersion} > .version
 
-    xmllint --noout --nonet --xinclude --noxincludenode \
-      --relaxng ${docbook5}/xml/rng/docbook/docbook.rng \
-      manual.xml
+    # validate against relaxng schema
+    xmllint --nonet --xinclude --noxincludenode manual.xml --output manual-full.xml
+    ${jing}/bin/jing ${docbook5}/xml/rng/docbook/docbook.rng manual-full.xml
 
     dst=$out/share/doc/nixpkgs
     mkdir -p $dst

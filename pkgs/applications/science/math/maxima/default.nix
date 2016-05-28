@@ -5,7 +5,7 @@ let
   version = "5.36.1";
 
   searchPath =
-    stdenv.lib.makeSearchPath "bin"
+    stdenv.lib.makeBinPath
       (stdenv.lib.filter (x: x != null) [ sbcl rlwrap tk gnuplot ]);
 in
 stdenv.mkDerivation {
@@ -49,6 +49,6 @@ stdenv.mkDerivation {
     '';
 
     platforms = stdenv.lib.platforms.unix;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    maintainers = [ stdenv.lib.maintainers.peti ];
   };
 }

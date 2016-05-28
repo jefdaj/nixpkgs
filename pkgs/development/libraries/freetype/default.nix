@@ -26,7 +26,8 @@ stdenv.mkDerivation rec {
   };
 
   patches = []
-    ++ optionals useEncumberedCode [
+    # mingw: these patches use `strcasestr` which isn't available on windows
+    ++ optionals (useEncumberedCode && stdenv.cross.libc or null != "msvcrt" ) [
       (fetchbohoomil "01-freetype-2.6.2-enable-valid.patch"
         "1szq0zha7n41f4pq179wgfkam034mp2xn0xc36sdl5sjp9s9hv08")
       (fetchbohoomil "02-upstream-2015.12.05.patch"
@@ -35,11 +36,15 @@ stdenv.mkDerivation rec {
         "0wcjf9hiymplgqm3szla633i417pb57vpzzs2dyl1dnmcxgqa2y8")
     ];
 
+  outputs = [ "dev" "out" ];
+
   propagatedBuildInputs = [ zlib bzip2 libpng ]; # needed when linking against freetype
   # dependence on harfbuzz is looser than the reverse dependence
-  buildInputs = [ pkgconfig which ]
+  nativeBuildInputs = [ pkgconfig which ]
     # FreeType requires GNU Make, which is not part of stdenv on FreeBSD.
     ++ optional (!stdenv.isLinux) gnumake;
+
+  configureFlags = "--disable-static --bindir=$(dev)/bin";
 
   # from Gentoo, see https://bugzilla.redhat.com/show_bug.cgi?id=506840
   NIX_CFLAGS_COMPILE = "-fno-strict-aliasing";
@@ -52,7 +57,7 @@ stdenv.mkDerivation rec {
 
   postInstall = glib.flattenInclude;
 
-  crossAttrs = {
+  crossAttrs = stdenv.lib.optionalAttrs (stdenv.cross.libc or null != "msvcrt") {
     # Somehow it calls the unwrapped gcc, "i686-pc-linux-gnu-gcc", instead
     # of gcc. I think it's due to the unwrapped gcc being in the PATH. I don't
     # know why it's on the PATH.

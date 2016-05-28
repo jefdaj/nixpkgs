@@ -17,7 +17,6 @@
     pkgs.ddrescue
     pkgs.ccrypt
     pkgs.cryptsetup # needed for dm-crypt volumes
-    pkgs.which # 88K size
 
     # Some networking tools.
     pkgs.fuse
@@ -36,7 +35,7 @@
     # Tools to create / manipulate filesystems.
     pkgs.ntfsprogs # for resizing NTFS partitions
     pkgs.dosfstools
-    pkgs.xfsprogs
+    pkgs.xfsprogs.bin
     pkgs.jfsutils
     pkgs.f2fs-tools
 

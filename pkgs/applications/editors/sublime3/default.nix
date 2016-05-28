@@ -6,7 +6,7 @@ assert stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux";
 assert gksuSupport -> gksu != null;
 
 let
-  build = "3103";
+  build = "3114";
   libPath = stdenv.lib.makeLibraryPath [glib xorg.libX11 gtk cairo pango];
   redirects = [ "/usr/bin/pkexec=${pkexecPath}" ]
     ++ stdenv.lib.optional gksuSupport "/usr/bin/gksudo=${gksu}/bin/gksudo";
@@ -20,13 +20,13 @@ in let
         fetchurl {
           name = "sublimetext-${build}.tar.bz2";
           url = "https://download.sublimetext.com/sublime_text_3_build_${build}_x32.tar.bz2";
-          sha256 = "1qidnczndyhyp9rfzmpqah00lrx7z1a0fy7a13lzwqq3gslhwf1l";
+          sha256 = "0xrfx76ilw5hlx26hv9zx1kw8q9qf76646yyjmn36p6mq9vs6y0d";
         }
       else
         fetchurl {
           name = "sublimetext-${build}.tar.bz2";
           url = "https://download.sublimetext.com/sublime_text_3_build_${build}_x64.tar.bz2";
-          sha256 = "1x8kb3prs6wa5s5rj0gfq96zx6k5q3s168yhfsa36x2szi6x6y4x";
+          sha256 = "0nmi2gkpz56a47a0f56nx6nl3sl7gif035517gx2v82113y9nh66";
         };
 
     dontStrip = true;
@@ -37,7 +37,7 @@ in let
       for i in sublime_text plugin_host crash_reporter; do
         patchelf \
           --interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-          --set-rpath ${libPath}:${stdenv.cc.cc}/lib${stdenv.lib.optionalString stdenv.is64bit "64"} \
+          --set-rpath ${libPath}:${stdenv.cc.cc.lib}/lib${stdenv.lib.optionalString stdenv.is64bit "64"} \
           $i
       done
 
@@ -57,7 +57,7 @@ in let
         --set NIX_REDIRECTS ${builtins.concatStringsSep ":" redirects}
 
       # Without this, plugin_host crashes, even though it has the rpath
-      wrapProgram $out/plugin_host --prefix LD_PRELOAD : ${stdenv.cc.cc}/lib${stdenv.lib.optionalString stdenv.is64bit "64"}/libgcc_s.so.1:${openssl}/lib/libssl.so:${bzip2}/lib/libbz2.so
+      wrapProgram $out/plugin_host --prefix LD_PRELOAD : ${stdenv.cc.cc.lib}/lib${stdenv.lib.optionalString stdenv.is64bit "64"}/libgcc_s.so.1:${openssl.out}/lib/libssl.so:${bzip2.out}/lib/libbz2.so
     '';
   };
 in stdenv.mkDerivation {
@@ -76,7 +76,7 @@ in stdenv.mkDerivation {
   meta = with stdenv.lib; {
     description = "Sophisticated text editor for code, markup and prose";
     homepage = https://www.sublimetext.com/;
-    maintainers = with maintainers; [ wmertens demin-dmitriy ];
+    maintainers = with maintainers; [ wmertens demin-dmitriy zimbatm ];
     license = licenses.unfree;
     platforms = platforms.linux;
   };

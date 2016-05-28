@@ -2,7 +2,7 @@
 
 let version = "1.2.8"; in
 
-stdenv.mkDerivation (rec {
+stdenv.mkDerivation rec {
   name = "zlib-${version}";
 
   src = fetchurl {
@@ -20,13 +20,29 @@ stdenv.mkDerivation (rec {
       --replace 'ARFLAGS="-o"' 'ARFLAGS="-r"'
   '';
 
-  configureFlags = if static then "" else "--shared";
+  outputs = [ "dev" "out" "static" ];
+  setOutputFlags = false;
+  outputDoc = "dev"; # single tiny man3 page
+
 
   preConfigure = ''
     if test -n "$crossConfig"; then
       export CC=$crossConfig-gcc
-      configureFlags=${if static then "" else "--shared"}
     fi
+  '';
+
+  configureFlags = stdenv.lib.optional (!static) "--shared";
+
+  postInstall = ''
+    moveToOutput lib/libz.a "$static"
+  ''
+    # jww (2015-01-06): Sometimes this library install as a .so, even on
+    # Darwin; others time it installs as a .dylib.  I haven't yet figured out
+    # what causes this difference.
+  + stdenv.lib.optionalString stdenv.isDarwin ''
+    for file in $out/lib/*.so* $out/lib/*.dylib* ; do
+      install_name_tool -id "$file" $file
+    done
   '';
 
   # As zlib takes part in the stdenv building, we don't want references
@@ -36,20 +52,24 @@ stdenv.mkDerivation (rec {
 
   crossAttrs = {
     dontStrip = static;
+    dontSetConfigureCross = true;
   } // stdenv.lib.optionalAttrs (stdenv.cross.libc == "msvcrt") {
-    configurePhase=''
-      installFlags="BINARY_PATH=$out/bin INCLUDE_PATH=$out/include LIBRARY_PATH=$out/lib"
-    '';
+    installFlags = [
+      "BINARY_PATH=$(out)/bin"
+      "INCLUDE_PATH=$(dev)/include"
+      "LIBRARY_PATH=$(out)/lib"
+    ];
     makeFlags = [
       "-f" "win32/Makefile.gcc"
       "PREFIX=${stdenv.cross.config}-"
-    ] ++ (if static then [] else [ "SHARED_MODE=1" ]);
+    ] ++ stdenv.lib.optional (!static) "SHARED_MODE=1";
+
+    # Non-typical naming confuses libtool which then refuses to use zlib's DLL
+    # in some cases, e.g. when compiling libpng.
+    postInstall = postInstall + "ln -s zlib1.dll $out/bin/libz.dll";
   } // stdenv.lib.optionalAttrs (stdenv.cross.libc == "libSystem") {
     makeFlags = [ "RANLIB=${stdenv.cross.config}-ranlib" ];
   };
-
-  # CYGXXX: This is not needed anymore and non-functional, but left not to trigger rebuilds
-  cygwinConfigureEnableShared = if (!stdenv.isCygwin) then true else null;
 
   passthru.version = version;
 
@@ -58,13 +78,5 @@ stdenv.mkDerivation (rec {
     license = licenses.zlib;
     platforms = platforms.all;
   };
-} // (if stdenv.isDarwin then {
-  postInstall = ''
-    # jww (2015-01-06): Sometimes this library install as a .so, even on
-    # Darwin; others time it installs as a .dylib.  I haven't yet figured out
-    # what causes this difference.
-    for file in $out/lib/*.so* $out/lib/*.dylib* ; do
-      install_name_tool -id "$file" $file
-    done
-  '';
-} else {}))
+}
+

@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   name = "ghostscript-${version}";
 
   src = fetchurl {
-    url = "http://downloads.ghostscript.com/public/${name}.tar.bz2";
+    url = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs918/${name}.tar.bz2";
     inherit sha256;
   };
 
@@ -125,6 +125,8 @@ stdenv.mkDerivation rec {
   preFixup = lib.optionalString stdenv.isDarwin ''
     install_name_tool -change libgs.dylib.${version} $out/lib/libgs.dylib.${version} $out/bin/gs
   '';
+
+  passthru = { inherit version; };
 
   meta = {
     homepage = "http://www.ghostscript.com/";

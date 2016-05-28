@@ -1,19 +1,20 @@
-{ stdenv, fetchFromGitHub, autoreconfHook, gtk3, nssTools, pcsclite
-, pkgconfig }:
+{ stdenv, fetchFromGitHub
+, autoreconfHook, pkgconfig
+, gtk3, nssTools, pcsclite }:
 
 stdenv.mkDerivation rec {
   name = "eid-mw-${version}";
-  version = "4.1.13";
+  version = "4.1.18";
 
   src = fetchFromGitHub {
-    sha256 = "1fkazhw6gs191w789fnp6mwnxrx9p38b3kh5bngb1ir0zhkgghkq";
+    sha256 = "049rxrlcwcb9yir8q2inmqlslp49alpgm4pccl138xl34cg1hyhl";
     rev = "v${version}";
     repo = "eid-mw";
     owner = "Fedict";
   };
 
-  buildInputs = [ gtk3 pcsclite ];
   nativeBuildInputs = [ autoreconfHook pkgconfig ];
+  buildInputs = [ gtk3 pcsclite ];
 
   postPatch = ''
     sed 's@m4_esyscmd_s(.*,@[${version}],@' -i configure.ac

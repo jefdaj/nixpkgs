@@ -1,21 +1,16 @@
-{ stdenv, fetchurl }:
+{ stdenv, lib, fetchurl, gcc, staticBuild ? false }:
 
 stdenv.mkDerivation rec {
-  version = "4.9.3";
-  name = "libiberty-${version}";
+  name = "libiberty-${gcc.cc.version}";
 
-  src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
-    sha256 = "0zmnm00d2a1hsd41g34bhvxzvxisa2l584q3p447bd91lfjv4ci3";
-  };
+  inherit (gcc.cc) src;
 
   postUnpack = "sourceRoot=\${sourceRoot}/libiberty";
 
-  enable_shared = 1;
+  configureFlags = [ "--enable-install-libiberty" ] ++ lib.optional (!staticBuild) "--enable-shared";
 
-  installPhase = ''
-    mkdir -p $out/lib
-    cp pic/libiberty.a $out/lib/libiberty_pic.a
+  postInstall = lib.optionalString (!staticBuild) ''
+    cp pic/libiberty.a $out/lib*/libiberty.a
   '';
 
   meta = with stdenv.lib; {

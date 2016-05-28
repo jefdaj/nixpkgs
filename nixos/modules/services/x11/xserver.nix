@@ -13,9 +13,10 @@ let
 
   # Map video driver names to driver packages. FIXME: move into card-specific modules.
   knownVideoDrivers = {
-    virtualbox   = { modules = [ kernelPackages.virtualboxGuestAdditions ]; driverName = "vboxvideo"; };
-    ati = { modules = [ pkgs.xorg.xf86videoati pkgs.xorg.glamoregl ]; };
-    intel-testing = { modules = with pkgs.xorg; [ xf86videointel-testing glamoregl ]; driverName = "intel"; };
+    virtualbox = { modules = [ kernelPackages.virtualboxGuestAdditions ]; driverName = "vboxvideo"; };
+    ati = { modules = with pkgs.xorg; [ xf86videoati glamoregl ]; };
+    intel = { modules = with pkgs.xorg; [ xf86videointel glamoregl ]; };
+    modesetting = { modules = []; };
   };
 
   fontsForXServer =
@@ -219,11 +220,26 @@ in
         '';
       };
 
+      dpi = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "DPI resolution to use for X server.";
+      };
+
       startDbusSession = mkOption {
         type = types.bool;
         default = true;
         description = ''
           Whether to start a new DBus session when you log in with dbus-launch.
+        '';
+      };
+
+      updateDbusEnvironment = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Whether to update the DBus activation environment after launching the
+          desktop manager.
         '';
       };
 
@@ -450,7 +466,7 @@ in
         ]);
 
     environment.systemPackages =
-      [ xorg.xorgserver
+      [ xorg.xorgserver.out
         xorg.xrandr
         xorg.xrdb
         xorg.setxkbmap
@@ -460,6 +476,7 @@ in
         xorg.xsetroot
         xorg.xinput
         xorg.xprop
+        xorg.xauth
         pkgs.xterm
         pkgs.xdg_utils
       ]
@@ -487,7 +504,7 @@ in
             XKB_BINDIR = "${xorg.xkbcomp}/bin"; # Needed for the Xkb extension.
             XORG_DRI_DRIVER_PATH = "/run/opengl-driver/lib/dri"; # !!! Depends on the driver selected at runtime.
             LD_LIBRARY_PATH = concatStringsSep ":" (
-              [ "${xorg.libX11}/lib" "${xorg.libXext}/lib" ]
+              [ "${xorg.libX11.out}/lib" "${xorg.libXext.out}/lib" ]
               ++ concatLists (catAttrs "libPath" cfg.drivers));
           } // cfg.displayManager.job.environment;
 
@@ -503,22 +520,24 @@ in
         serviceConfig = {
           Restart = "always";
           RestartSec = "200ms";
+          SyslogIdentifier = "display-manager";
         };
       };
 
     services.xserver.displayManager.xserverArgs =
-      [ "-ac"
-        "-terminate"
+      [ "-terminate"
         "-config ${configFile}"
         "-xkbdir" "${cfg.xkbDir}"
+        # Log at the default verbosity level to stderr rather than /var/log/X.*.log.
+        "-verbose" "3" "-logfile" "/dev/null"
       ] ++ optional (cfg.display != null) ":${toString cfg.display}"
         ++ optional (cfg.tty     != null) "vt${toString cfg.tty}"
-        ++ optionals (cfg.display != null) [ "-logfile" "/var/log/X.${toString cfg.display}.log" ]
+        ++ optional (cfg.dpi     != null) "-dpi ${toString cfg.dpi}"
         ++ optional (!cfg.enableTCP) "-nolisten tcp";
 
     services.xserver.modules =
       concatLists (catAttrs "modules" cfg.drivers) ++
-      [ xorg.xorgserver
+      [ xorg.xorgserver.out
         xorg.xf86inputevdev
       ];
 

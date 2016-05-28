@@ -4,7 +4,7 @@ with lib;
 
 let
   cfg = config.services.dovecot2;
-  dovecotPkg = cfg.package;
+  dovecotPkg = pkgs.dovecot;
 
   baseDir = "/run/dovecot2";
   stateDir = "/var/lib/dovecot";
@@ -63,8 +63,10 @@ let
     cfg.extraConfig
   ];
 
-  modulesDir = pkgs.symlinkJoin "dovecot-modules"
-    (map (pkg: "${pkg}/lib/dovecot") ([ dovecotPkg ] ++ map (module: module.override { dovecot = dovecotPkg; }) cfg.modules));
+  modulesDir = pkgs.symlinkJoin {
+    name = "dovecot-modules";
+    paths = map (pkg: "${pkg}/lib/dovecot") ([ dovecotPkg ] ++ map (module: module.override { dovecot = dovecotPkg; }) cfg.modules);
+  };
 
 in
 {
@@ -94,13 +96,6 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Additional listeners to start when Dovecot is enabled.";
-    };
-
-    package = mkOption {
-      type = types.package;
-      default = pkgs.dovecot;
-      defaultText = "pkgs.dovecot";
-      description = "Dovecot package to use.";
     };
 
     user = mkOption {
@@ -157,8 +152,7 @@ in
       description = ''
         Symlinks the contents of lib/dovecot of every given package into
         /etc/dovecot/modules. This will make the given modules available
-        if a dovecot package with the module_dir patch applied (like
-        pkgs.dovecot22, the default) is being used.
+        if a dovecot package with the module_dir patch applied is being used.
       '';
     };
 

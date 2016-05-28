@@ -1,5 +1,6 @@
 { stdenv, fetchurl, perl, gnum4, ncurses, openssl
 , gnused, gawk, makeWrapper
+, Carbon, Cocoa
 , odbcSupport ? false, unixODBC ? null
 , wxSupport ? true, mesa ? null, wxGTK ? null, xorg ? null, wxmac ? null
 , javacSupport ? false, openjdk ? null
@@ -27,9 +28,10 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ perl gnum4 ncurses openssl makeWrapper
-    ] ++ optional wxSupport (if stdenv.isDarwin then [ wxmac ] else [ mesa wxGTK xorg.libX11 ])
-      ++ optional odbcSupport [ unixODBC ]
-      ++ optional javacSupport [ openjdk ];
+    ] ++ optionals wxSupport (if stdenv.isDarwin then [ wxmac ] else [ mesa wxGTK xorg.libX11 ])
+      ++ optional odbcSupport unixODBC
+      ++ optional javacSupport openjdk
+      ++ stdenv.lib.optionals stdenv.isDarwin [ Carbon Cocoa ];
 
   patchPhase = '' sed -i "s@/bin/rm@rm@" lib/odbc/configure erts/configure '';
 
@@ -83,8 +85,6 @@ stdenv.mkDerivation rec {
     '';
 
     platforms = platforms.unix;
-    # Note: Maintainer of prev. erlang version was simons. If he wants
-    # to continue maintaining erlang I'm totally ok with that.
     maintainers = [ maintainers.the-kenny maintainers.sjmackenzie ];
   };
 }
