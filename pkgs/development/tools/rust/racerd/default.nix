@@ -4,20 +4,20 @@ with rustPlatform;
 
 buildRustPackage rec {
   name = "racerd-${version}";
-  version = "0.1.1";
+  version = "2016-08-23";
   src = fetchgit {
     url = "git://github.com/jwilm/racerd.git";
-    rev = "dcbb7885e84eb5e2fbb2072e185701ad1abbd93a";
-    sha256 = "18c6a1x0li5yxif9qqnsnyas6if0m6srbqh0h0nywgx0lm8bpgly";
+    rev = "5d685ed26ba812a1afe892a8c0d12eb6abbeeb3d";
+    sha256 = "1ww96nc00l8p28rnln31n92x0mp2p5jnaqh2nwc8xi3r559p1y5i";
   };
 
   doCheck = false;
 
-  depsSha256 = "0ca0lc8mm8kczll5m03n5fwsr0540c2xbfi4nn9ksn0s4sap50yn";
+  depsSha256 = "13vkabr6bbl2nairxpn3lhqxcr3larasjk03r4hzrn7ff7sy40h2";
 
   buildInputs = [ makeWrapper ];
 
-  RUST_SRC_PATH = ''${rustc.src}/src'';
+  RUST_SRC_PATH = ''${rustPlatform.rust.rustc.src}/src'';
 
   installPhase = ''
     mkdir -p $out/bin

@@ -29,7 +29,11 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ ghc perl libxml2 libxslt docbook_xsl docbook_xml_dtd_45 docbook_xml_dtd_42 hscolour ];
 
+  patches = [ ./relocation.patch ];
+
   enableParallelBuilding = true;
+
+  outputs = [ "out" "doc" ];
 
   preConfigure = ''
     echo >mk/build.mk "${buildMK}"
@@ -43,6 +47,7 @@ stdenv.mkDerivation rec {
   configureFlags = [
     "--with-gcc=${stdenv.cc}/bin/cc"
     "--with-gmp-includes=${gmp.dev}/include" "--with-gmp-libraries=${gmp.out}/lib"
+    "--datadir=$doc/share/doc/ghc"
   ];
 
   # required, because otherwise all symbols from HSffi.o are stripped, and
@@ -57,7 +62,7 @@ stdenv.mkDerivation rec {
     for i in "$out/bin/"*; do
       test ! -h $i || continue
       egrep --quiet '^#!' <(head -n 1 $i) || continue
-      sed -i -e '2i export PATH="$PATH:${binutils}/bin:${coreutils}/bin"' $i
+      sed -i -e '2i export PATH="$PATH:${stdenv.lib.makeBinPath [ binutils coreutils ]}"' $i
     done
   '';
 

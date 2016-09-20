@@ -24,14 +24,14 @@ stdenv.mkDerivation rec {
     sed -i -e '/<sys\\stat\.h>/s|\\|/|' bzip2.c
   '';
 
-  outputs = [ "dev" "bin" "out" "man" ];
+  outputs = [ "bin" "dev" "out" "man" ];
 
   configureFlags =
     stdenv.lib.optionals linkStatic [ "--enable-static" "--disable-shared" ];
 
   meta = {
     homepage = "http://www.bzip.org";
-    description = "high-quality data compression program";
+    description = "High-quality data compression program";
 
     platforms = stdenv.lib.platforms.all;
     maintainers = [];

@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ openssl ] ++ stdenv.lib.optionals usePAM [ pam ];
 
   configureFlags = [
-    "--with-ssl-incl-dir=${openssl}/include"
+    "--with-ssl-incl-dir=${openssl.dev}/include"
     "--with-ssl-lib-dir=${openssl.out}/lib"
   ] ++ stdenv.lib.optionals (! usePAM) [ "--without-pam" ];
 
@@ -21,5 +21,6 @@ stdenv.mkDerivation rec {
     description = "Monitoring system";
     license = stdenv.lib.licenses.agpl3;
     maintainers = with stdenv.lib.maintainers; [ raskin wmertens ];
+    platforms = with stdenv.lib.platforms; linux;
   };
 }

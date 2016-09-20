@@ -1,8 +1,9 @@
 { stdenv, fetchurl
 , pkgconfig
 , zlib
-, libjpeg
 , libpng
+, libjpeg ? null
+, libwebp ? null
 , libtiff ? null
 , libXpm ? null
 , fontconfig
@@ -11,23 +12,28 @@
 
 stdenv.mkDerivation rec {
   name = "gd-${version}";
-  version = "2.1.1";
+  version = "2.2.3";
 
   src = fetchurl {
     url = "https://github.com/libgd/libgd/releases/download/${name}/libgd-${version}.tar.xz";
-    sha256 = "11djy9flzxczphigqgp7fbbblbq35gqwwhn9xfcckawlapa1xnls";
+    sha256 = "0g3xz8jpz1pl2zzmssglrpa9nxiaa7rmcmvgpbrjz8k9cyynqsvl";
   };
 
-  patches = [
-    ./CVE-2016-3074.patch
-  ];
+  hardeningDisable = [ "format" ];
+
+  # -pthread gets passed to clang, causing warnings
+  configureFlags = stdenv.lib.optional stdenv.isDarwin "--enable-werror=no";
 
   nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ zlib fontconfig freetype libjpeg libpng libtiff libXpm ];
 
-  outputs = [ "dev" "out" "bin" ];
+  buildInputs = [ zlib fontconfig freetype ];
+  propagatedBuildInputs = [ libpng libjpeg libwebp libtiff libXpm ];
+
+  outputs = [ "bin" "dev" "out" ];
 
   postFixup = ''moveToOutput "bin/gdlib-config" $dev'';
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     homepage = https://libgd.github.io/;

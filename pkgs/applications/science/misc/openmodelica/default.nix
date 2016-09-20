@@ -20,12 +20,18 @@ stdenv.mkDerivation {
     doxygen boost openscenegraph gnome.gtkglext pangox_compat xorg.libXmu
     git gtk makeWrapper];
 
+  hardeningDisable = [ "format" ];
+
+  enableParallelBuilding = true;
+
   patchPhase = ''
     cp -fv ${fakegit}/bin/checkout-git.sh libraries/checkout-git.sh
     cp -fv ${fakegit}/bin/checkout-svn.sh libraries/checkout-svn.sh
   '';
 
   configurePhase = ''
+    export NIX_LDFLAGS="$NIX_LDFLAGS -L${gfortran.cc.lib}/lib"
+
     autoconf
     ./configure CC=${clang}/bin/clang CXX=${clang}/bin/clang++ --prefix=$out
   '';
@@ -34,7 +40,7 @@ stdenv.mkDerivation {
     for e in $(cd $out/bin && ls); do
       wrapProgram $out/bin/$e \
         --prefix PATH : "${gnumake}/bin" \
-        --prefix LIBRARY_PATH : "${liblapack}/lib:${blas}/lib"
+        --prefix LIBRARY_PATH : "${stdenv.lib.makeLibraryPath [ liblapack blas ]}"
     done
   '';
 

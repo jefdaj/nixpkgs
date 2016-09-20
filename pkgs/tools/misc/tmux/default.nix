@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   name = "tmux-${version}";
   version = "2.2";
 
+  outputs = [ "out" "man" ];
+
   src = fetchFromGitHub {
     owner = "tmux";
     repo = "tmux";
@@ -34,9 +36,6 @@ stdenv.mkDerivation rec {
   postInstall = ''
     mkdir -p $out/share/bash-completion/completions
     cp -v ${bashCompletion}/completions/tmux $out/share/bash-completion/completions/tmux
-
-    wrapProgram $out/bin/tmux \
-      --set TMUX_TMPDIR \''${XDG_RUNTIME_DIR:-"/run/user/\$(id -u)"}
   '';
 
   meta = {

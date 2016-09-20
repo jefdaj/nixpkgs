@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ openssl ncurses pkgconfig glib loudmouth libotr gpgme ];
 
-  configureFlags = "--with-openssl=${openssl} --enable-modules --enable-otr";
+  configureFlags = "--with-openssl=${openssl.dev} --enable-modules --enable-otr";
 
   doCheck = true;
   
@@ -22,5 +22,6 @@ stdenv.mkDerivation rec {
     description = "Small Jabber console client";
     license = licenses.gpl2;
     maintainers = with maintainers; [ pSub ];
+    platforms = with platforms; linux;
   };
 }

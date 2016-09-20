@@ -1,5 +1,6 @@
 { stdenv, fetchurl, lib, iasl, dev86, pam, libxslt, libxml2, libX11, xproto, libXext
 , libXcursor, libXmu, qt4, libIDL, SDL, libcap, zlib, libpng, glib, kernel, lvm2
+, libXrandr
 , which, alsaLib, curl, libvpx, gawk, nettools, dbus
 , xorriso, makeself, perl, pkgconfig, nukeReferences
 , javaBindings ? false, jdk ? null
@@ -7,6 +8,7 @@
 , enableExtensionPack ? false, requireFile ? null, patchelf ? null, fakeroot ? null
 , pulseSupport ? false, libpulseaudio ? null
 , enableHardening ? false
+, headless ? false
 }:
 
 with stdenv.lib;
@@ -18,7 +20,7 @@ let
   # revision/hash as well. See
   # http://download.virtualbox.org/virtualbox/${version}/SHA256SUMS
   # for hashes.
-  version = "5.0.20";
+  version = "5.0.26";
 
   forEachModule = action: ''
     for mod in \
@@ -39,22 +41,22 @@ let
   '';
 
   # See https://github.com/NixOS/nixpkgs/issues/672 for details
-  extpackRevision = "106931";
+  extpackRevision = "108824";
   extensionPack = requireFile rec {
     name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRevision}.vbox-extpack";
     # IMPORTANT: Hash must be base16 encoded because it's used as an input to
     # VBoxExtPackHelperApp!
-    sha256 = "11f40842a56ebb17da1bbc82a21543e66108a5330ebd54ded68038a990aa071b";
+    sha256 = "2f2302c7ba3d00a1258fe8e7767a6eb08dccdc3c31f6e3eeb74063c2c268b104";
     message = ''
       In order to use the extension pack, you need to comply with the VirtualBox Personal Use
-      and Evaluation License (PUEL) by downloading the related binaries from:
+      and Evaluation License (PUEL) available at:
 
-      https://www.virtualbox.org/wiki/Downloads
+      https://www.virtualbox.org/wiki/VirtualBox_PUEL
 
-      Once you have downloaded the file, please use the following command and re-run the
-      installation:
+      Once you have read and if you agree with the license, please use the
+      following command and re-run the installation:
 
-      nix-prefetch-url file://${name}
+      nix-prefetch-url http://download.virtualbox.org/virtualbox/${version}/${name}
     '';
   };
 
@@ -63,16 +65,20 @@ in stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://download.virtualbox.org/virtualbox/${version}/VirtualBox-${version}.tar.bz2";
-    sha256 = "0asc5n9an2dzvrd4isjz3vac2h0sm6dbzvrc36hn8ag2ma3hg75g";
+    sha256 = "78dec1369d2c8feefea3c682d95e76c0e99414c56626388035cf4061d4dad62e";
   };
 
   buildInputs =
-    [ iasl dev86 libxslt libxml2 xproto libX11 libXext libXcursor qt4 libIDL SDL
+    [ iasl dev86 libxslt libxml2 xproto libX11 libXext libXcursor libIDL
       libcap glib lvm2 python alsaLib curl libvpx pam xorriso makeself perl
       pkgconfig which libXmu nukeReferences ]
     ++ optional javaBindings jdk
     ++ optional pythonBindings python
-    ++ optional pulseSupport libpulseaudio;
+    ++ optional pulseSupport libpulseaudio
+    ++ optionals (headless) [ libXrandr libpng ]
+    ++ optionals (!headless) [ qt4 SDL ];
+
+  hardeningDisable = [ "fortify" "pic" "stackprotector" ];
 
   prePatch = ''
     set -x
@@ -106,7 +112,7 @@ in stdenv.mkDerivation {
 
   # first line: ugly hack, and it isn't yet clear why it's a problem
   configurePhase = ''
-    NIX_CFLAGS_COMPILE=$(echo "$NIX_CFLAGS_COMPILE" | sed 's,\-isystem ${stdenv.cc.libc}/include,,g')
+    NIX_CFLAGS_COMPILE=$(echo "$NIX_CFLAGS_COMPILE" | sed 's,\-isystem ${lib.getDev stdenv.cc.libc}/include,,g')
 
     cat >> LocalConfig.kmk <<LOCAL_CONFIG
     VBOX_WITH_TESTCASES            :=
@@ -127,13 +133,15 @@ in stdenv.mkDerivation {
     ''}
     LOCAL_CONFIG
 
-    ./configure --with-qt4-dir=${qt4} \
+    ./configure \
+      ${optionalString headless "--build-headless"} \
+      ${optionalString (!headless) "--with-qt4-dir=${qt4}"} \
       ${optionalString (!javaBindings) "--disable-java"} \
       ${optionalString (!pythonBindings) "--disable-python"} \
       ${optionalString (!pulseSupport) "--disable-pulse"} \
       ${optionalString (!enableHardening) "--disable-hardening"} \
       --disable-kmods --with-mkisofs=${xorriso}/bin/xorrisofs
-    sed -e 's@PKG_CONFIG_PATH=.*@PKG_CONFIG_PATH=${libIDL}/lib/pkgconfig:${glib}/lib/pkgconfig ${libIDL}/bin/libIDL-config-2@' \
+    sed -e 's@PKG_CONFIG_PATH=.*@PKG_CONFIG_PATH=${libIDL}/lib/pkgconfig:${glib.dev}/lib/pkgconfig ${libIDL}/bin/libIDL-config-2@' \
         -i AutoConfig.kmk
     sed -e 's@arch/x86/@@' \
         -i Config.kmk
@@ -178,16 +186,18 @@ in stdenv.mkDerivation {
       EXTHELPER
     ''}
 
-    # Create and fix desktop item
-    mkdir -p $out/share/applications
-    sed -i -e "s|Icon=VBox|Icon=$libexec/VBox.png|" $libexec/virtualbox.desktop
-    ln -sfv $libexec/virtualbox.desktop $out/share/applications
-    # Icons
-    mkdir -p $out/share/icons/hicolor
-    for size in `ls -1 $libexec/icons`; do
-      mkdir -p $out/share/icons/hicolor/$size/apps
-      ln -s $libexec/icons/$size/*.png $out/share/icons/hicolor/$size/apps
-    done
+    ${optionalString (!headless) ''
+      # Create and fix desktop item
+      mkdir -p $out/share/applications
+      sed -i -e "s|Icon=VBox|Icon=$libexec/VBox.png|" $libexec/virtualbox.desktop
+      ln -sfv $libexec/virtualbox.desktop $out/share/applications
+      # Icons
+      mkdir -p $out/share/icons/hicolor
+      for size in `ls -1 $libexec/icons`; do
+        mkdir -p $out/share/icons/hicolor/$size/apps
+        ln -s $libexec/icons/$size/*.png $out/share/icons/hicolor/$size/apps
+      done
+    ''}
 
     # Get rid of a reference to linux.dev.
     nuke-refs $out/lib/modules/*/misc/*.ko

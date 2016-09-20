@@ -14,9 +14,9 @@ let
   # Map video driver names to driver packages. FIXME: move into card-specific modules.
   knownVideoDrivers = {
     virtualbox = { modules = [ kernelPackages.virtualboxGuestAdditions ]; driverName = "vboxvideo"; };
-    ati = { modules = with pkgs.xorg; [ xf86videoati glamoregl ]; };
-    intel = { modules = with pkgs.xorg; [ xf86videointel glamoregl ]; };
-    modesetting = { modules = []; };
+
+    # modesetting does not have a xf86videomodesetting package as it is included in xorgserver
+    modesetting = {};
   };
 
   fontsForXServer =
@@ -446,7 +446,7 @@ in
            then { modules = [xorg.${"xf86video" + name}]; }
            else null)
           knownVideoDrivers;
-      in optional (driver != null) ({ inherit name; driverName = name; } // driver));
+      in optional (driver != null) ({ inherit name; modules = []; driverName = name; } // driver));
 
     assertions =
       [ { assertion = config.security.polkit.enable;
@@ -463,7 +463,14 @@ in
           { source = "${cfg.xkbDir}";
             target = "X11/xkb";
           }
-        ]);
+        ])
+      # Needed since 1.18; see https://bugs.freedesktop.org/show_bug.cgi?id=89023#c5
+      ++ (let cfgPath = "/X11/xorg.conf.d/10-evdev.conf"; in
+        [{
+          source = xorg.xf86inputevdev.out + "/share" + cfgPath;
+          target = cfgPath;
+        }]
+      );
 
     environment.systemPackages =
       [ xorg.xorgserver.out
@@ -479,6 +486,7 @@ in
         xorg.xauth
         pkgs.xterm
         pkgs.xdg_utils
+        xorg.xf86inputevdev.out # get evdev.4 man page
       ]
       ++ optional (elem "virtualbox" cfg.videoDrivers) xorg.xrefresh;
 
@@ -504,7 +512,7 @@ in
             XKB_BINDIR = "${xorg.xkbcomp}/bin"; # Needed for the Xkb extension.
             XORG_DRI_DRIVER_PATH = "/run/opengl-driver/lib/dri"; # !!! Depends on the driver selected at runtime.
             LD_LIBRARY_PATH = concatStringsSep ":" (
-              [ "${xorg.libX11.out}/lib" "${xorg.libXext.out}/lib" ]
+              [ "${xorg.libX11.out}/lib" "${xorg.libXext.out}/lib" "/run/opengl-driver/lib" ]
               ++ concatLists (catAttrs "libPath" cfg.drivers));
           } // cfg.displayManager.job.environment;
 
@@ -538,7 +546,7 @@ in
     services.xserver.modules =
       concatLists (catAttrs "modules" cfg.drivers) ++
       [ xorg.xorgserver.out
-        xorg.xf86inputevdev
+        xorg.xf86inputevdev.out
       ];
 
     services.xserver.xkbDir = mkDefault "${pkgs.xkeyboard_config}/etc/X11/xkb";
@@ -645,6 +653,8 @@ in
 
         ${xrandrMonitorSections}
       '';
+
+    fonts.enableDefaultFonts = mkDefault true;
 
   };
 

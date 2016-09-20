@@ -27,7 +27,7 @@ let
     };
 
   # Can't do separate $lib and $bin, as libs reference bins
-  outputs = [ "dev" "out" "man" ];
+  outputs = [ "out" "dev" "man" ];
 
     buildInputs = [ zlib apr aprutil sqlite ]
       ++ stdenv.lib.optional httpSupport serf
@@ -43,14 +43,14 @@ let
 
     configureFlags = ''
       ${if bdbSupport then "--with-berkeley-db" else "--without-berkeley-db"}
-      ${if httpServer then "--with-apxs=${apacheHttpd}/bin/apxs" else "--without-apxs"}
+      ${if httpServer then "--with-apxs=${apacheHttpd.dev}/bin/apxs" else "--without-apxs"}
       ${if pythonBindings || perlBindings then "--with-swig=${swig}" else "--without-swig"}
       ${if javahlBindings then "--enable-javahl --with-jdk=${jdk}" else ""}
       --disable-keychain
       ${if saslSupport then "--with-sasl=${sasl}" else "--without-sasl"}
       ${if httpSupport then "--with-serf=${serf}" else "--without-serf"}
-      --with-zlib=${zlib}
-      --with-sqlite=${sqlite}
+      --with-zlib=${zlib.dev}
+      --with-sqlite=${sqlite.dev}
     '';
 
     preBuild = ''
@@ -90,7 +90,7 @@ let
       description = "A version control system intended to be a compelling replacement for CVS in the open source community";
       homepage = http://subversion.apache.org/;
       maintainers = with stdenv.lib.maintainers; [ eelco lovek323 ];
-      hydraPlatforms = stdenv.lib.platforms.linux ++ stdenv.lib.platforms.darwin;
+      platforms = stdenv.lib.platforms.linux ++ stdenv.lib.platforms.darwin;
     };
 
   } // stdenv.lib.optionalAttrs stdenv.isDarwin {

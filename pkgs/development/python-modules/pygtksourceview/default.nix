@@ -1,8 +1,8 @@
-{ stdenv, fetchurl, python, pkgconfig, pygobject, glib, pygtk, gnome2 }:
+{ lib, fetchurl, python, mkPythonDerivation, pkgconfig, pygobject, glib, pygtk, gnome2 }:
 
 let version = "2.10.1"; in
 
-stdenv.mkDerivation {
+mkPythonDerivation {
   name = "pygtksourceview-${version}";
 
   src = fetchurl {
@@ -13,4 +13,8 @@ stdenv.mkDerivation {
   patches = [ ./codegendir.patch ];
 
   buildInputs = [ python pkgconfig pygobject glib pygtk gnome2.gtksourceview ];
+
+  meta = {
+    platforms = lib.platforms.unix;
+  };
 }

@@ -6,9 +6,9 @@ let fetchurl = args@{url, sha256, ...}:
 in rec {
 
   stable = fetchurl rec {
-    version = "1.8.1";
+    version = "1.8.4";
     url = "mirror://sourceforge/wine/wine-${version}.tar.bz2";
-    sha256 = "15ya496qq24ipqii7ij8x8h5x8n21vgqa4h6binb74w5mzdd76hl";
+    sha256 = "0yahh1n3s3y0bp1a1sr3zpna56749jdgr85hwmpq393pjx1i0pai";
 
     ## see http://wiki.winehq.org/Gecko
     gecko32 = fetchurl rec {
@@ -30,9 +30,9 @@ in rec {
   };
 
   unstable = fetchurl rec {
-    version = "1.9.7";
+    version = "1.9.18";
     url = "mirror://sourceforge/wine/wine-${version}.tar.bz2";
-    sha256 = "1v47i0pxqcixnh06x23kzp2dbz1cf3d2sric0bw6xqh54ph5yw29";
+    sha256 = "1n38697v707j489ljd6b2k1yvrarflc0yn847jas1ida1nm4nq96";
     inherit (stable) mono;
     gecko32 = fetchurl rec {
       version = "2.44";
@@ -48,15 +48,15 @@ in rec {
 
   staging = fetchFromGitHub rec {
     inherit (unstable) version;
-    sha256 = "1h5hwd07qyx0qw5whf6lcp7v57kqd6mrrcvwwg1bydir68b0zp16";
+    sha256 = "0gpxzv85x181dz3arp8xmjz2y0gchna54wjv2a1jg3mqaf3bp4dj";
     owner = "wine-compholio";
     repo = "wine-staging";
     rev = "v${version}";
   };
 
   winetricks = fetchFromGitHub rec {
-    version = "20160219";
-    sha256 = "1wqsbdh2qa5xxswilniki9wzbhlmkl6jqmryjd9f5smirr7ryy2r";
+    version = "20160622";
+    sha256 = "0xh7mc5xby0zxx2g3q1ky18s20y6s7wp3vzvgxydwzhhwf32189q";
     owner = "Winetricks";
     repo = "winetricks";
     rev = version;

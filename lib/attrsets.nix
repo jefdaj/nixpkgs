@@ -454,10 +454,11 @@ rec {
   getLib = getOutput "lib";
   getDev = getOutput "dev";
 
+  /* Pick the outputs of packages to place in buildInputs */
+  chooseDevOutputs = drvs: builtins.map getDev drvs;
 
   /*** deprecated stuff ***/
 
-  deepSeqAttrs = throw "removed 2016-02-29 because unused and broken";
   zipWithNames = zipAttrsWithNames;
   zip = builtins.trace
     "lib.zip is deprecated, use lib.zipAttrsWith instead" zipAttrsWith;

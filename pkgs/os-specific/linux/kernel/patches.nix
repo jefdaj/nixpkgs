@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgs }:
+{ stdenv, fetchurl, fetchpatch, pkgs }:
 
 let
 
@@ -18,20 +18,22 @@ let
       };
     };
 
-  grsecPatch = { grversion ? "3.1", kernel, patches, kversion, revision, branch ? "test", sha256 }:
-    assert kversion == kernel.version;
-    { name = "grsecurity-${grversion}-${kversion}";
-      inherit grversion kernel patches kversion revision;
+  grsecPatch = { grbranch ? "test", grver ? "3.1", kver, grrev, sha256 }: rec {
+    name = "grsecurity-${grver}-${kver}-${grrev}";
+
+    # Pass these along to allow the caller to determine compatibility
+    inherit grver kver grrev;
+
+    patch = fetchurl {
       # When updating versions/hashes, ALWAYS use the official version; we use
       # this mirror only because upstream removes sources files immediately upon
       # releasing a new version ...
-      patch = fetchurl {
-        url = "https://raw.githubusercontent.com/slashbeast/grsecurity-scrape/master/test/grsecurity-${grversion}-${kversion}-${revision}.patch";
-        inherit sha256;
-      };
-      features.grsecurity = true;
+      url = "https://raw.githubusercontent.com/slashbeast/grsecurity-scrape/master/${grbranch}/${name}.patch";
+      inherit sha256;
     };
 
+    features.grsecurity = true;
+  };
 in
 
 rec {
@@ -72,6 +74,11 @@ rec {
       patch = ./mips-ext3-n32.patch;
     };
 
+  modinst_arg_list_too_long =
+    { name = "modinst-arglist-too-long";
+      patch = ./modinst-arg-list-too-long.patch;
+    };
+
   ubuntu_fan_4_4 =
     { name = "ubuntu-fan";
       patch = ./ubuntu-fan-4.4.patch;
@@ -92,19 +99,18 @@ rec {
 
   grsecurity_4_4 = throw "grsecurity stable is no longer supported";
 
-  grsecurity_4_5 = grsecPatch
-    { kernel    = pkgs.grsecurity_base_linux_4_5;
-      patches   = [ grsecurity_fix_path_4_5 ];
-      kversion  = "4.5.5";
-      revision  = "201605211442";
-      sha256    = "15bg2j6y9jxjdcgxlbdj1g1wwf5afm3yzjczh79dj3v8z2hwz097";
+  grsecurity_testing = grsecPatch
+    { kver   = "4.7.3";
+      grrev  = "201609072139";
+      sha256 = "0c70nfsa1bk07z6sivy645d9w0qkq23pwpwdm28160kfy7dampyh";
     };
 
-  grsecurity_latest = grsecurity_4_5;
-
-  grsecurity_fix_path_4_5 =
-    { name = "grsecurity-fix-path-4.5";
-      patch = ./grsecurity-path-4.5.patch;
+  # This patch relaxes grsec constraints on the location of usermode helpers,
+  # e.g., modprobe, to allow calling into the Nix store.
+  grsecurity_nixos_kmod =
+    {
+      name  = "grsecurity-nixos-kmod";
+      patch = ./grsecurity-nixos-kmod.patch;
     };
 
   crc_regression =
@@ -137,8 +143,14 @@ rec {
     { name = "mfd_fix_dependency";
       patch = ./chromiumos-patches/mfd-fix-dependency.patch;
     };
-  qat_common_Makefile =
-    { name = "qat_common_Makefile";
-      patch = ./qat_common_Makefile.patch;
+
+  hiddev_CVE_2016_5829 =
+    { name = "hiddev_CVE_2016_5829";
+      patch = fetchpatch {
+        url = "https://sources.debian.net/data/main/l/linux/4.6.3-1/debian/patches/bugfix/all/HID-hiddev-validate-num_values-for-HIDIOCGUSAGES-HID.patch";
+        sha256 = "14rm1qr87p7a5prz8g5fwbpxzdp3ighj095x8rvhm8csm20wspyy";
+      };
     };
+
+  cpu-cgroup-v2 = import ./cpu-cgroup-v2-patches;
 }

@@ -4,10 +4,10 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "gparted-0.26.0";
+  name = "gparted-0.26.1";
 
   src = fetchurl {
-    sha256 = "1d3zw99yd1v0gqhcxff35wqz34xi6ps7q9j1bn11sghqihr3kwxw";
+    sha256 = "1h9d6x335wxpm49yphzm9n1hbh2hcg0p2rphv76mrvsss91bcm1g";
     url = "mirror://sourceforge/gparted/${name}.tar.gz";
   };
 
@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
     wrapProgram $out/sbin/gparted \
       --prefix PATH : "${procps}/bin"
     wrapProgram $out/sbin/gpartedbin \
-      --prefix PATH : "${gpart}/bin:${hdparm}/bin:${utillinux}/bin"
+      --prefix PATH : "${stdenv.lib.makeBinPath [ gpart hdparm utillinux ]}"
   '';
 
   meta = with stdenv.lib; {

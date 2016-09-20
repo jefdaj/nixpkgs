@@ -37,9 +37,11 @@
   ./hardware/network/rtl8192c.nix
   ./hardware/opengl.nix
   ./hardware/pcmcia.nix
-  ./hardware/video/bumblebee.nix
-  ./hardware/video/nvidia.nix
+  ./hardware/video/amdgpu.nix
   ./hardware/video/ati.nix
+  ./hardware/video/bumblebee.nix
+  ./hardware/video/displaylink.nix
+  ./hardware/video/nvidia.nix
   ./hardware/video/webcam/facetimehd.nix
   ./i18n/input-method/default.nix
   ./i18n/input-method/fcitx.nix
@@ -62,12 +64,12 @@
   ./programs/bash/bash.nix
   ./programs/blcr.nix
   ./programs/cdemu.nix
-  # see https://github.com/NixOS/nixos-channel-scripts/issues/4
-  #./programs/command-not-found/command-not-found.nix
+  ./programs/command-not-found/command-not-found.nix
   ./programs/dconf.nix
   ./programs/environment.nix
-  ./programs/freetds.nix
   ./programs/fish.nix
+  ./programs/freetds.nix
+  ./programs/info.nix
   ./programs/kbdlight.nix
   ./programs/light.nix
   ./programs/man.nix
@@ -76,12 +78,14 @@
   ./programs/screen.nix
   ./programs/shadow.nix
   ./programs/shell.nix
+  ./programs/spacefm.nix
   ./programs/ssh.nix
   ./programs/ssmtp.nix
   ./programs/tmux.nix
   ./programs/venus.nix
   ./programs/wvdial.nix
   ./programs/xfs_quota.nix
+  ./programs/xonsh.nix
   ./programs/zsh/zsh.nix
   ./rename.nix
   ./security/acme.nix
@@ -89,6 +93,7 @@
   ./security/apparmor-suid.nix
   ./security/audit.nix
   ./security/ca.nix
+  ./security/chromium-suid-sandbox.nix
   ./security/duosec.nix
   ./security/grsecurity.nix
   ./security/hidepid.nix
@@ -109,6 +114,8 @@
   ./services/audio/liquidsoap.nix
   ./services/audio/mpd.nix
   ./services/audio/mopidy.nix
+  ./services/audio/squeezelite.nix
+  ./services/audio/ympd.nix
   ./services/backup/almir.nix
   ./services/backup/bacula.nix
   ./services/backup/crashplan.nix
@@ -124,9 +131,13 @@
   ./services/computing/torque/server.nix
   ./services/computing/torque/mom.nix
   ./services/computing/slurm/slurm.nix
+  ./services/continuous-integration/buildkite-agent.nix
+  ./services/continuous-integration/hydra/default.nix
+  ./services/continuous-integration/gocd-agent/default.nix
+  ./services/continuous-integration/gocd-server/default.nix
   ./services/continuous-integration/jenkins/default.nix
-  ./services/continuous-integration/jenkins/slave.nix
   ./services/continuous-integration/jenkins/job-builder.nix
+  ./services/continuous-integration/jenkins/slave.nix
   ./services/databases/4store-endpoint.nix
   ./services/databases/4store.nix
   ./services/databases/couchdb.nix
@@ -160,10 +171,12 @@
   ./services/desktops/profile-sync-daemon.nix
   ./services/desktops/telepathy.nix
   ./services/development/hoogle.nix
+  ./services/editors/emacs.nix
   ./services/games/factorio.nix
   ./services/games/ghost-one.nix
   ./services/games/minecraft-server.nix
   ./services/games/minetest-server.nix
+  ./services/games/terraria.nix
   ./services/hardware/acpid.nix
   ./services/hardware/actkbd.nix
   ./services/hardware/amd-hybrid-graphics.nix
@@ -216,8 +229,8 @@
   ./services/misc/confd.nix
   ./services/misc/devmon.nix
   ./services/misc/dictd.nix
+  ./services/misc/dysnomia.nix
   ./services/misc/disnix.nix
-  ./services/misc/docker-registry.nix
   ./services/misc/emby.nix
   ./services/misc/etcd.nix
   ./services/misc/felix.nix
@@ -242,6 +255,7 @@
   ./services/misc/nix-ssh-serve.nix
   ./services/misc/nzbget.nix
   ./services/misc/octoprint.nix
+  ./services/misc/packagekit.nix
   ./services/misc/parsoid.nix
   ./services/misc/phd.nix
   ./services/misc/plex.nix
@@ -251,6 +265,7 @@
   ./services/misc/ripple-data-api.nix
   ./services/misc/rogue.nix
   ./services/misc/siproxd.nix
+  ./services/misc/sonarr.nix
   ./services/misc/spice-vdagentd.nix
   ./services/misc/subsonic.nix
   ./services/misc/sundtek.nix
@@ -273,6 +288,7 @@
   ./services/monitoring/monit.nix
   ./services/monitoring/munin.nix
   ./services/monitoring/nagios.nix
+  ./services/monitoring/prometheus/default.nix
   ./services/monitoring/riemann.nix
   ./services/monitoring/riemann-dash.nix
   ./services/monitoring/riemann-tools.nix
@@ -312,21 +328,23 @@
   ./services/networking/cntlm.nix
   ./services/networking/connman.nix
   ./services/networking/consul.nix
+  ./services/networking/coturn.nix
   ./services/networking/ddclient.nix
   ./services/networking/dhcpcd.nix
   ./services/networking/dhcpd.nix
   ./services/networking/dnschain.nix
   ./services/networking/dnscrypt-proxy.nix
   ./services/networking/dnsmasq.nix
-  ./services/networking/docker-registry-server.nix
   ./services/networking/ejabberd.nix
   ./services/networking/fan.nix
+  ./services/networking/ferm.nix
   ./services/networking/firefox/sync-server.nix
   ./services/networking/firewall.nix
   ./services/networking/flashpolicyd.nix
   ./services/networking/freenet.nix
   ./services/networking/gale.nix
   ./services/networking/gateone.nix
+  ./services/networking/gdomap.nix
   ./services/networking/git-daemon.nix
   ./services/networking/gnunet.nix
   ./services/networking/gogoclient.nix
@@ -360,6 +378,7 @@
   ./services/networking/ntopng.nix
   ./services/networking/ntpd.nix
   ./services/networking/nylon.nix
+  ./services/networking/offlineimap.nix
   ./services/networking/oidentd.nix
   ./services/networking/openfire.nix
   ./services/networking/openntpd.nix
@@ -367,9 +386,11 @@
   ./services/networking/ostinato.nix
   ./services/networking/pdnsd.nix
   ./services/networking/polipo.nix
+  ./services/networking/pptpd.nix
   ./services/networking/prayer.nix
   ./services/networking/privoxy.nix
   ./services/networking/prosody.nix
+  ./services/networking/quagga.nix
   ./services/networking/quassel.nix
   ./services/networking/racoon.nix
   ./services/networking/radicale.nix
@@ -383,6 +404,7 @@
   ./services/networking/shairport-sync.nix
   ./services/networking/shout.nix
   ./services/networking/sniproxy.nix
+  ./services/networking/smokeping.nix
   ./services/networking/softether.nix
   ./services/networking/spiped.nix
   ./services/networking/sslh.nix
@@ -398,6 +420,7 @@
   ./services/networking/tftpd.nix
   ./services/networking/tlsdated.nix
   ./services/networking/tox-bootstrapd.nix
+  ./services/networking/toxvpn.nix
   ./services/networking/tvheadend.nix
   ./services/networking/unbound.nix
   ./services/networking/unifi.nix
@@ -407,6 +430,7 @@
   ./services/networking/wicd.nix
   ./services/networking/wpa_supplicant.nix
   ./services/networking/xinetd.nix
+  ./services/networking/xl2tpd.nix
   ./services/networking/zerobin.nix
   ./services/networking/zerotierone.nix
   ./services/networking/znc.nix
@@ -428,6 +452,7 @@
   ./services/security/haveged.nix
   ./services/security/hologram.nix
   ./services/security/munge.nix
+  ./services/security/oauth2_proxy.nix
   ./services/security/physlock.nix
   ./services/security/torify.nix
   ./services/security/tor.nix
@@ -444,7 +469,9 @@
   ./services/ttys/agetty.nix
   ./services/ttys/gpm.nix
   ./services/ttys/kmscon.nix
+  ./services/web-apps/mattermost.nix
   ./services/web-apps/pump.io.nix
+  ./services/web-apps/tt-rss.nix
   ./services/web-servers/apache-httpd/default.nix
   ./services/web-servers/caddy.nix
   ./services/web-servers/fcgiwrap.nix
@@ -452,8 +479,9 @@
   ./services/web-servers/lighttpd/cgit.nix
   ./services/web-servers/lighttpd/default.nix
   ./services/web-servers/lighttpd/gitweb.nix
+  ./services/web-servers/lighttpd/inginious.nix
   ./services/web-servers/nginx/default.nix
-  ./services/web-servers/phpfpm.nix
+  ./services/web-servers/phpfpm/default.nix
   ./services/web-servers/shellinabox.nix
   ./services/web-servers/tomcat.nix
   ./services/web-servers/uwsgi.nix
@@ -461,6 +489,7 @@
   ./services/web-servers/winstone.nix
   ./services/web-servers/zope2.nix
   ./services/x11/colord.nix
+  ./services/x11/compton.nix
   ./services/x11/unclutter.nix
   ./services/x11/desktop-managers/default.nix
   ./services/x11/display-managers/auto.nix
@@ -487,6 +516,7 @@
   ./services/x11/window-managers/windowlab.nix
   ./services/x11/window-managers/wmii.nix
   ./services/x11/window-managers/xmonad.nix
+  ./services/x11/xbanish.nix
   ./services/x11/xfs.nix
   ./services/x11/xserver.nix
   ./system/activation/activation-script.nix
@@ -503,13 +533,14 @@
   ./system/boot/loader/grub/grub.nix
   ./system/boot/loader/grub/ipxe.nix
   ./system/boot/loader/grub/memtest.nix
-  ./system/boot/loader/gummiboot/gummiboot.nix
   ./system/boot/loader/init-script/init-script.nix
   ./system/boot/loader/loader.nix
   ./system/boot/loader/raspberrypi/raspberrypi.nix
+  ./system/boot/loader/systemd-boot/systemd-boot.nix
   ./system/boot/luksroot.nix
   ./system/boot/modprobe.nix
   ./system/boot/networkd.nix
+  ./system/boot/plymouth.nix
   ./system/boot/resolved.nix
   ./system/boot/shutdown.nix
   ./system/boot/stage-1.nix

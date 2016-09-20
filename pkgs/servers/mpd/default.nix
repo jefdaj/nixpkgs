@@ -30,14 +30,16 @@ let
   opt = stdenv.lib.optional;
   mkFlag = c: f: if c then "--enable-${f}" else "--disable-${f}";
   major = "0.19";
-  minor = "15";
+  minor = "19";
 
 in stdenv.mkDerivation rec {
   name = "mpd-${major}.${minor}";
   src = fetchurl {
     url    = "http://www.musicpd.org/download/mpd/${major}/${name}.tar.xz";
-    sha256 = "12wvqb5r3q77x78wigmrsz3vv8rykcfnavffcvlqq0sbi4is5f8c";
+    sha256 = "07af1m2lgblyiq0gcs26zv8n22wrhrpmf49xsm338h1n87d6r1dw";
   };
+
+  patches = stdenv.lib.optionals stdenv.isDarwin ./darwin-enable-cxx-exceptions.patch;
 
   buildInputs = [ pkgconfig glib boost ]
     ++ opt stdenv.isLinux systemd
@@ -61,8 +63,8 @@ in stdenv.mkDerivation rec {
     ++ opt mpg123Support mpg123
     ++ opt aacSupport faad2
     ++ opt zipSupport zziplib
-    ++ opt pulseaudioSupport libpulseaudio
-    ++ opt jackSupport libjack2
+    ++ opt (!stdenv.isDarwin && pulseaudioSupport) libpulseaudio
+    ++ opt (!stdenv.isDarwin && jackSupport) libjack2
     ++ opt gmeSupport game-music-emu
     ++ opt icuSupport icu
     ++ opt clientSupport mpd_clientlib
@@ -89,8 +91,8 @@ in stdenv.mkDerivation rec {
       (mkFlag mmsSupport "mms")
       (mkFlag mpg123Support "mpg123")
       (mkFlag aacSupport "aac")
-      (mkFlag pulseaudioSupport "pulse")
-      (mkFlag jackSupport "jack")
+      (mkFlag (!stdenv.isDarwin && pulseaudioSupport) "pulse")
+      (mkFlag (!stdenv.isDarwin && jackSupport) "jack")
       (mkFlag stdenv.isDarwin "osx")
       (mkFlag icuSupport "icu")
       (mkFlag gmeSupport "gme")

@@ -5,7 +5,7 @@
 }:
 
 let
-  version = "1.1.2";
+  version = "1.2.7";
   inherit (stdenv.lib) optional optionals optionalString;
 in
 
@@ -14,10 +14,10 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-${version}.tar.bz2";
-    sha256 = "07s6z3hbrb4rdfgzmln169wxz4nm5y7qbr02ik5c7drxpn85fb2a";
+    sha256 = "09lh8x6qj0cd950whgaqqi3c4pqbl6z7aw9ddm73i14bw056185v";
   };
 
-  outputs = [ "dev" "out" ];
+  outputs = [ "out" "dev" ];
   outputBin = "dev";
 
   configureFlags = [
@@ -38,6 +38,10 @@ stdenv.mkDerivation {
     rm "$out"/lib/libharfbuzz.* "$dev/lib/pkgconfig/harfbuzz.pc"
     ln -s {'${harfbuzz.out}',"$out"}/lib/libharfbuzz.la
     ln -s {'${harfbuzz.dev}',"$dev"}/lib/pkgconfig/harfbuzz.pc
+    ${optionalString stdenv.isDarwin ''
+      ln -s {'${harfbuzz.out}',"$out"}/lib/libharfbuzz.dylib
+      ln -s {'${harfbuzz.out}',"$out"}/lib/libharfbuzz.0.dylib
+    ''}
   '';
 
   meta = with stdenv.lib; {

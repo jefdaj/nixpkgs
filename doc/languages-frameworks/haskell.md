@@ -329,7 +329,7 @@ workarounds.
 
 ### How to build a Haskell project using Stack
 
-[Stack][http://haskellstack.org] is a popular build tool for Haskell projects.
+[Stack](http://haskellstack.org) is a popular build tool for Haskell projects.
 It has first-class support for Nix. Stack can optionally use Nix to
 automatically select the right version of GHC and other build tools to build,
 test and execute apps in an existing project downloaded from somewhere on the
@@ -376,6 +376,23 @@ special options turned on:
 	haskell.lib.buildStackProject {
       name = "HaskellR";
 	  buildInputs = [ R zeromq zlib ];
+    }
+
+You can select a particular GHC version to compile with by setting the
+`ghc` attribute as an argument to `buildStackProject`. Better yet, let
+Stack choose what GHC version it wants based on the snapshot specified
+in `stack.yaml` (only works with Stack >= 1.1.3):
+
+    {nixpkgs ? import <nixpkgs> { }, ghc ? nixpkgs.ghc}:
+
+    with nixpkgs;
+
+    let R = pkgs.R.override { enableStrictBarrier = true; };
+    in
+    haskell.lib.buildStackProject {
+      name = "HaskellR";
+      buildInputs = [ R zeromq zlib ];
+      inherit ghc;
     }
 
 [stack-nix-doc]: http://docs.haskellstack.org/en/stable/nix_integration.html
@@ -636,7 +653,7 @@ then you have to download and re-install `foo` and all its dependents from
 scratch:
 
     # nix-store -q --referrers /nix/store/*-haskell-text-1.2.0.4 \
-      | xargs -L 1 nix-store --repair-path --option binary-caches http://hydra.nixos.org
+      | xargs -L 1 nix-store --repair-path
 
 If you're using additional Hydra servers other than `hydra.nixos.org`, then it
 might be necessary to purge the local caches that store data from those
@@ -723,7 +740,7 @@ to the `stack.yaml` like the following:
       enable: true
 	  packages: [ zlib ]
 
-Stack's Nix support knows to add `${zlib}/lib` and `${zlib}/include` as an
+Stack's Nix support knows to add `${zlib.out}/lib` and `${zlib.dev}/include` as an
 `--extra-lib-dirs` and `extra-include-dirs`, respectively. Alternatively, you
 can achieve the same effect by hand. First of all, run
 

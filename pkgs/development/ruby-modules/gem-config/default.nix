@@ -21,7 +21,7 @@
 , libiconv, postgresql, v8_3_16_14, clang, sqlite, zlib, imagemagick
 , pkgconfig , ncurses, xapian, gpgme, utillinux, fetchpatch, tzdata, icu, libffi
 , cmake, libssh2, openssl, mysql, darwin, git, perl, gecode_3, curl
-, libmsgpack, qt48
+, libmsgpack, qt48, libsodium
 }:
 
 let
@@ -29,6 +29,21 @@ let
 in
 
 {
+  bundler = attrs:
+    let
+      templates = "${attrs.ruby.gemPath}/gems/${attrs.gemName}-${attrs.version}/lib/bundler/templates/";
+    in {
+      # patching shebangs would fail on the templates/Executable file, so we
+      # temporarily remove the executable flag.
+      preFixup  = "chmod -x $out/${templates}/Executable";
+      postFixup = ''
+        chmod +x $out/${templates}/Executable
+
+        # Allows to load another bundler version
+        sed -i -e "s/activate_bin_path/bin_path/g" $out/bin/bundle
+      '';
+    };
+
   capybara-webkit = attrs: {
     buildInputs = [ qt48 ];
   };
@@ -90,7 +105,7 @@ in
   nokogiri = attrs: {
     buildFlags = [
       "--use-system-libraries"
-      "--with-zlib-dir=${zlib}"
+      "--with-zlib-dir=${zlib.dev}"
       "--with-xml2-lib=${libxml2.out}/lib"
       "--with-xml2-include=${libxml2.dev}/include/libxml2"
       "--with-xslt-lib=${libxslt.out}/lib"
@@ -114,8 +129,16 @@ in
     buildInputs = [ openssl ];
   };
 
+  rbnacl = spec: {
+    postInstall = ''
+    sed -i $(cat $out/nix-support/gem-meta/install-path)/lib/rbnacl.rb -e "2a \
+    RBNACL_LIBSODIUM_GEM_LIB_PATH = '${libsodium.out}/lib/libsodium.${if stdenv.isDarwin then "dylib" else "so"}'
+    "
+    '';
+  };
+
   rmagick = attrs: {
-    buildInputs = [ imagemagick pkgconfig ];
+    buildInputs = [ imagemagick pkgconfig which ];
   };
 
   rugged = attrs: {
@@ -153,6 +176,10 @@ in
     ];
   };
 
+  typhoeus = attrs: {
+    buildInputs = [ curl ];
+  };
+
   tzinfo = attrs: {
     dontBuild = false;
     postPatch = ''
@@ -173,14 +200,5 @@ in
     '';
   };
 
-  # patching shebangs would fail on the templates/Executable file, so we
-  # temporarily remove the executable flag.
-  bundler = attrs:
-    let
-      templates = "${attrs.ruby.gemPath}/gems/${attrs.gemName}-${attrs.version}/lib/bundler/templates/";
-    in {
-      preFixup  = "chmod -x $out/${templates}/Executable";
-      postFixup = "chmod +x $out/${templates}/Executable";
-    };
 }
 

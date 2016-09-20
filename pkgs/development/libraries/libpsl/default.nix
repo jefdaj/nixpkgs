@@ -3,22 +3,22 @@
 
 let
 
-  listVersion = "2016-05-23";
+  listVersion = "2016-06-30";
   listSources = fetchFromGitHub {
-    sha256 = "1sld9s9d9g3fnppyvvn5w0xw50g1gq43d7yyk9yb710268kh31jc";
-    rev = "05f7a0a82e2fea5afb8ba3736db3c294db270849";
+    sha256 = "1fx7g36dcckckz860f0ady8lsg3m6a5c9pgb39a3dn28xfvd21jw";
+    rev = "aa87d27940595ed4a61e726c7dd06860d87fabb6";
     repo = "list";
     owner = "publicsuffix";
   };
 
-  libVersion = "0.13.0";
+  libVersion = "0.14.0";
 
 in stdenv.mkDerivation rec {
   name = "libpsl-${version}";
   version = "${libVersion}-list-${listVersion}";
 
   src = fetchFromGitHub {
-    sha256 = "12inl984r2qks51wyrzgll83y7k79q2lbhyc545dpk19qnfvp7gz";
+    sha256 = "1nqawm41rxaxddrqnwhxw1cgcpf74q6jw756sh0x8zbsjc73mbfq";
     rev = "libpsl-${libVersion}";
     repo = "libpsl";
     owner = "rockdaboot";
@@ -29,7 +29,7 @@ in stdenv.mkDerivation rec {
 
   postPatch = ''
     substituteInPlace src/psl.c --replace bits/stat.h sys/stat.h
-    patchShebangs src/make_dafsa.py
+    patchShebangs src/psl-make-dafsa
   '';
 
   preAutoreconf = ''

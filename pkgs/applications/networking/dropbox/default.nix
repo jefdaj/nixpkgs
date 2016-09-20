@@ -1,7 +1,9 @@
-{ stdenv, fetchurl, makeDesktopItem, patchelf
-, dbus_libs, gcc, glib, libdrm, libffi, libICE, libSM
-, libX11, libXmu, ncurses, popt, qt5, zlib
-, qtbase, qtdeclarative, qtwebkit, makeQtWrapper
+{ stdenv, fetchurl, makeDesktopItem, patchelf, makeWrapper
+, dbus_libs, fontconfig, freetype, gcc, glib
+, libdrm, libffi, libICE, libSM
+, libX11, libXcomposite, libXext, libXmu, libXrender, libxcb
+, libxml2, libxslt, ncurses, zlib
+, qtbase, qtdeclarative, qtwebkit
 }:
 
 # this package contains the daemon version of dropbox
@@ -19,18 +21,19 @@
 # them with our own.
 
 let
-  # NOTE: When updating, please also update in current stable, as older versions stop working
-  version = "3.20.1";
+  # NOTE: When updating, please also update in current stable,
+  # as older versions stop working
+  version = "9.4.49";
   sha256 =
     {
-      "x86_64-linux" = "170xnrxlsadl5iw96276f8l3w687l6n5j5m8z4djsfqqr3lqjxvg";
-      "i686-linux" = "0a7k56ib2qp5560wmbk7b30pqf7h9h7rjnq850993gn9lfwz81q2";
+      "x86_64-linux" = "0gkm4jhcn3pqaizmki98rbqb7mqyf6mjgmpslas1wr94q5msyrpd";
+      "i686-linux"   = "08h5jxan6l9h4zfmvc5q2652dyplih2avayy8f9h8mppirpg68px";
     }."${stdenv.system}" or (throw "system ${stdenv.system} not supported");
 
   arch =
     {
       "x86_64-linux" = "x86_64";
-      "i686-linux" = "x86";
+      "i686-linux"   = "x86";
     }."${stdenv.system}" or (throw "system ${stdenv.system} not supported");
 
   # relative location where the dropbox libraries are stored
@@ -38,8 +41,11 @@ let
 
   ldpath = stdenv.lib.makeLibraryPath
     [
-      dbus_libs gcc.cc glib libdrm libffi libICE libSM libX11 libXmu
-      ncurses popt qtbase qtdeclarative qtwebkit zlib
+      dbus_libs fontconfig freetype gcc.cc glib libdrm libffi libICE libSM
+      libX11 libXcomposite libXext libXmu libXrender libxcb libxml2 libxslt
+      ncurses zlib
+
+      qtbase qtdeclarative qtwebkit
     ];
 
   desktopItem = makeDesktopItem {
@@ -62,21 +68,19 @@ in stdenv.mkDerivation {
 
   sourceRoot = ".dropbox-dist";
 
-  nativeBuildInputs = [ makeQtWrapper patchelf ];
+  nativeBuildInputs = [ makeWrapper patchelf ];
   dontPatchELF = true; # patchelf invoked explicitly below
   dontStrip = true; # already done
 
   installPhase = ''
     mkdir -p "$out/${appdir}"
-    cp -r "dropbox-lnx.${arch}-${version}"/* "$out/${appdir}/"
+    cp -r --no-preserve=mode "dropbox-lnx.${arch}-${version}"/* "$out/${appdir}/"
 
     rm "$out/${appdir}/libdrm.so.2"
     rm "$out/${appdir}/libffi.so.6"
-    rm "$out/${appdir}/libicudata.so.42"
-    rm "$out/${appdir}/libicui18n.so.42"
-    rm "$out/${appdir}/libicuuc.so.42"
     rm "$out/${appdir}/libGL.so.1"
-    rm "$out/${appdir}/libpopt.so.0"
+    rm "$out/${appdir}/libX11-xcb.so.1"
+
     rm "$out/${appdir}/libQt5Core.so.5"
     rm "$out/${appdir}/libQt5DBus.so.5"
     rm "$out/${appdir}/libQt5Gui.so.5"
@@ -88,11 +92,7 @@ in stdenv.mkDerivation {
     rm "$out/${appdir}/libQt5Sql.so.5"
     rm "$out/${appdir}/libQt5WebKit.so.5"
     rm "$out/${appdir}/libQt5WebKitWidgets.so.5"
-    rm "$out/${appdir}/libQt5Widgets.so.5"
-    rm "$out/${appdir}/libX11-xcb.so.1"
-
-    rm "$out/${appdir}/qt.conf"
-    rm -fr "$out/${appdir}/plugins"
+    rm "$out/${appdir}/libQt5XcbQpa.so.5"
 
     mkdir -p "$out/share/applications"
     cp "${desktopItem}/share/applications/"* $out/share/applications
@@ -102,8 +102,10 @@ in stdenv.mkDerivation {
 
     mkdir -p "$out/bin"
     RPATH="${ldpath}:$out/${appdir}"
-    makeQtWrapper "$out/${appdir}/dropbox" "$out/bin/dropbox" \
+    makeWrapper "$out/${appdir}/dropbox" "$out/bin/dropbox" \
       --prefix LD_LIBRARY_PATH : "$RPATH"
+
+    chmod 755 $out/${appdir}/dropbox
   '';
 
   fixupPhase = ''

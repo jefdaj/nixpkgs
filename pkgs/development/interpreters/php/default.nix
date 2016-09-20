@@ -2,7 +2,7 @@
 , mysql, libxml2, readline, zlib, curl, postgresql, gettext
 , openssl, pkgconfig, sqlite, config, libjpeg, libpng, freetype
 , libxslt, libmcrypt, bzip2, icu, openldap, cyrus_sasl, libmhash, freetds
-, uwimap, pam, gmp, apacheHttpd }:
+, uwimap, pam, gmp, apacheHttpd, libiconv }:
 
 let
 
@@ -21,7 +21,9 @@ let
 
       buildInputs = [ flex bison pkgconfig ];
 
-      configureFlags = ["EXTENSION_DIR=$(out)/lib/php/extensions"];
+      configureFlags = [
+        "EXTENSION_DIR=$(out)/lib/php/extensions"
+      ] ++ lib.optional stdenv.isDarwin "--with-iconv=${libiconv}";
 
       flags = {
 
@@ -49,9 +51,9 @@ let
             "LDAP_DIR=${openldap.dev}"
             "LDAP_INCDIR=${openldap.dev}/include"
             "LDAP_LIBDIR=${openldap.out}/lib"
-            "--with-ldap-sasl=${cyrus_sasl.dev}"
+            (lib.optional stdenv.isLinux "--with-ldap-sasl=${cyrus_sasl.dev}")
             ];
-          buildInputs = [openldap cyrus_sasl openssl];
+          buildInputs = [openldap openssl] ++ lib.optional stdenv.isLinux cyrus_sasl;
         };
 
         mhash = {
@@ -60,7 +62,7 @@ let
         };
 
         curl = {
-          configureFlags = ["--with-curl=${curl}"];
+          configureFlags = ["--with-curl=${curl.dev}"];
           buildInputs = [curl openssl];
         };
 
@@ -69,7 +71,7 @@ let
         };
 
         zlib = {
-          configureFlags = ["--with-zlib=${zlib}"];
+          configureFlags = ["--with-zlib=${zlib.dev}"];
           buildInputs = [zlib];
         };
 
@@ -85,12 +87,12 @@ let
         };
 
         readline = {
-          configureFlags = ["--with-readline=${readline}"];
+          configureFlags = ["--with-readline=${readline.dev}"];
           buildInputs = [ readline ];
         };
 
         sqlite = {
-          configureFlags = ["--with-pdo-sqlite=${sqlite}"];
+          configureFlags = ["--with-pdo-sqlite=${sqlite.dev}"];
           buildInputs = [ sqlite ];
         };
 
@@ -105,13 +107,13 @@ let
         };
 
         mysql = {
-          configureFlags = ["--with-mysql=${mysql.lib}"];
-          buildInputs = [ mysql.lib ];
+          configureFlags = ["--with-mysql"];
+          buildInputs = [ mysql.lib.dev ];
         };
 
         mysqli = {
-          configureFlags = ["--with-mysqli=${mysql.lib}/bin/mysql_config"];
-          buildInputs = [ mysql.lib ];
+          configureFlags = ["--with-mysqli=${mysql.lib.dev}/bin/mysql_config"];
+          buildInputs = [ mysql.lib.dev ];
         };
 
         mysqli_embedded = {
@@ -121,8 +123,8 @@ let
         };
 
         pdo_mysql = {
-          configureFlags = ["--with-pdo-mysql=${mysql.lib}"];
-          buildInputs = [ mysql.lib ];
+          configureFlags = ["--with-pdo-mysql=${mysql.lib.dev}"];
+          buildInputs = [ mysql.lib.dev ];
         };
 
         bcmath = {
@@ -133,15 +135,15 @@ let
           # FIXME: Our own gd package doesn't work, see https://bugs.php.net/bug.php?id=60108.
           configureFlags = [
             "--with-gd"
-            "--with-freetype-dir=${freetype}"
-            "--with-png-dir=${libpng}"
-            "--with-jpeg-dir=${libjpeg}"
+            "--with-freetype-dir=${freetype.dev}"
+            "--with-png-dir=${libpng.dev}"
+            "--with-jpeg-dir=${libjpeg.dev}"
           ];
           buildInputs = [ libpng libjpeg freetype ];
         };
 
         gmp = {
-          configureFlags = ["--with-gmp=${gmp}"];
+          configureFlags = ["--with-gmp=${gmp.dev}"];
           buildInputs = [ gmp ];
         };
 
@@ -177,7 +179,7 @@ let
         };
 
         xsl = {
-          configureFlags = ["--with-xsl=${libxslt}"];
+          configureFlags = ["--with-xsl=${libxslt.dev}"];
           buildInputs = [libxslt];
         };
 
@@ -187,7 +189,7 @@ let
         };
 
         bz2 = {
-          configureFlags = ["--with-bz2=${bzip2}"];
+          configureFlags = ["--with-bz2=${bzip2.dev}"];
           buildInputs = [bzip2];
         };
 
@@ -218,14 +220,14 @@ let
       };
 
       cfg = {
-        imapSupport = config.php.imap or true;
+        imapSupport = config.php.imap or (!stdenv.isDarwin);
         ldapSupport = config.php.ldap or true;
         mhashSupport = config.php.mhash or true;
         mysqlSupport = (!php7) && (config.php.mysql or true);
         mysqliSupport = config.php.mysqli or true;
         pdo_mysqlSupport = config.php.pdo_mysql or true;
         libxml2Support = config.php.libxml2 or true;
-        apxs2Support = config.php.apxs2 or true;
+        apxs2Support = config.php.apxs2 or (!stdenv.isDarwin);
         bcmathSupport = config.php.bcmath or true;
         socketsSupport = config.php.sockets or true;
         curlSupport = config.php.curl or true;
@@ -255,6 +257,8 @@ let
         calendarSupport = config.php.calendar or true;
       };
 
+      hardeningDisable = [ "bindnow" ];
+
       configurePhase = ''
         # Don't record the configure flags since this causes unnecessary
         # runtime dependencies.
@@ -281,29 +285,27 @@ let
       meta = with stdenv.lib; {
         description = "An HTML-embedded scripting language";
         homepage = http://www.php.net/;
-        license = stdenv.lib.licenses.php301;
+        license = licenses.php301;
         maintainers = with maintainers; [ globin ];
+        platforms = platforms.all;
       };
 
       patches = if !php7 then [ ./fix-paths.patch ] else [ ./fix-paths-php7.patch ];
 
+      postPatch = lib.optional stdenv.isDarwin ''
+        substituteInPlace configure --replace "-lstdc++" "-lc++"
+      '';
+
     });
 
 in {
-
-  php55 = generic {
-    version = "5.5.36";
-    sha256 = "1fvipg3p8m61kym2ir589vi1l6zm0r95rd97z5s6sq6ylgxfv114";
-  };
-
   php56 = generic {
-    version = "5.6.21";
-    sha256 = "144m8xzpqv3pimxh2pjhbk4fy1kch9afkzclcinzv2dnfjspmvdl";
+    version = "5.6.25";
+    sha256 = "1pldn4z7pzcjm8li9xryrniz5cz542cbv4nlrr13wzzdmhr61kjq";
   };
 
   php70 = generic {
-    version = "7.0.7";
-    sha256 = "06ixiaqqndvancqy5xmnzpscd77z2ixv3yrsdq0r8avqqhjjjks7";
+    version = "7.0.10";
+    sha256 = "1ppn17n5klhs1b2mcbbxxiqq4xvdbmv8p866q0qnk61nlzjvnmc0";
   };
-
 }

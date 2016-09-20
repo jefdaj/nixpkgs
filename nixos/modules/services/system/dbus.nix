@@ -65,10 +65,13 @@ in
         default = [ ];
         description = ''
           Packages whose D-Bus configuration files should be included in
-          the configuration of the D-Bus system-wide message bus.
-          Specifically, every file in
+          the configuration of the D-Bus system-wide or session-wide
+          message bus.  Specifically, files in the following directories
+          will be included into their respective DBus configuration paths:
           <filename><replaceable>pkg</replaceable>/etc/dbus-1/system.d</filename>
-          is included.
+          <filename><replaceable>pkg</replaceable>/share/dbus-1/system-services</filename>
+          <filename><replaceable>pkg</replaceable>/etc/dbus-1/session.d</filename>
+          <filename><replaceable>pkg</replaceable>/share/dbus-1/services</filename>
         '';
       };
 
@@ -81,7 +84,7 @@ in
 
   config = mkIf cfg.enable {
 
-    environment.systemPackages = [ pkgs.dbus.daemon pkgs.dbus_tools ];
+    environment.systemPackages = [ pkgs.dbus.daemon pkgs.dbus ];
 
     environment.etc = singleton
       { source = configDir;
@@ -101,7 +104,7 @@ in
 
     security.setuidOwners = singleton
       { program = "dbus-daemon-launch-helper";
-        source = "${pkgs.dbus_daemon.out}/libexec/dbus-daemon-launch-helper";
+        source = "${pkgs.dbus.daemon}/libexec/dbus-daemon-launch-helper";
         owner = "root";
         group = "messagebus";
         setuid = true;

@@ -3,19 +3,19 @@
 stdenv.mkDerivation rec {
   name = "${package-name}-${version}";
   package-name = "paper-icon-theme";
-  version = "2016-05-21";
+  version = "2016-06-08";
 
   src = fetchFromGitHub {
     owner = "snwh";
     repo = package-name;
-    rev = "f2a34cab78df0fa7db5a10e93e633953cb7c1eb7";
-    sha256 = "0pk848jbskkwz7im73119hcrcyr5nim37jcdrhqf4cwrshmbcacq";
+    rev = "6aa0a2c8d802199d0a9f71579f136bd6476d5d8e";
+    sha256 = "07ak1lnvd0gwaclkcvccjbxikh701vfi07gmjp4zcqi6b5crl7f5";
   };
 
   nativeBuildInputs = [ autoreconfHook ];
 
-  installPhase = ''
-    make install DESTDIR="$out"
+  postPatch = ''
+    substituteInPlace Makefile.am --replace '$(DESTDIR)'/usr $out
   '';
 
   meta = with stdenv.lib; {

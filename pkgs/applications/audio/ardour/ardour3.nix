@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
   src = fetchgit {
     url = git://git.ardour.org/ardour/ardour.git;
     rev = "7024232855d268633760674d34c096ce447b7240";
-    sha256 = "ede3730455c3c91b2fd612871fa7262bdacd3dff4ba77c5dfbc3c1f0de9b8a36";
+    sha256 = "0pnnx22asizin5rvf352nfv6003zarw3jd64magp10310wrfiwbq";
   };
 
   buildInputs = 
@@ -48,7 +48,7 @@ stdenv.mkDerivation rec {
 
   patchPhase = ''
     printf '#include "libs/ardour/ardour/revision.h"\nnamespace ARDOUR { const char* revision = \"${revision}\"; }\n' > libs/ardour/revision.cc
-    sed 's|/usr/include/libintl.h|${glibc}/include/libintl.h|' -i wscript
+    sed 's|/usr/include/libintl.h|${glibc.dev}/include/libintl.h|' -i wscript
     patchShebangs ./tools/
   '';
 

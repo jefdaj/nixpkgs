@@ -13,11 +13,11 @@ stdenv.mkDerivation {
 
   buildInputs = [ openssl ];
 
-  configureFlags = "--with-ssl=${openssl}";
+  configureFlags = "--with-ssl=${openssl.dev}";
 
   meta = {
     homepage = "http://www.fetchmail.info/";
-    description = "a full-featured remote-mail retrieval and forwarding utility";
+    description = "A full-featured remote-mail retrieval and forwarding utility";
     longDescription = ''
       A full-featured, robust, well-documented remote-mail retrieval and
       forwarding utility intended to be used over on-demand TCP/IP links

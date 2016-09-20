@@ -14,6 +14,7 @@ let
   upstreamSystemUnits =
     [ # Targets.
       "basic.target"
+      "busnames.target"
       "sysinit.target"
       "sockets.target"
       "graphical.target"
@@ -120,7 +121,6 @@ let
       "systemd-poweroff.service"
       "halt.target"
       "systemd-halt.service"
-      "ctrl-alt-del.target"
       "shutdown.target"
       "umount.target"
       "final.target"
@@ -141,6 +141,7 @@ let
       "user.slice"
       "machine.slice"
       "systemd-machined.service"
+      "systemd-nspawn@.service"
 
       # Temporary file creation / cleanup.
       "systemd-tmpfiles-clean.service"
@@ -162,7 +163,6 @@ let
       "systemd-hostnamed.service"
       "systemd-binfmt.service"
     ]
-
     ++ cfg.additionalUpstreamSystemUnits;
 
   upstreamSystemWants =
@@ -485,6 +485,15 @@ in
       description = "Default unit started when the system boots.";
     };
 
+    systemd.ctrlAltDelUnit = mkOption {
+      default = "reboot.target";
+      type = types.str;
+      example = "poweroff.target";
+      description = ''
+        Target that should be started when Ctrl-Alt-Delete is pressed.
+      '';
+    };
+
     systemd.globalEnvironment = mkOption {
       type = types.attrs;
       default = {};
@@ -669,6 +678,7 @@ in
 
       "systemd/logind.conf".text = ''
         [Login]
+        KillUserProcesses=no
         ${config.services.logind.extraConfig}
       '';
 
@@ -717,18 +727,6 @@ in
         unitConfig.X-StopOnReconfiguration = true;
       };
 
-    systemd.targets.network-online.after = [ "ip-up.target" ];
-
-    systemd.targets.network-pre = {
-      wantedBy = [ "network.target" ];
-      before = [ "network.target" ];
-    };
-
-    systemd.targets.remote-fs-pre = {
-      wantedBy = [ "remote-fs.target" ];
-      before = [ "remote-fs.target" ];
-    };
-
     systemd.units =
       mapAttrs' (n: v: nameValuePair "${n}.target" (targetToUnit n v)) cfg.targets
       // mapAttrs' (n: v: nameValuePair "${n}.service" (serviceToUnit n v)) cfg.services
@@ -763,7 +761,7 @@ in
         { wantedBy = [ "timers.target" ];
           timerConfig.OnCalendar = service.startAt;
         })
-        (filterAttrs (name: service: service.startAt != "") cfg.services);
+        (filterAttrs (name: service: service.enable && service.startAt != "") cfg.services);
 
     # Generate timer units for all services that have a ‘startAt’ value.
     systemd.user.timers =
@@ -793,6 +791,8 @@ in
     systemd.services.systemd-remount-fs.restartIfChanged = false;
     systemd.services.systemd-update-utmp.restartIfChanged = false;
     systemd.services.systemd-user-sessions.restartIfChanged = false; # Restart kills all active sessions.
+    systemd.services.systemd-logind.restartTriggers = [ config.environment.etc."systemd/logind.conf".source ];
+    systemd.services.systemd-logind.stopIfChanged = false;
     systemd.targets.local-fs.unitConfig.X-StopOnReconfiguration = true;
     systemd.targets.remote-fs.unitConfig.X-StopOnReconfiguration = true;
     systemd.services.systemd-binfmt.wants = [ "proc-sys-fs-binfmt_misc.automount" ];

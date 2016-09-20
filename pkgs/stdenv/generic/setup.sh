@@ -236,6 +236,11 @@ BASH="$SHELL"
 export CONFIG_SHELL="$SHELL"
 
 
+# Dummy implementation of the paxmark function. On Linux, this is
+# overwritten by paxctl's setup hook.
+paxmark() { true; }
+
+
 # Execute the pre-hook.
 if [ -z "$shell" ]; then export shell=$SHELL; fi
 runHook preHook
@@ -369,14 +374,10 @@ fi
 export NIX_BUILD_CORES
 
 
-# Dummy implementation of the paxmark function. On Linux, this is
-# overwritten by paxctl's setup hook.
-paxmark() { true; }
-
-
 # Prevent OpenSSL-based applications from using certificates in
 # /etc/ssl.
-if [ -z "$SSL_CERT_FILE" ]; then
+# Leave it in shells for convenience.
+if [ -z "$SSL_CERT_FILE" ] && [ -z "$IN_NIX_SHELL" ]; then
   export SSL_CERT_FILE=/no-cert-file.crt
 fi
 
@@ -388,6 +389,11 @@ fi
 substitute() {
     local input="$1"
     local output="$2"
+
+    if [ ! -f "$input" ]; then
+      echo "substitute(): file '$input' does not exist"
+      return 1
+    fi
 
     local -a params=("$@")
 
@@ -827,6 +833,10 @@ showPhaseHeader() {
 
 
 genericBuild() {
+    if [ -f "$buildCommandPath" ]; then
+        . "$buildCommandPath"
+        return
+    fi
     if [ -n "$buildCommand" ]; then
         eval "$buildCommand"
         return

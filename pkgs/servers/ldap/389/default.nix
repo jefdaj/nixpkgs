@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
     "--localstatedir=/var"
     "--with-openldap"
     "--with-db=${db}"
-    "--with-sasl=${cyrus_sasl}"
+    "--with-sasl=${cyrus_sasl.dev}"
     "--with-netsnmp=${net_snmp}"
   ];
   
@@ -53,7 +53,7 @@ stdenv.mkDerivation rec {
 
   meta = with stdenv.lib; {
     homepage = https://directory.fedoraproject.org/;
-    description = "enterprise-class Open Source LDAP server for Linux";
+    description = "Enterprise-class Open Source LDAP server for Linux";
     license = licenses.gpl2;
     platforms = platforms.linux;
     maintainers = with maintainers; [ wkennington ];

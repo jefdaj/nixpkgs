@@ -13,9 +13,9 @@ stdenv.mkDerivation rec {
   CPP = "${stdenv.cc}/bin/gcc -E";
 
   configureFlags = "
-    --enable-shared --disable-all-vads --with-readline=${readline}
+    --enable-shared --disable-all-vads --with-readline=${readline.dev}
     --disable-hslookup --disable-wbxml2 --without-iodbc
-    --enable-openssl=${openssl}
+    --enable-openssl=${openssl.dev}
     ";
 
   postInstall=''
@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
   meta = with stdenv.lib; {
     description = "SQL/RDF database used by, e.g., KDE-nepomuk";
     homepage = http://virtuoso.openlinksw.com/dataspace/dav/wiki/Main/;
-    platforms = platforms.all;
+    platforms = platforms.linux;
     maintainers = [ maintainers.urkud ];
   };
 }

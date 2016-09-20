@@ -5,11 +5,7 @@ with import ./lib.nix { inherit pkgs; };
 self: super: {
 
   # Some packages need a non-core version of Cabal.
-  Cabal_1_18_1_7 = dontCheck super.Cabal_1_18_1_7;
-  Cabal_1_20_0_4 = dontCheck super.Cabal_1_20_0_4;
-  Cabal_1_22_4_0 = dontCheck super.Cabal_1_22_4_0;
-  cabal-install = (dontCheck super.cabal-install).overrideScope (self: super: { Cabal = self.Cabal_1_22_4_0; });
-  cabal-install_1_18_1_0 = (dontCheck super.cabal-install_1_18_1_0).overrideScope (self: super: { Cabal = self.Cabal_1_18_1_7; });
+  cabal-install = super.cabal-install.overrideScope (self: super: { Cabal = self.Cabal_1_24_0_0; });
 
   # Link statically to avoid runtime dependency on GHC.
   jailbreak-cabal = (disableSharedExecutables super.jailbreak-cabal).override { Cabal = dontJailbreak self.Cabal_1_20_0_4; };
@@ -21,28 +17,21 @@ self: super: {
   clock = dontCheck super.clock;
   Dust-crypto = dontCheck super.Dust-crypto;
   hasql-postgres = dontCheck super.hasql-postgres;
-  hspec_2_1_2 = super.hspec_2_1_2.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_1_3 = super.hspec_2_1_3.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_1_4 = super.hspec_2_1_4.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_1_5 = super.hspec_2_1_5.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_1_6 = super.hspec_2_1_6.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_1_7 = super.hspec_2_1_7.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_1_10 = super.hspec_2_1_10.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_2_1 = super.hspec_2_2_1.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec_2_2_2 = super.hspec_2_2_2.override { stringbuilder = dontCheck super.stringbuilder; };
-  hspec-expectations_0_6_1_1 = dontCheck super.hspec-expectations_0_6_1_1;
-  hspec-expectations_0_6_1 = dontCheck super.hspec-expectations_0_6_1;
-  hspec-expectations_0_7_1 = dontCheck super.hspec-expectations_0_7_1;
   hspec-expectations = dontCheck super.hspec-expectations;
   hspec = super.hspec.override { stringbuilder = dontCheck super.stringbuilder; };
   HTTP = dontCheck super.HTTP;
-  nanospec_0_2_0 = dontCheck super.nanospec_0_2_0;
   nanospec = dontCheck super.nanospec;
-  options_1_2_1 = dontCheck super.options_1_2_1;
-  options_1_2 = dontCheck super.options_1_2;
   options = dontCheck super.options;
   statistics = dontCheck super.statistics;
-  c2hs = if pkgs.stdenv.isDarwin then dontCheck super.c2hs else super.c2hs;
+  c2hs = dontCheck super.c2hs;
+
+  # fix errors caused by hardening flags
+  epanet-haskell = super.epanet-haskell.overrideDerivation (drv: {
+    hardeningDisable = [ "format" ];
+  });
+
+  # This test keeps being aborted because it runs too quietly for too long
+  Lazy-Pbkdf2 = if pkgs.stdenv.isi686 then dontCheck super.Lazy-Pbkdf2 else super.Lazy-Pbkdf2;
 
   # Use the default version of mysql to build this package (which is actually mariadb).
   mysql = super.mysql.override { mysql = pkgs.mysql.lib; };
@@ -50,24 +39,21 @@ self: super: {
   # Link the proper version.
   zeromq4-haskell = super.zeromq4-haskell.override { zeromq = pkgs.zeromq4; };
 
-  # This package needs a little help compiling properly on Darwin. Furthermore,
-  # Stackage compiles git-annex without the Assistant, supposedly because not
-  # all required dependencies are part of Stackage. To comply with Stackage, we
-  # make 'git-annex-without-assistant' our default version, but offer another
-  # build which has the assistant to be used in the top-level.
-  git-annex_5_20150727 = (disableCabalFlag super.git-annex_5_20150727 "assistant").override {
-    dbus = if pkgs.stdenv.isLinux then self.dbus else null;
-    lsof = if pkgs.stdenv.isLinux then pkgs.lsof else null;
-    fdo-notify = if pkgs.stdenv.isLinux then self.fdo-notify else null;
-    hinotify = if pkgs.stdenv.isLinux then self.hinotify else self.fsnotify;
-  };
-  git-annex = (disableCabalFlag super.git-annex "assistant").override {
-    dbus = if pkgs.stdenv.isLinux then self.dbus else null;
-    lsof = if pkgs.stdenv.isLinux then pkgs.lsof else null;
-    fdo-notify = if pkgs.stdenv.isLinux then self.fdo-notify else null;
-    hinotify = if pkgs.stdenv.isLinux then self.hinotify else self.fsnotify;
-  };
-  git-annex-with-assistant = super.git-annex.override {
+  # The Hackage tarball is purposefully broken. Mr. Hess wants people to build
+  # his package from the Git repo because that is, like, better!
+  git-annex = ((overrideCabal super.git-annex (drv: {
+    src = pkgs.fetchFromGitHub {
+      owner = "joeyh";
+      repo = "git-annex";
+      sha256 = "0an1rafbv48m04g7crfj2qrk64d98yrjn2z4hfv2pybwmqdmx78z";
+      rev = drv.version;
+    };
+  })).overrideScope (self: super: {
+    # https://github.com/prowdsponsor/esqueleto/issues/137
+    persistent = self.persistent_2_2_4_1;
+    persistent-template = self.persistent-template_2_1_8_1;
+    persistent-sqlite = self.persistent-sqlite_2_2_1;
+  })).override {
     dbus = if pkgs.stdenv.isLinux then self.dbus else null;
     fdo-notify = if pkgs.stdenv.isLinux then self.fdo-notify else null;
     hinotify = if pkgs.stdenv.isLinux then self.hinotify else self.fsnotify;
@@ -158,13 +144,6 @@ self: super: {
   HDBC-odbc = dontHaddock super.HDBC-odbc;
   hoodle-core = dontHaddock super.hoodle-core;
   hsc3-db = dontHaddock super.hsc3-db;
-  hspec-discover_2_1_10 = dontHaddock super.hspec-discover_2_1_10;
-  hspec-discover_2_1_2 = dontHaddock super.hspec-discover_2_1_2;
-  hspec-discover_2_1_3 = dontHaddock super.hspec-discover_2_1_3;
-  hspec-discover_2_1_4 = dontHaddock super.hspec-discover_2_1_4;
-  hspec-discover_2_1_5 = dontHaddock super.hspec-discover_2_1_5;
-  hspec-discover_2_1_6 = dontHaddock super.hspec-discover_2_1_6;
-  hspec-discover_2_1_7 = dontHaddock super.hspec-discover_2_1_7;
   hspec-discover = dontHaddock super.hspec-discover;
   http-client-conduit = dontHaddock super.http-client-conduit;
   http-client-multipart = dontHaddock super.http-client-multipart;
@@ -192,15 +171,12 @@ self: super: {
   # on darwin: https://github.com/NixOS/cabal2nix/issues/146.
   hinotify = if pkgs.stdenv.isDarwin then self.hfsevents else super.hinotify;
 
-  # hfsevents needs CoreServices in scope
-  hfsevents = if pkgs.stdenv.isDarwin
-    then with pkgs.darwin.apple_sdk.frameworks; addBuildTool (addBuildDepends super.hfsevents [Cocoa]) CoreServices
-    else super.hfsevents;
-
   # FSEvents API is very buggy and tests are unreliable. See
   # http://openradar.appspot.com/10207999 and similar issues.
   # https://github.com/haskell-fswatch/hfsnotify/issues/62
-  fsnotify = dontCheck super.fsnotify; # if pkgs.stdenv.isDarwin then dontCheck super.fsnotify else super.fsnotify;
+  fsnotify = if pkgs.stdenv.isDarwin
+    then addBuildDepend (dontCheck super.fsnotify) pkgs.darwin.apple_sdk.frameworks.Cocoa
+    else dontCheck super.fsnotify;
 
   # the system-fileio tests use canonicalizePath, which fails in the sandbox
   system-fileio = if pkgs.stdenv.isDarwin then dontCheck super.system-fileio else super.system-fileio;
@@ -225,17 +201,37 @@ self: super: {
         '';
       })) pkgs.libcxx;
 
+  inline-c-cpp = if !pkgs.stdenv.isDarwin
+    then super.inline-c-cpp
+    else addExtraLibrary (overrideCabal super.inline-c-cpp (drv:
+      {
+        postPatch = ''
+          substituteInPlace inline-c-cpp.cabal --replace stdc++ c++
+        '';
+      })) pkgs.libcxx;
+
   # tests don't compile for some odd reason
   jwt = dontCheck super.jwt;
 
-  # https://github.com/NixOS/cabal2nix/issues/136
-  gio = addPkgconfigDepend super.gio pkgs.glib;
-  gio_0_13_0_3 = addPkgconfigDepend super.gio_0_13_0_3 pkgs.glib;
-  gio_0_13_0_4 = addPkgconfigDepend super.gio_0_13_0_4 pkgs.glib;
-  gio_0_13_1_0 = addPkgconfigDepend super.gio_0_13_1_0 pkgs.glib;
-  glib = addPkgconfigDepend super.glib pkgs.glib;
-  gtk3 = super.gtk3.override { inherit (pkgs) gtk3; };
-  gtk = addPkgconfigDepend super.gtk pkgs.gtk;
+  # https://github.com/NixOS/cabal2nix/issues/136 and https://github.com/NixOS/cabal2nix/issues/216
+  gio = pkgs.lib.overrideDerivation (addPkgconfigDepend (
+    addBuildTool super.gio self.gtk2hs-buildtools
+  ) pkgs.glib) (drv: {
+    hardeningDisable = [ "fortify" ];
+  });
+  glib = pkgs.lib.overrideDerivation (addPkgconfigDepend (
+    addBuildTool super.glib self.gtk2hs-buildtools
+  ) pkgs.glib) (drv: {
+    hardeningDisable = [ "fortify" ];
+  });
+  gtk3 = pkgs.lib.overrideDerivation (super.gtk3.override { inherit (pkgs) gtk3; }) (drv: {
+    hardeningDisable = [ "fortify" ];
+  });
+  gtk = pkgs.lib.overrideDerivation (addPkgconfigDepend (
+    addBuildTool super.gtk self.gtk2hs-buildtools
+  ) pkgs.gtk) (drv: {
+    hardeningDisable = [ "fortify" ];
+  });
   gtksourceview2 = (addPkgconfigDepend super.gtksourceview2 pkgs.gtk2).override { inherit (pkgs.gnome2) gtksourceview; };
   gtksourceview3 = super.gtksourceview3.override { inherit (pkgs.gnome3) gtksourceview; };
 
@@ -283,7 +279,6 @@ self: super: {
   pocket-dns = dontCheck super.pocket-dns;
   postgresql-simple = dontCheck super.postgresql-simple;
   postgrest = dontCheck super.postgrest;
-  setenv_0_1_1_1 = dontCheck super.setenv_0_1_1_1;
   snowball = dontCheck super.snowball;
   sophia = dontCheck super.sophia;
   test-sandbox = dontCheck super.test-sandbox;
@@ -315,6 +310,7 @@ self: super: {
   raven-haskell = dontCheck super.raven-haskell;        # http://hydra.cryp.to/build/502053/log/raw
   riak = dontCheck super.riak;                          # http://hydra.cryp.to/build/498763/log/raw
   scotty-binding-play = dontCheck super.scotty-binding-play;
+  servant-router = dontCheck super.servant-router;
   serversession-backend-redis = dontCheck super.serversession-backend-redis;
   slack-api = dontCheck super.slack-api;                # https://github.com/mpickering/slack-api/issues/5
   socket = dontCheck super.socket;
@@ -402,12 +398,8 @@ self: super: {
   hsexif = dontCheck super.hsexif;
   hspec-server = dontCheck super.hspec-server;
   HTF = dontCheck super.HTF;
-  HTF_0_12_2_3 = dontCheck super.HTF_0_12_2_3;
-  HTF_0_12_2_4 = dontCheck super.HTF_0_12_2_4;
-  HTF_0_13_0_0 = dontCheck super.HTF_0_13_0_0;
   htsn = dontCheck super.htsn;
   htsn-import = dontCheck super.htsn-import;
-  http2 = dontCheck super.http2;
   http-client-openssl = dontCheck super.http-client-openssl;
   http-client-tls = dontCheck super.http-client-tls;
   ihaskell = dontCheck super.ihaskell;
@@ -419,7 +411,9 @@ self: super: {
   lensref = dontCheck super.lensref;
   liquidhaskell = dontCheck super.liquidhaskell;
   lucid = dontCheck super.lucid; #https://github.com/chrisdone/lucid/issues/25
-  lvmrun = dontCheck super.lvmrun;
+  lvmrun = pkgs.lib.overrideDerivation (dontCheck super.lvmrun) (drv: {
+    hardeningDisable = [ "format" ];
+  });
   memcache = dontCheck super.memcache;
   milena = dontCheck super.milena;
   nats-queue = dontCheck super.nats-queue;
@@ -450,9 +444,6 @@ self: super: {
   separated = dontCheck super.separated;
   shadowsocks = dontCheck super.shadowsocks;
   shake-language-c = dontCheck super.shake-language-c;
-  shake-language-c_0_6_3 = dontCheck super.shake-language-c_0_6_3;
-  shake-language-c_0_6_4 = dontCheck super.shake-language-c_0_6_4;
-  shake-language-c_0_8_0 = dontCheck super.shake-language-c_0_8_0;
   static-resources = dontCheck super.static-resources;
   strive = dontCheck super.strive;                      # fails its own hlint test with tons of warnings
   svndump = dontCheck super.svndump;
@@ -550,9 +541,6 @@ self: super: {
   HaVSA = super.HaVSA.override { QuickCheck = self.QuickCheck_1_2_0_1; };
   test-framework-quickcheck = super.test-framework-quickcheck.override { QuickCheck = self.QuickCheck_1_2_0_1; };
 
-  # Doesn't support "this system". Linux? Needs investigation.
-  lhc = markBroken (super.lhc.override { QuickCheck = self.QuickCheck_1_2_0_1; });
-
   # Depends on broken test-framework-quickcheck.
   apiary = dontCheck super.apiary;
   apiary-authenticate = dontCheck super.apiary-authenticate;
@@ -585,8 +573,10 @@ self: super: {
   # https://github.com/junjihashimoto/test-sandbox-compose/issues/2
   test-sandbox-compose = dontCheck super.test-sandbox-compose;
 
-  # https://github.com/jgm/pandoc/issues/2709
-  pandoc = disableSharedExecutables super.pandoc;
+  # Relax overspecified constraints. Unfortunately, jailbreak won't work.
+  pandoc = overrideCabal super.pandoc (drv: {
+    preConfigure = "sed -i -e 's,time .* < 1.6,time >= 1.5,' -e 's,haddock-library >= 1.1 && < 1.3,haddock-library >= 1.1,' pandoc.cabal";
+  });
 
   # Tests attempt to use NPM to install from the network into
   # /homeless-shelter. Disabled.
@@ -615,8 +605,20 @@ self: super: {
   # Uses OpenGL in testing
   caramia = dontCheck super.caramia;
 
+  llvm-general-darwin = overrideCabal (super.llvm-general.override { llvm-config = pkgs.llvm_35; }) (drv: {
+      preConfigure = ''
+        sed -i llvm-general.cabal \
+            -e 's,extra-libraries: stdc++,extra-libraries: c++,'
+      '';
+      configureFlags = (drv.configureFlags or []) ++ ["--extra-include-dirs=${pkgs.libcxx}/include/c++/v1"];
+      librarySystemDepends = [ pkgs.libcxx ] ++ drv.librarySystemDepends or [];
+    });
+
   # Supports only 3.5 for now, https://github.com/bscarlet/llvm-general/issues/142
-  llvm-general = super.llvm-general.override { llvm-config = pkgs.llvm_35; };
+  llvm-general =
+    if pkgs.stdenv.isDarwin
+    then self.llvm-general-darwin
+    else super.llvm-general.override { llvm-config = pkgs.llvm_35; };
 
   # Needs help finding LLVM.
   spaceprobe = addBuildTool super.spaceprobe self.llvmPackages.llvm;
@@ -641,11 +643,6 @@ self: super: {
 
   # Test suite won't compile against tasty-hunit 0.9.x.
   zlib = dontCheck super.zlib;
-
-  # Override the obsolete version from Hackage with our more up-to-date copy.
-  cabal2nix = self.callPackage ../tools/haskell/cabal2nix/cabal2nix.nix {};
-  hackage2nix = self.callPackage ../tools/haskell/cabal2nix/hackage2nix.nix {};
-  distribution-nixpkgs = self.callPackage ../tools/haskell/cabal2nix/distribution-nixpkgs.nix {};
 
   # https://github.com/ndmitchell/shake/issues/206
   # https://github.com/ndmitchell/shake/issues/267
@@ -767,8 +764,12 @@ self: super: {
     '';
   });
 
-  # Byte-compile elisp code for Emacs.
+  # Fine-tune the build.
   structured-haskell-mode = overrideCabal super.structured-haskell-mode (drv: {
+    # Statically linked Haskell libraries make the tool start-up much faster,
+    # which is important for use in Emacs.
+    enableSharedExecutables = false;
+    # Byte-compile elisp code for Emacs.
     executableToolDepends = drv.executableToolDepends or [] ++ [pkgs.emacs];
     postInstall = ''
       local lispdir=( "$out/share/"*"-${self.ghc.name}/${drv.pname}-${drv.version}/elisp" )
@@ -834,10 +835,10 @@ self: super: {
   # https://github.com/ivanperez-keera/hcwiid/pull/4
   hcwiid = overrideCabal super.hcwiid (drv: {
     configureFlags = (drv.configureFlags or []) ++ [
-      "--extra-lib-dirs=${pkgs.bluez}/lib"
+      "--extra-lib-dirs=${pkgs.bluez.out}/lib"
       "--extra-lib-dirs=${pkgs.cwiid}/lib"
       "--extra-include-dirs=${pkgs.cwiid}/include"
-      "--extra-include-dirs=${pkgs.bluez}/include"
+      "--extra-include-dirs=${pkgs.bluez.dev}/include"
     ];
     prePatch = '' sed -i -e "/Extra-Lib-Dirs/d" -e "/Include-Dirs/d" "hcwiid.cabal" '';
   });
@@ -869,29 +870,12 @@ self: super: {
 
   # https://github.com/guillaume-nargeot/hpc-coveralls/issues/52
   hpc-coveralls = disableSharedExecutables super.hpc-coveralls;
-  hpc-coveralls_0_9_0 = disableSharedExecutables super.hpc-coveralls_0_9_0;
-
-  # Test suite won't compile.
-  semigroupoids_5_0_0_3 = dontCheck super.semigroupoids_5_0_0_3;
-
-  # This is fixed in newer versions.
-  zip-archive_0_2_3_5 = addBuildTool super.zip-archive_0_2_3_5 pkgs.zip;
 
   # https://github.com/fpco/stackage/issues/838
   cryptonite = dontCheck super.cryptonite;
-  cryptonite_0_6   = dontCheck super.cryptonite_0_6  ;
-
-  # https://github.com/fpco/stackage/issues/843
-  hmatrix-gsl-stats_0_4_1 = overrideCabal super.hmatrix-gsl-stats_0_4_1 (drv: {
-    postUnpack = "rm */Setup.lhs";
-  });
 
   # We cannot build this package w/o the C library from <http://www.phash.org/>.
   phash = markBroken super.phash;
-
-  # https://github.com/yesodweb/serversession/issues/2
-  # https://github.com/haskell/cabal/issues/2661
-  serversession-backend-acid-state_1_0_1 = dontCheck super.serversession-backend-acid-state_1_0_1;
 
   # https://github.com/sol/hpack/issues/53
   hpack = dontCheck super.hpack;
@@ -913,36 +897,16 @@ self: super: {
     librarySystemDepends = (drv.librarySystemDepends or []) ++ [ pkgs.ncurses ];
   });
 
-  # https://github.com/mainland/language-c-quote/issues/57
-  language-c-quote = super.language-c-quote.override { alex = self.alex_3_1_4; };
-
-  # https://github.com/agda/agda/issues/1840
-  Agda_2_4_2_3 = super.Agda_2_4_2_3.override {
-    unordered-containers = self.unordered-containers_0_2_5_1;
-    cpphs = self.cpphs_1_19_3;
-  };
-  Agda_2_4_2_4 = super.Agda_2_4_2_4.override {
-    unordered-containers = self.unordered-containers_0_2_5_1;
-    cpphs = self.cpphs_1_19_3;
-  };
-  Agda = super.Agda.override {
-    unordered-containers = self.unordered-containers_0_2_5_1;
-    cpphs = self.cpphs_1_19_3;
-  };
-
   # We get lots of strange compiler errors during the test suite run.
   jsaddle = dontCheck super.jsaddle;
-
-  # https://github.com/gwern/mueval/issues/14
-  mueval = super.mueval.override { hint = self.hint_0_4_3; };
 
   # Looks like Avahi provides the missing library
   dnssd = super.dnssd.override { dns_sd = pkgs.avahi.override { withLibdnssdCompat = true; }; };
 
   # Haste stuff
-  haste-Cabal         = self.callPackage ../tools/haskell/haste/haste-Cabal.nix {};
-  haste-cabal-install = self.callPackage ../tools/haskell/haste/haste-cabal-install.nix { Cabal = self.haste-Cabal; HTTP = self.HTTP_4000_2_23; };
-  haste-compiler      = self.callPackage ../tools/haskell/haste/haste-compiler.nix { inherit overrideCabal; super-haste-compiler = super.haste-compiler; };
+  haste-Cabal         = markBroken (self.callPackage ../tools/haskell/haste/haste-Cabal.nix {});
+  haste-cabal-install = markBroken (self.callPackage ../tools/haskell/haste/haste-cabal-install.nix { Cabal = self.haste-Cabal; });
+  haste-compiler      = markBroken (self.callPackage ../tools/haskell/haste/haste-compiler.nix { inherit overrideCabal; super-haste-compiler = super.haste-compiler; });
 
   # Ensure the necessary frameworks are propagatedBuildInputs on darwin
   OpenGLRaw = overrideCabal super.OpenGLRaw (drv: {
@@ -982,27 +946,61 @@ self: super: {
                             [ pkgs.darwin.apple_sdk.frameworks.OpenCL ];
   });
 
-  # Tests must be disabled on darwin for all versions of c2hs
-  # (e.g. Stackage LTS releases).
-  c2hs_0_20_1 = if pkgs.stdenv.isDarwin
-                then dontCheck super.c2hs_0_20_1
-                else super.c2hs_0_20_1;
-  c2hs_0_25_2 = if pkgs.stdenv.isDarwin
-                then dontCheck super.c2hs_0_25_2
-                else super.c2hs_0_25_2;
-  c2hs_0_27_1 = if pkgs.stdenv.isDarwin
-                then dontCheck super.c2hs_0_27_1
-                else super.c2hs_0_27_1;
-
   # tinc is a new build driver a la Stack that's not yet available from Hackage.
   tinc = self.callPackage ../tools/haskell/tinc {};
 
-  # https://github.com/NixOS/nixpkgs/issues/14967
-  yi = markBroken super.yi;
-  yi-fuzzy-open = markBroken super.yi-fuzzy-open;
-  yi-monokai = markBroken super.yi-monokai;
-  yi-snippet = markBroken super.yi-snippet;
-  yi-solarized = markBroken super.yi-solarized;
-  yi-spolsky = markBroken super.yi-spolsky;
+  # Tools that use gtk2hs-buildtools now depend on them in a custom-setup stanza
+  cairo = addBuildTool super.cairo self.gtk2hs-buildtools;
+  pango = (addBuildTool super.pango self.gtk2hs-buildtools).overrideDerivation (drv: {
+    hardeningDisable = [ "fortify" ];
+  });
+
+  # Fix tests which would otherwise fail with "Couldn't launch intero process."
+  intero = overrideCabal super.intero (drv: {
+    postPatch = (drv.postPatch or "") + ''
+      substituteInPlace src/test/Main.hs --replace "\"intero\"" "\"$PWD/dist/build/intero/intero\""
+    '';
+  });
+
+  # https://github.com/commercialhaskell/stack/issues/2263
+  stack = appendPatch super.stack (pkgs.fetchpatch {
+    url = "https://github.com/commercialhaskell/stack/commit/7f7f1a5f67f4ecdd1f3009495f1ff101dd38047e.patch";
+    sha256 = "1yh2g45mkfpwxq0vyzcbc4nbxh6wmb2xpp0k7r5byd8jicgvli29";
+  });
+
+  # GLUT uses `dlopen` to link to freeglut, so we need to set the RUNPATH correctly for
+  # it to find `libglut.so` from the nix store. We do this by patching GLUT.cabal to pkg-config
+  # depend on freeglut, which provides GHC to necessary information to generate a correct RPATH.
+  #
+  # Note: Simply patching the dynamic library (.so) of the GLUT build will *not* work, since the
+  # RPATH also needs to be propagated when using static linking. GHC automatically handles this for
+  # us when we patch the cabal file (Link options will be recored in the ghc package registry).
+  GLUT = addPkgconfigDepend (appendPatch super.GLUT ./patches/GLUT.patch) pkgs.freeglut;
+
+  # https://github.com/Philonous/hs-stun/pull/1
+  # Remove if a version > 0.1.0.1 ever gets released.
+  stunclient = overrideCabal super.stunclient (drv: {
+    postPatch = (drv.postPatch or "") + ''
+      substituteInPlace source/Network/Stun/MappedAddress.hs --replace "import Network.Endian" ""
+    '';
+  });
+
+  # https://bitbucket.org/ssaasen/spy/pull-requests/3/fsnotify-dropped-system-filepath
+  spy = appendPatch super.spy ./patches/spy.patch;
+
+  idris = overrideCabal super.idris (drv: {
+    # "idris" binary cannot find Idris library otherwise while building. After
+    # installing it's completely fine though. This seems like a bug in Idris
+    # that's related to builds with shared libraries enabled. It would be great
+    # if someone who knows a thing or two about Idris could look into this.
+    preBuild = "export LD_LIBRARY_PATH=$PWD/dist/build:$LD_LIBRARY_PATH";
+    # https://github.com/idris-lang/Idris-dev/issues/2499
+    librarySystemDepends = (drv.librarySystemDepends or []) ++ [pkgs.gmp];
+  });
+
+  # https://github.com/MarcWeber/hasktags/issues/32
+  hasktags = overrideCabal super.hasktags (drv: {
+    postInstall = "rm $out/bin/test";
+  });
 
 }

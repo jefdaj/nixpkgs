@@ -1,6 +1,6 @@
 { stdenv, fetchurl, zlib, libX11, libXext, libSM, libICE
 , libXfixes, libXt, libXi, libXcursor, libXScrnSaver, libXcomposite, libXdamage, libXtst, libXrandr
-, alsaLib, dbus_libs, cups, libexif, ffmpeg, libudev
+, alsaLib, dbus_libs, cups, libexif, ffmpeg, systemd
 , freetype, fontconfig, libXft, libXrender, libxcb, expat, libXau, libXdmcp
 , libuuid, xz
 , gstreamer, gst_plugins_base, libxml2
@@ -10,16 +10,16 @@
 }:
 
 let
-  version = "1.1";
-  build = "453.47-1";
+  version = "1.3";
+  build = "551.30-1";
   fullVersion = "stable_${version}.${build}";
 
   info = if stdenv.is64bit then {
       arch = "amd64";
-      sha256 = "09kadsi4ydjciq092i6linapqzjdzx915zqmz7vfq6w1yp9mqbwq";
+      sha256 = "89d0630c9df56cfb12a87f23430179f6d14a8c57fb029d1c8d28ab06c98b7640";
     } else {
       arch = "i386";
-      sha256 = "0b5410phnkpg6sz0j345vdn0r6n89rm865bchqw8p4kx7pmy78z3";
+      sha256 = "0a7e07833f5359e38516222767da63edeca92177cbb6d4ef4946a6ef7c7b2946";
     };
 in stdenv.mkDerivation rec {
   product    = "vivaldi";
@@ -38,7 +38,7 @@ in stdenv.mkDerivation rec {
   buildInputs =
     [ stdenv.cc.cc stdenv.cc.libc zlib libX11 libXt libXext libSM libICE
       libXi libXft libXcursor libXfixes libXScrnSaver libXcomposite libXdamage libXtst libXrandr
-      atk alsaLib dbus_libs cups gtk gdk_pixbuf libexif ffmpeg libudev
+      atk alsaLib dbus_libs cups gtk gdk_pixbuf libexif ffmpeg systemd
       freetype fontconfig libXrender libuuid expat glib nss nspr
       gstreamer libxml2 gst_plugins_base pango cairo gnome3.gconf
       patchelf
@@ -53,7 +53,7 @@ in stdenv.mkDerivation rec {
     patchelf \
       --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
       --set-rpath "${libPath}" \
-    opt/vivaldi/vivaldi-bin
+      opt/vivaldi/vivaldi-bin
     echo "Finished patching Vivaldi binaries"
   '';
 

@@ -19,32 +19,19 @@
 , buildExamples ? false
 , buildTests ? false
 , developerBuild ? false
-, gtkStyle ? true, libgnomeui, GConf, gnome_vfs, gtk
 , decryptSslTraffic ? false
 }:
 
 let
-  inherit (srcs.qt5) version;
   system-x86_64 = lib.elem stdenv.system lib.platforms.x86_64;
-
-  # Search path for Gtk plugin
-  gtkLibPath = lib.makeLibraryPath [ gtk.out gnome_vfs.out libgnomeui.out GConf.out ];
 in
 
 stdenv.mkDerivation {
 
-  name = "qtbase-${version}";
-  inherit version;
+  name = "qtbase-${srcs.qtbase.version}";
+  inherit (srcs.qtbase) src version;
 
-  srcs = with srcs; [ qt5.src qtbase.src ];
-
-  sourceRoot = "qt-everywhere-opensource-src-${version}";
-
-  outputs = [ "dev" "out" "gtk" ];
-
-  postUnpack = ''
-    mv qtbase-opensource-src-${version} $sourceRoot/qtbase
-  '';
+  outputs = [ "out" "dev" ];
 
   patches =
     copyPathsToStore (lib.readPathsFromFile ./. ./series)
@@ -54,38 +41,37 @@ stdenv.mkDerivation {
   postPatch =
     ''
       substituteInPlace configure --replace /bin/pwd pwd
-      substituteInPlace qtbase/configure --replace /bin/pwd pwd
-      substituteInPlace qtbase/src/corelib/global/global.pri --replace /bin/ls ${coreutils}/bin/ls
-      sed -e 's@/\(usr\|opt\)/@/var/empty/@g' -i config.tests/*/*.test -i qtbase/mkspecs/*/*.conf
+      substituteInPlace src/corelib/global/global.pri --replace /bin/ls ${coreutils}/bin/ls
+      sed -e 's@/\(usr\|opt\)/@/var/empty/@g' -i config.tests/*/*.test -i mkspecs/*/*.conf
 
-      sed -i 's/PATHS.*NO_DEFAULT_PATH//' "qtbase/src/corelib/Qt5Config.cmake.in"
-      sed -i 's/PATHS.*NO_DEFAULT_PATH//' "qtbase/src/corelib/Qt5CoreMacros.cmake"
-      sed -i 's/NO_DEFAULT_PATH//' "qtbase/src/gui/Qt5GuiConfigExtras.cmake.in"
-      sed -i 's/PATHS.*NO_DEFAULT_PATH//' "qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in"
+      sed -i 's/PATHS.*NO_DEFAULT_PATH//' "src/corelib/Qt5Config.cmake.in"
+      sed -i 's/PATHS.*NO_DEFAULT_PATH//' "src/corelib/Qt5CoreMacros.cmake"
+      sed -i 's/NO_DEFAULT_PATH//' "src/gui/Qt5GuiConfigExtras.cmake.in"
+      sed -i 's/PATHS.*NO_DEFAULT_PATH//' "mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in"
 
-      substituteInPlace qtbase/src/network/kernel/qdnslookup_unix.cpp \
+      substituteInPlace src/network/kernel/qdnslookup_unix.cpp \
         --replace "@glibc@" "${stdenv.cc.libc.out}"
-      substituteInPlace qtbase/src/network/kernel/qhostinfo_unix.cpp \
+      substituteInPlace src/network/kernel/qhostinfo_unix.cpp \
         --replace "@glibc@" "${stdenv.cc.libc.out}"
 
-      substituteInPlace qtbase/src/plugins/platforms/xcb/qxcbcursor.cpp \
+      substituteInPlace src/plugins/platforms/xcb/qxcbcursor.cpp \
         --replace "@libXcursor@" "${libXcursor.out}"
 
-      substituteInPlace qtbase/src/network/ssl/qsslsocket_openssl_symbols.cpp \
+      substituteInPlace src/network/ssl/qsslsocket_openssl_symbols.cpp \
         --replace "@openssl@" "${openssl.out}"
 
-      substituteInPlace qtbase/src/dbus/qdbus_symbols.cpp \
+      substituteInPlace src/dbus/qdbus_symbols.cpp \
         --replace "@dbus_libs@" "${dbus.lib}"
 
       substituteInPlace \
-        qtbase/src/plugins/platforminputcontexts/compose/generator/qtablegenerator.cpp \
+        src/plugins/platforminputcontexts/compose/generator/qtablegenerator.cpp \
         --replace "@libX11@" "${libX11.out}"
     ''
     + lib.optionalString mesaSupported ''
       substituteInPlace \
-        qtbase/src/plugins/platforms/xcb/gl_integrations/xcb_glx/qglxintegration.cpp \
+        src/plugins/platforms/xcb/gl_integrations/xcb_glx/qglxintegration.cpp \
         --replace "@mesa_lib@" "${mesa.out}"
-      substituteInPlace qtbase/mkspecs/common/linux.conf \
+      substituteInPlace mkspecs/common/linux.conf \
         --replace "@mesa_lib@" "${mesa.out}" \
         --replace "@mesa_inc@" "${mesa.dev or mesa}"
     '';
@@ -93,7 +79,7 @@ stdenv.mkDerivation {
 
   setOutputFlags = false;
   preConfigure = ''
-    export LD_LIBRARY_PATH="$PWD/qtbase/lib:$PWD/qtbase/plugins/platforms:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="$PWD/lib:$PWD/plugins/platforms:$LD_LIBRARY_PATH"
     export MAKEFLAGS=-j$NIX_BUILD_CORES
 
     configureFlags+="\
@@ -101,10 +87,6 @@ stdenv.mkDerivation {
         -importdir $out/lib/qt5/imports \
         -qmldir $out/lib/qt5/qml \
         -docdir $out/share/doc/qt5"
-  ''
-  # QMake expects to extract the list of available modules from .gitmodules
-  + ''
-    echo '[submodule "qtbase"]' >.gitmodules
   '';
 
   prefixKey = "-prefix ";
@@ -125,7 +107,7 @@ stdenv.mkDerivation {
     -rpath
     -optimized-qmake
     -strip
-    -reduce-relocations
+    -no-reduce-relocations
     -system-proxies
     -pkg-config
 
@@ -141,7 +123,6 @@ stdenv.mkDerivation {
     -xcb
     -qpa xcb
     -${lib.optionalString (cups == null) "no-"}cups
-    -${lib.optionalString (!gtkStyle) "no-"}gtkstyle
 
     -no-eglfs
     -no-directfb
@@ -203,13 +184,20 @@ stdenv.mkDerivation {
     ++ lib.optional developerBuild gdb
     ++ lib.optional (cups != null) cups
     ++ lib.optional (mysql != null) mysql.lib
-    ++ lib.optional (postgresql != null) postgresql
-    ++ lib.optionals gtkStyle [gnome_vfs.out libgnomeui.out gtk GConf];
+    ++ lib.optional (postgresql != null) postgresql;
 
   nativeBuildInputs = [ lndir patchelf perl pkgconfig python ];
 
   # freetype-2.5.4 changed signedness of some struct fields
   NIX_CFLAGS_COMPILE = "-Wno-error=sign-compare";
+
+  postInstall = ''
+    find "$out" -name "*.cmake" | while read file; do
+        substituteInPlace "$file" \
+            --subst-var-by NIX_OUT "$out" \
+            --subst-var-by NIX_DEV "$dev"
+    done
+  '';
 
   preFixup = ''
     # We cannot simply set these paths in configureFlags because libQtCore retains
@@ -221,22 +209,6 @@ stdenv.mkDerivation {
     # The destination directory must exist or moveToOutput will do nothing
     mkdir -p "$dev/share"
     moveToOutput "share/doc" "$dev"
-
-    # Move the QGtkStyle plugin to the gtk output
-    mkdir -p "$gtk/lib/qt5/plugins/platformthemes"
-    mv "$out/lib/qt5/plugins/platformthemes/libqgtk2.so" "$gtk/lib/qt5/plugins/platformthemes"
-    rm "$out/lib/cmake/Qt5Gui/Qt5Gui_QGtk2ThemePlugin.cmake"
-
-    # Set RPATH for QGtkStyle plugin
-    qgtk2="$gtk/lib/qt5/plugins/platformthemes/libqgtk2.so"
-    qgtk2_RPATH="$(patchelf --print-rpath "$qgtk2")"
-    qgtk2_RPATH="$qgtk2_RPATH''${qgtk2_RPATH:+:}${gtkLibPath}"
-    patchelf "$qgtk2" \
-        --add-needed libgtk-x11-2.0.so \
-        --add-needed libgnomeui-2.so \
-        --add-needed libgnomevfs-2.so \
-        --add-needed libgconf-2.so \
-        --set-rpath "$qgtk2_RPATH"
   '';
 
   postFixup =
@@ -253,12 +225,10 @@ stdenv.mkDerivation {
                   mv "''${!outputLib}/$file" "''${!outputDev}/$file"
               done
           popd
-
-          # Ensure that CMake can find the shared libraries
-          lndir -silent "''${!outputLib}/lib" "''${!outputDev}/lib"
       fi
     '';
 
+  inherit lndir;
   setupHook = ./setup-hook.sh;
 
   enableParallelBuilding = true;

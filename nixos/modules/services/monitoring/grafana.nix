@@ -9,6 +9,7 @@ let
 
   envOptions = {
     PATHS_DATA = cfg.dataDir;
+    PATHS_PLUGINS = "${cfg.dataDir}/plugins";
     PATHS_LOGS = "${cfg.dataDir}/log";
 
     SERVER_PROTOCOL = cfg.protocol;
@@ -37,6 +38,8 @@ let
     USERS_AUTO_ASSIGN_ORG_ROLE = cfg.users.autoAssignOrgRole;
 
     AUTH_ANONYMOUS_ENABLED = b2s cfg.auth.anonymous.enable;
+    AUTH_ANONYMOUS_ORG_NAME = cfg.auth.anonymous.org_name;
+    AUTH_ANONYMOUS_ORG_ROLE = cfg.auth.anonymous.org_role;
 
     ANALYTICS_REPORTING_ENABLED = b2s cfg.analytics.reporting.enable;
   } // cfg.extraOptions;
@@ -196,6 +199,17 @@ in {
         default = false;
         type = types.bool;
       };
+      org_name = mkOption {
+        description = "Which organization to allow anonymous access to";
+        default = "Main Org.";
+        type = types.str;
+      };
+      org_role = mkOption {
+        description = "Which role anonymous users have in the organization";
+        default = "Viewer";
+        type = types.str;
+      };
+
     };
 
     analytics.reporting = {
@@ -222,18 +236,21 @@ in {
       "Grafana passwords will be stored as plaintext in the Nix store!"
     ];
 
+    environment.systemPackages = [ cfg.package ];
+
     systemd.services.grafana = {
       description = "Grafana Service Daemon";
       wantedBy = ["multi-user.target"];
       after = ["networking.target"];
       environment = mapAttrs' (n: v: nameValuePair "GF_${n}" (toString v)) envOptions;
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/grafana-server -homepath ${cfg.dataDir}";
+        ExecStart = "${cfg.package.bin}/bin/grafana-server -homepath ${cfg.dataDir}";
         WorkingDirectory = cfg.dataDir;
         User = "grafana";
       };
       preStart = ''
         ln -fs ${cfg.package}/share/grafana/conf ${cfg.dataDir}
+        ln -fs ${cfg.package}/share/grafana/vendor ${cfg.dataDir}
       '';
     };
 

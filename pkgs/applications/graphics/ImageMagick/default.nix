@@ -11,8 +11,8 @@ let
     else throw "ImageMagick is not supported on this platform.";
 
   cfg = {
-    version = "6.9.3-9";
-    sha256 = "0q19jgn1iv7zqrw8ibxp4z57iihrc9kyb09k2wnspcacs6vrvinf";
+    version = "6.9.5-2";
+    sha256 = "09h3rpr1jnzd7ipy5d16r2gi0bwg4hk5khwzv4cyhv1xzs8pk7pj";
     patches = [];
   }
     # Freeze version on mingw so we don't need to port the patch too often.
@@ -43,7 +43,8 @@ stdenv.mkDerivation rec {
 
   patches = [ ./imagetragick.patch ] ++ cfg.patches;
 
-  outputs = [ "out" "doc" ];
+  outputs = [ "out" "dev" "doc" ]; # bin/ isn't really big
+  outputMan = "out"; # it's tiny
 
   enableParallelBuilding = true;
 
@@ -76,18 +77,23 @@ stdenv.mkDerivation rec {
     ;
 
   postInstall = ''
-
-    (cd "$out/include" && ln -s ImageMagick* ImageMagick)
+    (cd "$dev/include" && ln -s ImageMagick* ImageMagick)
+    moveToOutput "bin/*-config" "$dev"
+    moveToOutput "lib/ImageMagick-*/config-Q16" "$dev" # includes configure params
+    for file in "$dev"/bin/*-config; do
+      substituteInPlace "$file" --replace pkg-config \
+        "PKG_CONFIG_PATH='$dev/lib/pkgconfig' '${pkgconfig}/bin/pkg-config'"
+    done
   '' + lib.optionalString (ghostscript != null) ''
     for la in $out/lib/*.la; do
-      sed 's|-lgs|-L${ghostscript}/lib -lgs|' -i $la
+      sed 's|-lgs|-L${lib.getLib ghostscript}/lib -lgs|' -i $la
     done
   '';
 
   meta = with stdenv.lib; {
     homepage = http://www.imagemagick.org/;
     description = "A software suite to create, edit, compose, or convert bitmap images";
-    platforms = platforms.linux ++ [ "x86_64-darwin" ];
+    platforms = platforms.linux ++ platforms.darwin;
     maintainers = with maintainers; [ the-kenny wkennington ];
   };
 }

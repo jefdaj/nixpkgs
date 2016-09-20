@@ -22,14 +22,14 @@ stdenv.mkDerivation rec {
 
   patches = optional stdenv.isFreeBSD ./include-static-dependencies.patch;
 
-  outputs = [ "dev" "out" ];
+  outputs = [ "out" "dev" ];
   outputBin = "dev";
 
   buildInputs = optional stdenv.isFreeBSD autoreconfHook;
 
-  configureFlags = [ "--with-apr=${apr}" "--with-expat=${expat}" ]
+  configureFlags = [ "--with-apr=${apr.dev}" "--with-expat=${expat.dev}" ]
     ++ optional (!stdenv.isCygwin) "--with-crypto"
-    ++ optional sslSupport "--with-openssl=${openssl}"
+    ++ optional sslSupport "--with-openssl=${openssl.dev}"
     ++ optional bdbSupport "--with-berkeley-db=${db}"
     ++ optional ldapSupport "--with-ldap=ldap"
     ++ optionals stdenv.isCygwin
@@ -61,5 +61,6 @@ stdenv.mkDerivation rec {
     homepage = http://apr.apache.org/;
     description = "A companion library to APR, the Apache Portable Runtime";
     maintainers = [ stdenv.lib.maintainers.eelco ];
+    platforms = stdenv.lib.platforms.unix;
   };
 }
