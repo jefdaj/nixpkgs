@@ -1,14 +1,17 @@
-{ stdenv, fetchurl, pkgs, ... }:
+{ stdenv, fetchurl, pkgs, makeWrapper, mono, ffmpeg, ... }:
 
 stdenv.mkDerivation rec {
   name = "emby-${version}";
-  version = "3.0.7100";
+  version = "3.0.8500";
 
   src = fetchurl {
     url = "https://github.com/MediaBrowser/Emby/archive/${version}.tar.gz";
-    sha256 = "0fxqk4p8p72bjzlbl8da988xr6bryr1zpvaaf8if6vnclly4vmny";
+    sha256 = "0vm2yvwyhswsp31g48qdzm17c4p7c25vyiy1029hgy8nd5qy4shc";
   };
 
+  buildInputs = with pkgs; [
+    makeWrapper
+  ];
   propagatedBuildInputs = with pkgs; [
     mono
     sqlite
@@ -23,6 +26,9 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bin
     cp -r MediaBrowser.Server.Mono/bin/Release\ Mono/* $out/bin/
+
+    makeWrapper "${mono}/bin/mono" $out/bin/MediaBrowser.Server.Mono \
+      --add-flags "$out/bin/MediaBrowser.Server.Mono.exe -ffmpeg ${ffmpeg}/bin/ffmpeg -ffprobe ${ffmpeg}/bin/ffprobe"
   '';
 
   meta = {

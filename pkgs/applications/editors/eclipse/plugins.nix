@@ -83,16 +83,16 @@ rec {
 
   acejump = buildEclipsePlugin rec {
     name = "acejump-${version}";
-    version = "1.0.0.201501181511";
+    version = "1.0.0.201610261941";
 
     srcFeature = fetchurl {
       url = "https://tobiasmelcher.github.io/acejumpeclipse/features/acejump.feature_${version}.jar";
-      sha256 = "127xqrnns4h96g21c9zg0iblxprx3fg6fg0w5f413rf84415z884";
+      sha256 = "1szswjxp9g70ibfbv3p8dlq1bngq7nc22kp657z9i9kp8309md2d";
     };
 
     srcPlugin = fetchurl {
       url = "https://tobiasmelcher.github.io/acejumpeclipse/plugins/acejump_${version}.jar";
-      sha256 = "0mz79ca32yryidd1wijirvnmfg4j5q4g84vdspdi56z0r4xrja13";
+      sha256 = "1cn64xj2bm69vnn9db2xxh6kq148v83w5nx3183mrqb59ym3v9kf";
     };
 
     meta = with stdenv.lib; {
@@ -403,16 +403,16 @@ rec {
 
   testng = buildEclipsePlugin rec {
     name = "testng-${version}";
-    version = "6.9.11.201604020423";
+    version = "6.9.12.201607091356";
 
     srcFeature = fetchurl {
       url = "http://beust.com/eclipse-old/eclipse_${version}/features/org.testng.eclipse_${version}.jar";
-      sha256 = "1cp7f6f0525wqwjj4pyrp0q0ii7zcd5gwd5acaq9jjb13xgw8vav";
+      sha256 = "06c6885d3ggg1i085zhfwayj06jn4v1jip9zz40921vpq0iand54";
     };
 
     srcPlugin = fetchurl {
       url = "http://beust.com/eclipse-old/eclipse_${version}/plugins/org.testng.eclipse_${version}.jar";
-      sha256 = "04m07cdfw0isp27ykx6dbrlcdw33rxww7vnavanygxxnlpyvyas3";
+      sha256 = "0bpyb9bnh8kglajmdzb7pr21i1sly73kwdjbygg75ad7z37l58br";
     };
 
     meta = with stdenv.lib; {

@@ -1,21 +1,17 @@
-{ stdenv, fetchzip, ocaml, findlib, cstruct, type_conv, zarith, ounit }:
+{ stdenv, fetchzip, ocaml, findlib, cstruct, type_conv, zarith, ocaml_lwt, ounit }:
 
-let
-  version = "0.5.1";
-  ocaml_version = stdenv.lib.getVersion ocaml;
-in
+assert stdenv.lib.versionAtLeast ocaml.version "4.01";
 
-assert stdenv.lib.versionAtLeast ocaml_version "4.01";
-
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "ocaml-nocrypto-${version}";
+  version = "0.5.1";
 
   src = fetchzip {
     url = "https://github.com/mirleft/ocaml-nocrypto/archive/${version}.tar.gz";
     sha256 = "15gffvixk12ghsfra9amfszd473c8h188zfj03ngvblbdm0d80m0";
   };
 
-  buildInputs = [ ocaml findlib type_conv ounit ];
+  buildInputs = [ ocaml findlib type_conv ocaml_lwt ounit ];
   propagatedBuildInputs = [ cstruct zarith ];
 
   configureFlags = "--enable-tests";

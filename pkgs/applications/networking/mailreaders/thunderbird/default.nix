@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, which, m4, gtk, pango, perl, python, zip, libIDL
+{ stdenv, fetchurl, pkgconfig, which, m4, gtk2, pango, perl, python, zip, libIDL
 , libjpeg, libpng, zlib, dbus, dbus_glib, bzip2, xorg
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper, pysqlite
@@ -13,7 +13,7 @@
   enableOfficialBranding ? false
 }:
 
-let version = "45.3.0"; in
+let version = "45.4.0"; in
 let verName = "${version}"; in
 
 stdenv.mkDerivation rec {
@@ -21,11 +21,11 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://mozilla/thunderbird/releases/${verName}/source/thunderbird-${verName}.source.tar.xz";
-    sha512 = "1226b35535d68b9c088ab8692f61120c99951e1ecbae4739ced711665a3237d248202831831f00536c724e2f6359db4601fa5c90f2793433eab4bd9dab0c1165";
+    sha512 = "9c601d9625b43103b64e111da3a88fccdc30d4a52aa8a66ee02120bc13f3c5600d24fa1cfd3817975a0e58be9078d192334dd3099aa462468d8ab0cd05a3bcd5";
   };
 
   buildInputs = # from firefox30Pkgs.xulrunner, without gstreamer and libvpx
-    [ pkgconfig which libpng gtk perl zip libIDL libjpeg zlib bzip2
+    [ pkgconfig which libpng gtk2 perl zip libIDL libjpeg zlib bzip2
       python dbus dbus_glib pango freetype fontconfig xorg.libXi
       xorg.libX11 xorg.libXrender xorg.libXft xorg.libXt file
       alsaLib nspr nss libnotify xorg.pixman yasm mesa
@@ -112,6 +112,11 @@ stdenv.mkDerivation rec {
       Categories=Application;Network;
       EOF
     '';
+
+    postFixup =
+      ''
+        paxmark m $out/lib/thunderbird-${version}/thunderbird
+      '';
 
   meta = with stdenv.lib; {
     description = "A full-featured e-mail client";

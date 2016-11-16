@@ -1,12 +1,12 @@
 { stdenv, fetchurl, makeWrapper, jre, unzip }:
 
 stdenv.mkDerivation rec {
-  version = "1.0.3";
+  version = "1.0.5";
   name = "kotlin-${version}";
 
   src = fetchurl {
     url = "https://github.com/JetBrains/kotlin/releases/download/v${version}/kotlin-compiler-${version}.zip";
-    sha256 = "15ywjv46i2d7zgg2b3vdklc6agr62nvn0gkz7k9hql78ccfmyq9p";
+    sha512 = "0bkgxr4an1fq890s3bw4izwc8ly29xk28gdibvnp2q9qd15rwrny5dgns697rnbw2gg0nn08q5p33asvbkac001cfabfphamjwndvc9";
   };
 
   propagatedBuildInputs = [ jre ] ;

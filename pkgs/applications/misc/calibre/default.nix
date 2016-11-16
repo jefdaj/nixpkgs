@@ -5,12 +5,12 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.66.0";
+  version = "2.70.0";
   name = "calibre-${version}";
 
   src = fetchurl {
     url = "https://download.calibre-ebook.com/${version}/${name}.tar.xz";
-    sha256 = "1dbv6p9cq9zj51zvhfy2b7aic2zqa44lmfmq7k7fkqcgb6wmanic";
+    sha256 = "18iv1c2nx93gkfqa3k2m42dk4p59b9zp08fggb6imc1xqh2icfch";
   };
 
   inherit python;
@@ -59,7 +59,7 @@ stdenv.mkDerivation rec {
     python pyqt5 sip poppler_utils libpng imagemagick libjpeg
     fontconfig podofo qtbase chmlib icu sqlite libusb1 libmtp xdg_utils
   ] ++ (with pythonPackages; [
-    apsw beautifulsoup cssselect cssutils dateutil lxml mechanize netifaces pillow sqlite3
+    apsw beautifulsoup cssselect cssutils dateutil lxml mechanize netifaces pillow
     # the following are distributed with calibre, but we use upstream instead
     chardet cherrypy html5lib odfpy routes
   ]);
@@ -129,14 +129,14 @@ stdenv.mkDerivation rec {
     ];
     categories = "Office";
     extraEntries = ''
-      Actions=ebook-edit ebook-viewer
+      Actions=Edit;Viewer;
 
-      [Desktop Action ebook-edit]
+      [Desktop Action Edit]
       Name=Edit E-book
       Icon=@out@/share/calibre/images/tweak.png
       Exec=@out@/bin/ebook-edit --detach %F
 
-      [Desktop Action ebook-viewer]
+      [Desktop Action Viewer]
       Name=E-book Viewer
       Icon=@out@/share/calibre/images/viewer.png
       Exec=@out@/bin/ebook-viewer --detach %F
