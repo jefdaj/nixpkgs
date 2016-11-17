@@ -23,20 +23,11 @@ let
     sha256 = "0r5pfbjbmdj46h20jm3iqmy969qd27ajyf0phjhgykv6j0cqjlgd";
   };
 
-  imagick = if isPhp7 then imagick34 else imagick31;
-
-  imagick31 = assert !isPhp7; buildPecl {
-    name = "imagick-3.1.2";
-    sha256 = "14vclf2pqcgf3w8nzqbdw0b9v30q898344c84jdbw2sa62n6k1sj";
+  imagick = buildPecl {
+    name = "imagick-3.4.3RC1";
+    sha256 = "0siyxpszjz6s095s2g2854bhprjq49rf22v6syjiwvndg1pc9fsh";
     configureFlags = "--with-imagick=${pkgs.imagemagick.dev}";
-    buildInputs = [ pkgs.pkgconfig ];
-  };
-
-  imagick34 = buildPecl {
-    name = "imagick-3.4.0RC4";
-    sha256 = "0fdkzdv3r8sm6y1x11kp3rxsimq6zf15xvi0mhn57svmnan4zh0i";
-    configureFlags = "--with-imagick=${pkgs.imagemagick.dev}";
-    buildInputs = [ pkgs.pkgconfig ];
+    nativeBuildInputs = [ pkgs.pkgconfig ];
   };
 
   # No support for PHP 7 yet
@@ -121,32 +112,13 @@ let
     sha256 = "0qpfbkfy4wlnsfq4vc4q5wvaia83l89ky33s08gqrcfp3p1adn88";
   };
 
-  zmq = if isPhp7 then zmqPhp7 else zmq11;
+  zmq = buildPecl {
+    name = "zmq-1.1.3";
 
-  zmq11 = assert !isPhp7; buildPecl {
-    name = "zmq-1.1.2";
-
-    sha256 = "0ccz73p8pkda3y9p9qbr3m19m0yrf7k2bvqgbaly3ibgh9bazc69";
+    sha256 = "1kj487vllqj9720vlhfsmv32hs2dy2agp6176mav6ldx31c3g4n4";
 
     configureFlags = [
-      "--with-zmq=${pkgs.zeromq2}"
-    ];
-
-    buildInputs = [ pkgs.pkgconfig ];
-  };
-
-  # Not released yet
-  zmqPhp7 = assert isPhp7; buildPecl rec {
-    name = "zmq-php7";
-
-    src = fetchgit {
-      url = "https://github.com/mkoppanen/php-zmq";
-      rev = "94d2b87d195f870775b153b42c29f30da049f4db";
-      sha256 = "51a25b1029800d8abe03c5c08c50d6aee941c95c741dc22d2f853052511f4296";
-    };
-
-    configureFlags = [
-      "--with-zmq=${pkgs.zeromq2}"
+      "--with-zmq=${pkgs.zeromq}"
     ];
 
     buildInputs = [ pkgs.pkgconfig ];

@@ -1,9 +1,19 @@
-{ stdenv, fetchzip, ocaml, findlib, yojson, menhir
+{ stdenv, fetchzip, ocaml, findlib, yojson, menhir, lib
 , withEmacsMode ? false, emacs }:
 
 assert stdenv.lib.versionAtLeast (stdenv.lib.getVersion ocaml) "4.00";
 
-let version = "2.3.1"; in
+let
+  version = if lib.versionOlder (lib.getVersion ocaml) "4.02.0"
+  then
+    "2.3.1"
+  else
+    "2.5.1";
+  hashes = {
+    "2.3.1" = "192jamcc7rmvadlqqsjkzsl6hlgwhg9my1qc89fxh1lmd4qdsrpn";
+    "2.5.1" = "0p3hqxawp18q43ws6506cnndi49f3gxzmai0x2qch7h42dgh1cb8";
+  };
+in
 
 stdenv.mkDerivation {
 
@@ -11,7 +21,7 @@ stdenv.mkDerivation {
 
   src = fetchzip {
     url = "https://github.com/the-lambda-church/merlin/archive/v${version}.tar.gz";
-    sha256 = "192jamcc7rmvadlqqsjkzsl6hlgwhg9my1qc89fxh1lmd4qdsrpn";
+    sha256 = hashes."${version}";
   };
 
   buildInputs = [ ocaml findlib yojson menhir ]

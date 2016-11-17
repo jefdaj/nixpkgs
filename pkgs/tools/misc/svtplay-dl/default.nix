@@ -5,13 +5,13 @@ let
   inherit (pythonPackages) python nose pycrypto requests2 mock;
 in stdenv.mkDerivation rec {
   name = "svtplay-dl-${version}";
-  version = "1.3";
+  version = "1.7";
 
   src = fetchFromGitHub {
     owner = "spaam";
     repo = "svtplay-dl";
     rev = version;
-    sha256 = "0cnhv9a6vdrp2wmyl69fb1yklbx1x5pblsy4a5a36gwxmaill05k";
+    sha256 = "15vadnyah51pk4d0lx11bymxhfq47l5ijn72pjqr9yjx3pkgpd7w";
   };
 
   pythonPaths = [ pycrypto requests2 ];
