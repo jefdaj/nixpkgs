@@ -16342,6 +16342,8 @@ in
 
   emboss = callPackage ../applications/science/biology/emboss { };
 
+  fasttree = callPackage ../applications/science/biology/fasttree { };
+
   htslib = callPackage ../development/libraries/science/biology/htslib { };
 
   igv = callPackage ../applications/science/biology/igv { };
