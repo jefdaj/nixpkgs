@@ -16378,6 +16378,8 @@ in
 
   plink = callPackage ../applications/science/biology/plink/default.nix { };
 
+  raxml = callPackage ../applications/science/biology/raxml { };
+
   samtools = callPackage ../applications/science/biology/samtools/default.nix { };
 
   bwa = callPackage ../applications/science/biology/bwa/default.nix { };
