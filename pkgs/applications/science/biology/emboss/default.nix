@@ -1,10 +1,10 @@
 {stdenv, fetchurl, readline, perl, libX11, libpng, libXt, zlib}:
 
 stdenv.mkDerivation {
-  name = "emboss-6.0.1";
+  name = "emboss-6.6.0";
   src = fetchurl {
-    url = ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.0.1.tar.gz;
-    sha256 = "0g939k9wmpvmy55hqmbbzj6kj6agg4izymv492zqiawxm812jd9y";
+    url = ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz;
+    sha256 = "0vhcn45a9hhn8jn7r7nvfkj57aili9i33mdzk2snpncssdisg13i";
   };
   # patch = fetchurl {
   #   url = ftp://emboss.open-bio.org/pub/EMBOSS/fixes/patches/patch-1-9.gz;
