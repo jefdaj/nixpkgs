@@ -16356,6 +16356,8 @@ in
   # TODO include this with igv above?
   igvtools = callPackage ../applications/science/biology/igvtools { };
 
+  kallisto = callPackage ../applications/science/biology/kallisto { };
+
   neuron = callPackage ../applications/science/biology/neuron {
     python = null;
   };
