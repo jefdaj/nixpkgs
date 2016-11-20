@@ -16389,6 +16389,8 @@ in
 
   trimal = callPackage ../applications/science/biology/trimal { };
 
+  viennarna = callPackage ../applications/science/biology/viennarna { };
+
   bwa = callPackage ../applications/science/biology/bwa/default.nix { };
 
   ### SCIENCE/MATH
