@@ -9114,6 +9114,8 @@ in
 
   SDL2_ttf = callPackage ../development/libraries/SDL2_ttf { };
 
+  sdx = callPackage ../development/libraries/sdx {};
+
   sblim-sfcc = callPackage ../development/libraries/sblim-sfcc {};
 
   serd = callPackage ../development/libraries/serd {};
@@ -9265,6 +9267,8 @@ in
   tclap = callPackage ../development/libraries/tclap {};
 
   tclgpg = callPackage ../development/libraries/tclgpg { };
+
+  tclkit = callPackage ../development/libraries/tclkit { };
 
   tcllib = callPackage ../development/libraries/tcllib { };
 
@@ -16322,6 +16326,8 @@ in
   aliview = callPackage ../applications/science/biology/aliview { };
 
   alliance = callPackage ../applications/science/electronics/alliance { };
+
+  ape = callPackage ../applications/science/biology/ape { };
 
   archimedes = callPackage ../applications/science/electronics/archimedes {
     stdenv = overrideCC stdenv gcc49;
