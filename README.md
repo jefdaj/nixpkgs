@@ -1,42 +1,47 @@
-[<img src="http://nixos.org/logo/nixos-hires.png" width="500px" alt="logo" />](https://nixos.org/nixos)
+nixpkgs
+=======
 
-[![Build Status](https://travis-ci.org/NixOS/nixpkgs.svg?branch=master)](https://travis-ci.org/NixOS/nixpkgs)
-[![Code Triagers Badge](https://www.codetriage.com/nixos/nixpkgs/badges/users.svg)](https://www.codetriage.com/nixos/nixpkgs)
+This is my fork of [NixOS/nixpkgs](https://github.com/nixos/nixpkgs). I've
+added a lot of software for personal use, and will eventually get around to
+cleaning it up and sending pull requests upstream. In the meantime, let me know
+if you're interested in anything here! Maybe you're the author, or you can't
+get it to work, or you got it working better, or whatever.
 
-Nixpkgs is a collection of packages for the [Nix](https://nixos.org/nix/) package
-manager. It is periodically built and tested by the [hydra](http://hydra.nixos.org/)
-build daemon as so-called channels. To get channel information via git, add
-[nixpkgs-channels](https://github.com/NixOS/nixpkgs-channels.git) as a remote:
+Most of the packages are related to bioinformatics:
 
-```
-% git remote add channels git://github.com/NixOS/nixpkgs-channels.git
-```
+* Bioconductor packages for R (merged!)
+* A hackish script that auto-updates all the R packages
+* BioPython
+* aliview
+* ape, with dependencies sdx and tclkit
+* argtable (what depends on this again?)
+* clustal-omega
+* dendroscope
+* emboss (someone else did it too)
+* fasttree
+* figtree
+* gblocks
+* igv (someone else did it too)
+* igvtools
+* kallisto
+* ncbi-blast
+* raxml
+* seqtrace
+* sunwait
+* t-coffee
+* tarql
+* trimal
+* viennarna
+* xlsx2csv
 
-For stability and maximum binary package support, it is recommended to maintain
-custom changes on top of one of the channels, e.g. `nixos-16.09` for the latest
-release and `nixos-unstable` for the latest successful build of master:
+But there are also some random ones:
 
-```
-% git remote update channels
-% git rebase channels/nixos-16.09
-```
-
-For pull-requests, please rebase onto nixpkgs `master`.
-
-[NixOS](https://nixos.org/nixos/) linux distribution source code is located inside
-`nixos/` folder.
-
-* [NixOS installation instructions](https://nixos.org/nixos/manual/#ch-installation)
-* [Documentation (Nix Expression Language chapter)](https://nixos.org/nix/manual/#ch-expression-language)
-* [Manual (How to write packages for Nix)](https://nixos.org/nixpkgs/manual/)
-* [Manual (NixOS)](https://nixos.org/nixos/manual/)
-* [Nix Wiki](https://nixos.org/wiki/) (deprecated, see milestone ["Move the Wiki!"](https://github.com/NixOS/nixpkgs/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Move+the+wiki%21%22))
-* [Continuous package builds for unstable/master](https://hydra.nixos.org/jobset/nixos/trunk-combined)
-* [Continuous package builds for 16.09 release](https://hydra.nixos.org/jobset/nixos/release-16.09)
-* [Tests for unstable/master](https://hydra.nixos.org/job/nixos/trunk-combined/tested#tabs-constituents)
-* [Tests for 16.09 release](https://hydra.nixos.org/job/nixos/release-16.09/tested#tabs-constituents)
-
-Communication:
-
-* [Mailing list](http://lists.science.uu.nl/mailman/listinfo/nix-dev)
-* [IRC - #nixos on freenode.net](irc://irc.freenode.net/#nixos)
+* docopts, which uses python to generate shell script CLI interfaces
+* motion, a daemon for watching security cameras
+* terminal-velocity a CLI note-taking program similar to Notational Velocity
+* tidal, a Haskell library for live coding music (super fun!)
+* tidal-vim shreddit, which overwrites reddit comments before deleting them
+  (may not be useful as of 2016 because new privacy policy allows versioning)
+* mypaint
+* etmtk, a task manager
+* Bitcoin XT and Unlimited
