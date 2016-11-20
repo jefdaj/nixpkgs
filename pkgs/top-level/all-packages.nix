@@ -23548,6 +23548,9 @@ in
 
   exonerate = callPackage ../applications/science/biology/exonerate { };
 
+  # TODO finish writing this
+  figtree = callPackage ../applications/science/biology/figtree { };
+
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
