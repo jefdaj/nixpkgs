@@ -22851,6 +22851,8 @@ in
 
   exonerate = callPackage ../applications/science/biology/exonerate { };
 
+  fasttree = callPackage ../applications/science/biology/fasttree { };
+
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
