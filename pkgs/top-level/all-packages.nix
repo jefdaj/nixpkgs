@@ -24021,6 +24021,8 @@ in
 
   tebreak = callPackage ../applications/science/biology/tebreak { };
 
+  t-coffee = callPackage ../applications/science/biology/t-coffee { };
+
   trimal = callPackage ../applications/science/biology/trimal { };
 
   truvari = callPackage ../applications/science/biology/truvari { };
