@@ -432,6 +432,7 @@ in
   argus-clients = callPackage ../tools/networking/argus-clients {};
 
   argtable = callPackage ../tools/misc/argtable {};
+  argtable2 = callPackage ../development/libraries/argtable {};
 
   argyllcms = callPackage ../tools/graphics/argyllcms {};
 
@@ -16334,6 +16335,8 @@ in
   };
 
   bcftools = callPackage ../applications/science/biology/bcftools { };
+
+  clustal-omega = callPackage ../applications/science/biology/clustal-omega { };
 
   emboss = callPackage ../applications/science/biology/emboss { };
 
