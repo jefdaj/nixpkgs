@@ -16344,6 +16344,9 @@ in
 
   fasttree = callPackage ../applications/science/biology/fasttree { };
 
+  # TODO finish writing this
+  # figtree = callPackage ../applications/science/biology/figtree { };
+
   htslib = callPackage ../development/libraries/science/biology/htslib { };
 
   igv = callPackage ../applications/science/biology/igv { };
