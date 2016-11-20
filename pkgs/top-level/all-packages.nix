@@ -16385,6 +16385,8 @@ in
   # TODO fix libc6 error on launch
   # seqtrace = callPackage ../applications/science/biology/seqtrace { };
 
+  t-coffee = callPackage ../applications/science/biology/t-coffee { };
+
   bwa = callPackage ../applications/science/biology/bwa/default.nix { };
 
   ### SCIENCE/MATH
