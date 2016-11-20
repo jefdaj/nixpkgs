@@ -16387,6 +16387,8 @@ in
 
   t-coffee = callPackage ../applications/science/biology/t-coffee { };
 
+  trimal = callPackage ../applications/science/biology/trimal { };
+
   bwa = callPackage ../applications/science/biology/bwa/default.nix { };
 
   ### SCIENCE/MATH
