@@ -16347,6 +16347,8 @@ in
   # TODO finish writing this
   # figtree = callPackage ../applications/science/biology/figtree { };
 
+  gblocks = callPackage ../applications/science/biology/gblocks { };
+
   htslib = callPackage ../development/libraries/science/biology/htslib { };
 
   igv = callPackage ../applications/science/biology/igv { };
