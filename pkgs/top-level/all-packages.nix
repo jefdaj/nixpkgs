@@ -22861,6 +22861,9 @@ in
 
   igv = callPackage ../applications/science/biology/igv { };
 
+  # TODO include this with igv above?
+  igvtools = callPackage ../applications/science/biology/igvtools { };
+
   inormalize = callPackage ../applications/science/biology/inormalize { };
 
   itsx = callPackage ../applications/science/biology/itsx { };
