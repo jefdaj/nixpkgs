@@ -23548,6 +23548,8 @@ in
 
   exonerate = callPackage ../applications/science/biology/exonerate { };
 
+  gblocks = callPackage ../applications/science/biology/gblocks { };
+
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
