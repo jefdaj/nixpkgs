@@ -16338,6 +16338,8 @@ in
 
   clustal-omega = callPackage ../applications/science/biology/clustal-omega { };
 
+  dendroscope = callPackage ../applications/science/biology/dendroscope { };
+
   emboss = callPackage ../applications/science/biology/emboss { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
