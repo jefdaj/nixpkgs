@@ -6585,6 +6585,8 @@ in
 
   targetcli = callPackage ../os-specific/linux/targetcli { };
 
+  tarql = callPackage ../tools/text/tarql { };
+
   tarsnap = callPackage ../tools/backup/tarsnap { };
 
   tarsnapper = callPackage ../tools/backup/tarsnapper { };
