@@ -22853,7 +22853,8 @@ in
 
   exonerate = callPackage ../applications/science/biology/exonerate { };
 
-  fasttree = callPackage ../applications/science/biology/fasttree { };
+  # TODO finish writing this
+  figtree = callPackage ../applications/science/biology/figtree { };
 
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
