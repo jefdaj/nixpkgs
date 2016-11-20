@@ -16353,6 +16353,9 @@ in
 
   igv = callPackage ../applications/science/biology/igv { };
 
+  # TODO include this with igv above?
+  igvtools = callPackage ../applications/science/biology/igvtools { };
+
   neuron = callPackage ../applications/science/biology/neuron {
     python = null;
   };
