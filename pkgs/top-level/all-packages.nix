@@ -16382,6 +16382,9 @@ in
 
   samtools = callPackage ../applications/science/biology/samtools/default.nix { };
 
+  # TODO fix libc6 error on launch
+  # seqtrace = callPackage ../applications/science/biology/seqtrace { };
+
   bwa = callPackage ../applications/science/biology/bwa/default.nix { };
 
   ### SCIENCE/MATH
