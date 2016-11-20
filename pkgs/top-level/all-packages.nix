@@ -22951,6 +22951,8 @@ in
 
   seaview = callPackage ../applications/science/biology/seaview { };
 
+  t-coffee = callPackage ../applications/science/biology/t-coffee { };
+
   trimal = callPackage ../applications/science/biology/trimal { };
 
   varscan = callPackage ../applications/science/biology/varscan { };
