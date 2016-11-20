@@ -3817,6 +3817,8 @@ in
 
   znapzend = callPackage ../tools/backup/znapzend { };
 
+  tarql = callPackage ../tools/text/tarql { };
+
   tarsnap = callPackage ../tools/backup/tarsnap { };
 
   tcpcrypt = callPackage ../tools/security/tcpcrypt { };
