@@ -16319,6 +16319,8 @@ in
 
   ### SCIENCE/BIOLOGY
 
+  aliview = callPackage ../applications/science/biology/aliview { };
+
   alliance = callPackage ../applications/science/electronics/alliance { };
 
   archimedes = callPackage ../applications/science/electronics/archimedes {
