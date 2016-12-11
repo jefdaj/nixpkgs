@@ -23548,6 +23548,10 @@ in
 
   exonerate = callPackage ../applications/science/biology/exonerate { };
 
+  # broken? :(
+  # fastx-toolkit = callPackage ../applications/science/biology/fastx-toolkit { };
+  # libgtextutils = callPackage ../development/libraries/libgtextutils { };
+
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
