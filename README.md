@@ -19,6 +19,7 @@ Most of the packages are related to bioinformatics:
 * dendroscope
 * emboss (someone else did it too)
 * fasttree
+* fastx-toolkit (and the dependency libgtextutils)
 * figtree
 * gblocks
 * igv (someone else did it too)

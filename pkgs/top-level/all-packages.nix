@@ -7038,6 +7038,8 @@ in
 
   libgit2_0_21 = callPackage ../development/libraries/git2/0.21.nix { };
 
+  libgtextutils = callPackage ../development/libraries/libgtextutils { };
+
   gle = callPackage ../development/libraries/gle { };
 
   glew = callPackage ../development/libraries/glew { };
@@ -16345,6 +16347,8 @@ in
   emboss = callPackage ../applications/science/biology/emboss { };
 
   fasttree = callPackage ../applications/science/biology/fasttree { };
+
+  fastx-toolkit = callPackage ../applications/science/biology/fastx-toolkit { };
 
   # TODO finish writing this
   # figtree = callPackage ../applications/science/biology/figtree { };
