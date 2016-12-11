@@ -22853,7 +22853,9 @@ in
 
   exonerate = callPackage ../applications/science/biology/exonerate { };
 
-  gblocks = callPackage ../applications/science/biology/gblocks { };
+  # broken? :(
+  # fastx-toolkit = callPackage ../applications/science/biology/fastx-toolkit { };
+  # libgtextutils = callPackage ../development/libraries/libgtextutils { };
 
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
