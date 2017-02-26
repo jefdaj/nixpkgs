@@ -8,6 +8,8 @@
 {pkgs, overrides}:
 
 let self = _self // overrides; _self = with self; {
+  # TODO package these individually, then make quick pull req
+  BioPerl = (import ../../bioperl.nix) { inherit perl; perlPackages = self; };
 
   inherit (pkgs) buildPerlPackage fetchurl fetchFromGitHub stdenv perl fetchsvn gnused;
 
