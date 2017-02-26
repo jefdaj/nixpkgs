@@ -1,11 +1,26 @@
 /*
 
+# New packages
+
+READ THIS FIRST
+
+This module is for official packages in KDE Frameworks 5. All available packages
+are listed in `./srcs.nix`, although a few are not yet packaged in Nixpkgs (see
+below).
+
+IF YOUR PACKAGE IS NOT LISTED IN `./srcs.nix`, IT DOES NOT GO HERE.
+
+Many of the packages released upstream are not yet built in Nixpkgs due to lack
+of demand. To add a Nixpkgs build for an upstream package, copy one of the
+existing packages here and modify it as necessary.
+
 # Updates
 
-1. Update the URL in `maintainers/scripts/generate-kde-frameworks.sh` and
-   run that script from the top of the Nixpkgs tree.
-2. Check that the new packages build correctly.
-3. Commit the changes and open a pull request.
+1. Update the URL in `./fetch.sh`.
+2. Run `./maintainers/scripts/fetch-kde-qt.sh pkgs/development/libraries/kde-frameworks`
+   from the top of the Nixpkgs tree.
+3. Invoke `nix-build -A kde5` and ensure that everything builds.
+4. Commit the changes and open a pull request.
 
 */
 
@@ -56,20 +71,15 @@ let
         } // (args.meta or {});
       });
 
-    kdeEnv = import ./kde-env.nix {
-      inherit (pkgs) stdenv lib;
-      inherit (pkgs.xorg) lndir;
-    };
-
     kdeWrapper = import ./kde-wrapper.nix {
-      inherit (pkgs) stdenv lib makeWrapper;
-      inherit kdeEnv;
+      inherit (pkgs) stdenv lib makeWrapper buildEnv;
     };
 
     attica = callPackage ./attica.nix {};
     baloo = callPackage ./baloo.nix {};
     bluez-qt = callPackage ./bluez-qt.nix {};
     breeze-icons = callPackage ./breeze-icons.nix {};
+    # FIXME: this collides with the "ecm" package.
     ecm =
       let drv = { cmake, ecmNoHooks, pkgconfig, qtbase, qttools }:
             makeSetupHook
@@ -144,6 +154,7 @@ let
     plasma-framework = callPackage ./plasma-framework.nix {};
     solid = callPackage ./solid.nix {};
     sonnet = callPackage ./sonnet.nix {};
+    syntax-highlighting = callPackage ./syntax-highlighting.nix {};
     threadweaver = callPackage ./threadweaver.nix {};
   };
 

@@ -6,6 +6,7 @@
 , javacSupport ? false, openjdk ? null
 , enableHipe ? true
 , enableDebugInfo ? false
+, enableDirtySchedulers ? false
 }:
 
 assert wxSupport -> (if stdenv.isDarwin
@@ -20,7 +21,7 @@ with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "erlang-" + version + "${optionalString odbcSupport "-odbc"}"
   + "${optionalString javacSupport "-javac"}";
-  version = "19.1";
+  version = "19.2";
 
   # Minor OTP releases are not always released as tarbals at
   # http://erlang.org/download/ So we have to download from
@@ -30,7 +31,7 @@ stdenv.mkDerivation rec {
     owner = "erlang";
     repo = "otp";
     rev = "OTP-${version}";
-    sha256 = "0nnjj069d5pjhgcd8vvqbrkjdac3p1v4s3zb59i4h73vg7f5p736";
+    sha256 = "06pr4ydrqpp1skx85zjb1an4kvzv6vacb771vy71k54j7w6lh9hk";
   };
 
   buildInputs =
@@ -42,6 +43,11 @@ stdenv.mkDerivation rec {
 
   debugInfo = enableDebugInfo;
 
+  prePatch = ''
+    substituteInPlace configure.in \
+      --replace '`sw_vers -productVersion`' '10.10'
+  '';
+
   preConfigure = ''
     ./otp_build autoconf
   '';
@@ -49,6 +55,7 @@ stdenv.mkDerivation rec {
   configureFlags= [
     "--with-ssl=${openssl.dev}"
   ] ++ optional enableHipe "--enable-hipe"
+    ++ optional enableDirtySchedulers "--enable-dirty-schedulers"
     ++ optional wxSupport "--enable-wx"
     ++ optional odbcSupport "--with-odbc=${unixODBC}"
     ++ optional javacSupport "--with-javac"

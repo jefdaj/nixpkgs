@@ -7,7 +7,7 @@ import ./generic.nix (args // rec {
 
   extraMeta = {
     branch = "4.1";
-    maintainers = stdenv.lib.maintainers.layus;
+    maintainers = [ stdenv.lib.maintainers.layus ];
   };
 
   src = fetchurl {
@@ -46,6 +46,5 @@ import ./generic.nix (args // rec {
   features.iwlwifi = true;
   features.efiBootStub = true;
   features.needsCifsUtils = true;
-  features.canDisableNetfilterConntrackHelpers = true;
   features.netfilterRPFilter = true;
 } // (args.argsOverride or {}))

@@ -4,7 +4,7 @@
 , which, alsaLib, curl, libvpx, gawk, nettools, dbus
 , xorriso, makeself, perl, pkgconfig
 , javaBindings ? false, jdk ? null
-, pythonBindings ? false, python ? null
+, pythonBindings ? false, python2 ? null
 , enableExtensionPack ? false, requireFile ? null, patchelf ? null, fakeroot ? null
 , pulseSupport ? false, libpulseaudio ? null
 , enableHardening ? false
@@ -15,13 +15,17 @@
 with stdenv.lib;
 
 let
+  python = python2;
   buildType = "release";
 
-  inherit (importJSON ./upstream-info.json) version extpackRev extpack main;
+  extpack = "baddb7cc49224ecc1147f82d77fce2685ac39941ac9b0aac83c270dd6570ea85";
+  extpackRev = 112924;
+  main = "8267bb026717c6e55237eb798210767d9c703cfcdf01224d9bc26f7dac9f228a";
+  version = "5.1.14";
 
   # See https://github.com/NixOS/nixpkgs/issues/672 for details
   extensionPack = requireFile rec {
-    name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRev}.vbox-extpack";
+    name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${toString extpackRev}.vbox-extpack";
     sha256 = extpack;
     message = ''
       In order to use the extension pack, you need to comply with the VirtualBox Personal Use
@@ -48,10 +52,10 @@ in stdenv.mkDerivation {
 
   buildInputs =
     [ iasl dev86 libxslt libxml2 xproto libX11 libXext libXcursor libIDL
-      libcap glib lvm2 python alsaLib curl libvpx pam xorriso makeself perl
-      pkgconfig which libXmu libpng patchelfUnstable ]
+      libcap glib lvm2 alsaLib curl libvpx pam xorriso makeself perl
+      pkgconfig which libXmu libpng patchelfUnstable python ]
     ++ optional javaBindings jdk
-    ++ optional pythonBindings python
+    ++ optional pythonBindings python # Python is needed even when not building bindings
     ++ optional pulseSupport libpulseaudio
     ++ optionals (headless) [ libXrandr ]
     ++ optionals (!headless) [ qt5.qtbase qt5.qtx11extras libXinerama SDL ];

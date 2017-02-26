@@ -3,8 +3,8 @@
 stdenv.mkDerivation {
   name = "emboss-6.6.0";
   src = fetchurl {
-    url = ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz;
-    sha256 = "0vhcn45a9hhn8jn7r7nvfkj57aili9i33mdzk2snpncssdisg13i";
+    url = "ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz";
+    sha256 = "7184a763d39ad96bb598bfd531628a34aa53e474db9e7cac4416c2a40ab10c6e";
   };
   # patch = fetchurl {
   #   url = ftp://emboss.open-bio.org/pub/EMBOSS/fixes/patches/patch-1-9.gz;

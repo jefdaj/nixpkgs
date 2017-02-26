@@ -1,8 +1,11 @@
-{ stdenv, lib, fetchurl, zlib, xz, python2, findXMLCatalogs, libiconv, fetchpatch
-, supportPython ? (! stdenv ? cross) }:
+{ stdenv, lib, fetchurl, fetchpatch
+, zlib, xz, python2, findXMLCatalogs, libiconv
+, pythonSupport ? (! stdenv ? cross)
+, icuSupport ? false, icu ? null }:
 
 let
   python = python2;
+
 in stdenv.mkDerivation rec {
   name = "libxml2-${version}";
   version = "2.9.4";
@@ -14,32 +17,28 @@ in stdenv.mkDerivation rec {
 
   patches = [
     (fetchpatch {
-      name = "CVE-2016-4658.patch";
-      url = "https://git.gnome.org/browse/libxml2/patch/?id=c1d1f7121194036608bf555f08d3062a36fd344b";
-      sha256 = "0q7i5qgwgzp2x4r820mqq3nx69bgkd7n0v00j28wa6hndbfaaxmb";
+      # Contains fixes for CVE-2016-{4658,5131} and other bugs.
+      name = "misc.patch";
+      url = "https://git.gnome.org/browse/libxml2/patch/?id=e905f081&id2=v2.9.4";
+      sha256 = "14rnzilspmh92bcpwbd6kqikj36gx78al42ilgpqgl1609krb5m5";
     })
   ];
 
-  # https://bugzilla.gnome.org/show_bug.cgi?id=766834#c5
-  postPatch = "patch -R < " + fetchpatch {
-    name = "schemas-validity.patch";
-    url = "https://git.gnome.org/browse/libxml2/patch/?id=f6599c5164";
-    sha256 = "0i7a0nhxwkxx6dkm8917qn0bsfn1av6ghg2f4dxanxi4bn4b1jjn";
-  };
-
   outputs = [ "bin" "dev" "out" "doc" ]
-    ++ lib.optional supportPython "py";
-  propagatedBuildOutputs = "out bin" + lib.optionalString supportPython " py";
+    ++ lib.optional pythonSupport "py";
+  propagatedBuildOutputs = "out bin" + lib.optionalString pythonSupport " py";
 
-  buildInputs = lib.optional supportPython python
+  buildInputs = lib.optional pythonSupport python
     # Libxml2 has an optional dependency on liblzma.  However, on impure
     # platforms, it may end up using that from /usr/lib, and thus lack a
     # RUNPATH for that, leading to undefined references for its users.
     ++ lib.optional stdenv.isFreeBSD xz;
 
-  propagatedBuildInputs = [ zlib findXMLCatalogs ];
+  propagatedBuildInputs = [ zlib findXMLCatalogs ] ++ lib.optional icuSupport icu;
 
-  configureFlags = lib.optional supportPython "--with-python=${python}"
+  configureFlags =
+       lib.optional pythonSupport "--with-python=${python}"
+    ++ lib.optional icuSupport    "--with-icu"
     ++ [ "--exec_prefix=$dev" ];
 
   enableParallelBuilding = true;
@@ -55,9 +54,9 @@ in stdenv.mkDerivation rec {
     propagatedBuildInputs =  [ findXMLCatalogs libiconv ];
   };
 
-  preInstall = lib.optionalString supportPython
+  preInstall = lib.optionalString pythonSupport
     ''substituteInPlace python/libxml2mod.la --replace "${python}" "$py"'';
-  installFlags = lib.optionalString supportPython
+  installFlags = lib.optionalString pythonSupport
     ''pythondir="$(py)/lib/${python.libPrefix}/site-packages"'';
 
   postFixup = ''
@@ -66,7 +65,7 @@ in stdenv.mkDerivation rec {
     moveToOutput share/man/man1 "$bin"
   '';
 
-  passthru = { inherit version; pythonSupport = supportPython; };
+  passthru = { inherit version; pythonSupport = pythonSupport; };
 
   meta = {
     homepage = http://xmlsoft.org/;

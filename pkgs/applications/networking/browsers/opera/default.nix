@@ -14,6 +14,7 @@
 , gnome2
 , gtk2
 , libX11
+, libxcb
 , libXScrnSaver
 , libXcomposite
 , libXcursor
@@ -36,7 +37,7 @@
 let
 
   mirror = https://get.geo.opera.com/pub/opera/desktop;
-  version = "40.0.2308.90";
+  version = "43.0.2442.991";
 
   rpath = stdenv.lib.makeLibraryPath [
 
@@ -66,6 +67,7 @@ let
     libXrandr.out
     libXrender.out
     libXtst.out
+    libxcb.out
     libnotify.out
     nspr.out
     nss.out
@@ -89,12 +91,12 @@ in stdenv.mkDerivation {
     if stdenv.system == "i686-linux" then
       fetchurl {
         url = "${mirror}/${version}/linux/opera-stable_${version}_i386.deb";
-        sha256 = "1fqbxbn4531yv9figgg8xxr63swimrgpamqrphcg8jq5q3smrk4k";
+        sha256 = "0gd30b5gs2n4ypyn2ky2dlz648akmss2kixb8dqsy4yfd0mz7xqr";
       }
     else if stdenv.system == "x86_64-linux" then
       fetchurl {
         url = "${mirror}/${version}/linux/opera-stable_${version}_amd64.deb";
-        sha256 = "12imzjxwip9r7bjyfnrpdsxyxb0cjn92s3b7ajdlbqccxxmc6k6g";
+        sha256 = "1pj2d3zhzyavv2gj3v5w07m14679k2vlbfk6sd9bjdy6g7fb5f7x";
       }
     else throw "Opera is not supported on ${stdenv.system} (only i686-linux and x86_64 linux are supported)";
 
