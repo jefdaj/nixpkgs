@@ -24,6 +24,11 @@ with pkgs;
     };
   };
 
+  # TODO package this properly
+  FEBA = callPackage (import ../../feba.nix) {
+    inherit perl perlPackages rPackages rWrapper;
+  };
+
   # Used by wine, firefox with debugging version of Flash, ...
   pkgsi686Linux = forceSystem "i686-linux" "i386";
 

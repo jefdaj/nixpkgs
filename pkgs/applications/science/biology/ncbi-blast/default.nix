@@ -45,6 +45,6 @@ in stdenv.mkDerivation rec {
       patchelf --set-rpath   "$libPath" "$exe"
       # patchelf --shrink-rpath "$exe"
     done
-    mkdir $out; cp -R * $out
+    mkdir $out; cp -R * $out; rm $out/README; rm $out/LICENSE
   '';
 }
