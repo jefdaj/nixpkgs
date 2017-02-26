@@ -34,6 +34,8 @@ Most of the packages are related to bioinformatics:
 * trimal
 * viennarna
 * xlsx2csv
+* FEBA (TODO: package properly)
+* bioperl (TODO: package each part in perl-packages.nix)
 
 But there are also some random ones:
 
