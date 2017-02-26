@@ -41,7 +41,8 @@ But there are also some random ones:
 * motion, a daemon for watching security cameras
 * terminal-velocity a CLI note-taking program similar to Notational Velocity
 * tidal, a Haskell library for live coding music (super fun!)
-* tidal-vim shreddit, which overwrites reddit comments before deleting them
+* tidal-vim
+* shreddit, which overwrites reddit comments before deleting them
   (may not be useful as of 2016 because new privacy policy allows versioning)
 * mypaint
 * etmtk, a task manager
