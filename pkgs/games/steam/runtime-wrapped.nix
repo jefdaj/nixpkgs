@@ -78,7 +78,7 @@ let
     SDL2_ttf
     SDL2_mixer
     gstreamer
-    gst_plugins_base
+    gst-plugins-base
   ] ++ lib.optional (!newStdcpp) gcc48.cc;
 
   overridePkgs = with pkgs; [
@@ -88,6 +88,7 @@ let
     openalSoft
     libva
     openssl-steam
+    vulkan-loader
   ] ++ lib.optional newStdcpp gcc.cc;
 
   ourRuntime = if runtimeOnly then []

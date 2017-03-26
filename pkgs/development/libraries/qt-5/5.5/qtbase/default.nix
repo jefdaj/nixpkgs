@@ -55,7 +55,7 @@ stdenv.mkDerivation {
   patches =
     copyPathsToStore (lib.readPathsFromFile ./. ./series)
     ++ lib.optional decryptSslTraffic ./decrypt-ssl-traffic.patch
-    ++ lib.optional mesaSupported [ ./dlopen-gl.patch ./mkspecs-libgl.patch ];
+    ++ lib.optionals mesaSupported [ ./dlopen-gl.patch ./mkspecs-libgl.patch ];
 
   postPatch =
     ''
@@ -269,6 +269,12 @@ stdenv.mkDerivation {
               done
           popd
       fi
+    ''
+
+    # fixup .pc file (where to find 'moc' etc.)
+    + lib.optionalString (!stdenv.isDarwin) ''
+      sed -i "$dev/lib/pkgconfig/Qt5Core.pc" \
+          -e "/^host_bins=/ c host_bins=$dev/bin"
     '';
 
   inherit lndir;
@@ -280,7 +286,7 @@ stdenv.mkDerivation {
     homepage = http://www.qt.io;
     description = "A cross-platform application framework for C++";
     license = with licenses; [ fdl13 gpl2 lgpl21 lgpl3 ];
-    maintainers = with maintainers; [ bbenoist qknight ttuegel ];
+    maintainers = with maintainers; [ qknight ttuegel ];
     platforms = platforms.linux;
   };
 

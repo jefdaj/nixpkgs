@@ -97,15 +97,6 @@ following incompatible changes:</para>
 
   <listitem>
     <para>
-      The Yama LSM is now enabled by default in the kernel,
-      which prevents ptracing non-child processes.
-      This means you will not be able to attach gdb to an existing process,
-      but will need to start that process from gdb (so it is a child).
-    </para>
-  </listitem>
-
-  <listitem>
-    <para>
       The <literal>stripHash</literal> bash function in <literal>stdenv</literal>
       changed according to its documentation; it now outputs the stripped name to
       <literal>stdout</literal> instead of putting it in the variable
@@ -237,10 +228,29 @@ following incompatible changes:</para>
     </para>
   </listitem>
 
+  <listitem>
+    <para>
+      The socket handling of the <literal>services.rmilter</literal> module
+      has been fixed and refactored. As rmilter doesn't support binding to
+      more than one socket, the options <literal>bindUnixSockets</literal>
+      and <literal>bindInetSockets</literal> have been replaced by
+      <literal>services.rmilter.bindSocket.*</literal>. The default is still
+      a unix socket in <literal>/run/rmilter/rmilter.sock</literal>. Refer to
+      the options documentation for more information.
+    </para>
+  </listitem>
+
+  <listitem>
+    <para>
+      The <literal>fetch*</literal> functions no longer support md5,
+      please use sha256 instead.
+    </para>
+  </listitem>
+
 </itemizedlist>
 
 
-<para>Other notable improvements:</para>
+<para>Other notable changes:</para>
 
 <itemizedlist>
 
@@ -258,6 +268,40 @@ following incompatible changes:</para>
       improving the situation on HighDPI displays. This has a cost of increased
       closure size; for server and other headless workloads it's recommended to
       use <literal>jre_headless</literal>.
+    </para>
+  </listitem>
+
+  <listitem>
+    <para>Python 2.6 interpreter and package set have been removed.</para>
+  </listitem>
+
+  <listitem>
+    <para>The Python 2.7 interpreter does not use modules anymore. Instead, all CPython interpreters now include the whole standard library except for `tkinter`, which is available in the Python package set.</para>
+  </listitem>
+
+  <listitem>
+    <para>
+      Python 2.7, 3.5 and 3.6 are now built deterministically and 3.4 mostly.
+      Minor modifications had to be made to the interpreters in order to generate
+      deterministic bytecode. This has security implications and is relevant for
+      those using Python in a <literal>nix-shell</literal>. See the Nixpkgs manual
+      for details.
+    </para>
+  </listitem>
+
+  <listitem>
+    <para>The Python package sets now use a fixed-point combinator and the sets are available as attributes of the interpreters.</para>
+  </listitem>
+
+  <listitem>
+    <para>The Python function `buildPythonPackage` has been improved and can be used to build from Setuptools source, Flit source, and precompiled Wheels.</para>
+  </listitem>
+
+  <listitem>
+    <para>
+      When adding new or updating current Python libraries, the expressions should be put
+      in separate files in <literal>pkgs/development/python-modules</literal> and 
+      called from <literal>python-packages.nix</literal>.
     </para>
   </listitem>
 

@@ -1,6 +1,6 @@
 {
   kdeDerivation, kdeWrapper, lib, fetchgit,
-  ecm, kdoctools, kconfig, kinit, kparts
+  extra-cmake-modules, kdoctools, kconfig, kinit, kparts
 }:
 
 let
@@ -16,9 +16,13 @@ let
       inherit rev;
     };
 
-    preConfigure = "cd kdiff3";
+    setSourceRoot = ''sourceRoot="$(echo */kdiff3/)"'';
 
-    nativeBuildInputs = [ ecm kdoctools ];
+    postPatch = ''
+      sed -re "s/(p\\[[^]]+] *== *)('([^']|\\\\')+')/\\1QChar(\\2)/g" -i src/diff.cpp
+    '';
+
+    nativeBuildInputs = [ extra-cmake-modules kdoctools ];
 
     propagatedBuildInputs = [ kconfig kinit kparts ];
 

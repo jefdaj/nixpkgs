@@ -47,10 +47,10 @@ self: super:
 
   # These packages are core libraries in GHC 7.10.x, but not here.
   bin-package-db = null;
-  haskeline = self.haskeline_0_7_2_1;
+  haskeline = self.haskeline_0_7_3_1;
   hoopl = self.hoopl_3_10_2_1;
   hpc = self.hpc_0_6_0_2;
-  terminfo = self.terminfo_0_4_0_1;
+  terminfo = self.terminfo_0_4_0_2;
   xhtml = self.xhtml_3000_2_1;
 
 
@@ -126,7 +126,8 @@ self: super:
   });
 
   ghcjs-dom-jsffi = overrideCabal super.ghcjs-dom-jsffi (drv: {
-    libraryHaskellDepends = [ self.ghcjs-base self.text ];
+    setupHaskellDepends = (drv.setupHaskellDepends or []) ++ [ self.Cabal_1_24_2_0 ];
+    libraryHaskellDepends = (drv.libraryHaskellDepends or []) ++ [ self.ghcjs-base self.text ];
     isLibrary = true;
   });
 
@@ -179,8 +180,6 @@ self: super:
         "glib" "gtk3" "webkitgtk3" "webkitgtk3-javascriptcore" "raw-strings-qq" "unix"
       ] drv.libraryHaskellDepends;
   });
-
-  semigroups = addBuildDepends super.semigroups [ self.hashable self.unordered-containers self.text self.tagged ];
 
   transformers-compat = overrideCabal super.transformers-compat (drv: {
     configureFlags = [];
