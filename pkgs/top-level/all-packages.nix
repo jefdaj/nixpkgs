@@ -12,6 +12,9 @@ with pkgs;
 
 {
 
+  # TODO convert for ghc8
+  gitit = haskell.packages.ghc7102.callPackage ../../gitit/gitit.nix {};
+
   # Allow callPackage to fill in the pkgs argument
   inherit pkgs;
 

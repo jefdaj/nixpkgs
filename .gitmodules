@@ -1,0 +1,3 @@
+[submodule "gitit"]
+	path = gitit
+	url = https://github.com/jefdaj/gitit.git
