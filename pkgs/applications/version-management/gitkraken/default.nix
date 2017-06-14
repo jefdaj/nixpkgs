@@ -2,17 +2,18 @@
 , libXfixes, atk, gtk2, libXrender, pango, gnome2, cairo, freetype, fontconfig
 , libX11, libXi, libXext, libXcursor, glib, libXScrnSaver, libxkbfile, libXtst
 , nss, nspr, cups, fetchurl, expat, gdk_pixbuf, libXdamage, libXrandr, dbus
+, dpkg, makeDesktopItem
 }:
 
 with stdenv.lib;
 
 stdenv.mkDerivation rec {
   name = "gitkraken-${version}";
-  version = "2.2.1";
+  version = "2.5.0";
 
   src = fetchurl {
-    url = "https://release.gitkraken.com/linux/v${version}.tar.gz";
-    sha256 = "12nyw2dh9ylrms264dbw0xzyif0znmba32zyfq7kdp0iay0wvgqd";
+    url = "https://release.gitkraken.com/linux/v${version}.deb";
+    sha256 = "1in8caxsc8fld1sl6d9nzch86s9x0770qi6amh573zmb80yyd743";
   };
 
   libPath = makeLibraryPath [
@@ -53,9 +54,29 @@ stdenv.mkDerivation rec {
 
   dontBuild = true;
 
+  desktopItem = makeDesktopItem {
+    name = "gitkraken";
+    exec = "gitkraken";
+    icon = "app";
+    desktopName = "GitKraken";
+    genericName = "Git Client";
+    categories = "Application;Development;";
+    comment = "Graphical Git client from Axosoft";
+  };
+
+  buildInputs = [ dpkg ];
+
+  unpackPhase = "dpkg-deb -x $src .";
+
   installPhase = ''
     mkdir -p "$out/opt/gitkraken"
-    cp -r ./* "$out/opt/gitkraken"
+    cp -r usr/share/gitkraken/* "$out/opt/gitkraken"
+
+    mkdir -p "$out/share/applications"
+    cp $desktopItem/share/applications/* "$out/share/applications"
+
+    mkdir -p "$out/share/pixmaps"
+    cp usr/share/pixmaps/app.png "$out/share/pixmaps"
   '';
 
   postFixup = ''

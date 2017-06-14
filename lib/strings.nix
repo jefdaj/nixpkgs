@@ -126,8 +126,8 @@ rec {
   */
   makePerlPath = makeSearchPathOutput "lib" "lib/perl5/site_perl";
 
-  /* Dependening on the boolean `cond', return either the given string
-     or the empty string. Useful to contatenate against a bigger string.
+  /* Depending on the boolean `cond', return either the given string
+     or the empty string. Useful to concatenate against a bigger string.
 
      Example:
        optionalString true "some-string"
@@ -438,8 +438,13 @@ rec {
        => true
        isStorePath pkgs.python
        => true
+       isStorePath [] || isStorePath 42 || isStorePath {} || …
+       => false
   */
-  isStorePath = x: builtins.substring 0 1 (toString x) == "/" && dirOf (builtins.toPath x) == builtins.storeDir;
+  isStorePath = x:
+       builtins.isString x
+    && builtins.substring 0 1 (toString x) == "/"
+    && dirOf (builtins.toPath x) == builtins.storeDir;
 
   /* Convert string to int
      Obviously, it is a bit hacky to use fromJSON that way.

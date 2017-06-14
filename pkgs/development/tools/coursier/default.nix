@@ -1,12 +1,12 @@
 { stdenv, fetchurl, makeWrapper, jre }:
 
 stdenv.mkDerivation rec {
-  name    = "coursier-${version}";
-  version = "1.0.0-M15-5";
+  name = "coursier-${version}";
+  version = "1.0.0-RC3";
 
   src = fetchurl {
-    url    = "https://github.com/coursier/coursier/raw/v${version}/coursier";
-    sha256 = "610c5fc08d0137c5270cefd14623120ab10cd81b9f48e43093893ac8d00484c9";
+    url = "https://github.com/coursier/coursier/raw/v${version}/coursier";
+    sha256 = "0iiv79ig8p9pm7fklxskxn6bx1m4xqgdfdk6bvqq81gl8b101z5w";
   };
 
   nativeBuildInputs = [ makeWrapper ];
@@ -21,9 +21,9 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with stdenv.lib; {
-    homepage    = http://get-coursier.io/;
+    homepage = http://get-coursier.io/;
     description = "A Scala library to fetch dependencies from Maven / Ivy repositories";
-    license     = licenses.asl20;
+    license = licenses.asl20;
     maintainers = with maintainers; [ adelbertc nequissimus ];
   };
 }

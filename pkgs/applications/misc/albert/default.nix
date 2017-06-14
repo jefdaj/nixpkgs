@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   name    = "albert-${version}";
-  version = "0.10.0";
+  version = "0.11.3";
 
   src = fetchFromGitHub {
     owner  = "albertlauncher";
     repo   = "albert";
     rev    = "v${version}";
-    sha256 = "1r8m0b6lqljy314ilpi58sdpqyb9rr502nzx3pgmx2g2xz4izsfj";
+    sha256 = "0ddz6h1334b9kqy1lfi7qa21znm3l0b9h0d4s62llxdasv103jh5";
   };
 
   nativeBuildInputs = [ cmake makeQtWrapper ];
@@ -19,7 +19,16 @@ stdenv.mkDerivation rec {
 
   postPatch = ''
     sed -i "/QStringList dirs = {/a    \"$out/lib\"," \
-      src/lib/albert/src/pluginsystem/extensionmanager.cpp
+      src/lib/albert/src/albert/extensionmanager.cpp
+  '';
+
+  preBuild = ''
+    mkdir -p "$out/"
+    ln -s "$PWD/lib" "$out/lib"
+  '';
+
+  postBuild = ''
+    rm "$out/lib"
   '';
 
   fixupPhase = ''

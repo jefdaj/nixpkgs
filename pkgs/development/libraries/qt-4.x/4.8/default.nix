@@ -6,7 +6,8 @@
 , buildMultimedia ? stdenv.isLinux, alsaLib, gstreamer, gst-plugins-base
 , buildWebkit ? (stdenv.isLinux || stdenv.isDarwin)
 , flashplayerFix ? false, gdk_pixbuf
-, gtkStyle ? false, libgnomeui, gtk2, GConf, gnome_vfs
+, gtkStyle ? true, gtk2
+, gnomeStyle ? false, libgnomeui, GConf, gnome_vfs
 , developerBuild ? false
 , docs ? false
 , examples ? false
@@ -54,6 +55,12 @@ stdenv.mkDerivation rec {
     # there might be more references, but this is the only one I could find
     substituteInPlace tools/macdeployqt/tests/tst_deployment_mac.cpp \
       --replace /usr/lib/libstdc++.6.dylib "${stdenv.cc}/lib/libstdc++.6.dylib"
+  '' + stdenv.lib.optionalString stdenv.cc.isClang ''
+    substituteInPlace src/3rdparty/webkit/Source/WebCore/html/HTMLImageElement.cpp \
+      --replace 'optionalHeight > 0' 'optionalHeight != NULL'
+
+    substituteInPlace ./tools/linguist/linguist/messagemodel.cpp \
+      --replace 'm->comment()) >= 0' 'm->comment()) != NULL'
   '';
 
   patches =
@@ -67,14 +74,15 @@ stdenv.mkDerivation rec {
         glibc = stdenv.cc.libc.out;
         openglDriver = if mesaSupported then mesa.driverLink else "/no-such-path";
       })
-    ] ++ stdenv.lib.optional gtkStyle (substituteAll {
+    ] ++ stdenv.lib.optional gtkStyle (substituteAll ({
         src = ./dlopen-gtkstyle.diff;
         # substituteAll ignores env vars starting with capital letter
-        gconf = GConf.out;
         gtk = gtk2.out;
+      } // stdenv.lib.optionalAttrs gnomeStyle {
+        gconf = GConf.out;
         libgnomeui = libgnomeui.out;
         gnome_vfs = gnome_vfs.out;
-      })
+      }))
     ++ stdenv.lib.optional flashplayerFix (substituteAll {
         src = ./dlopen-webkit-nsplugin.diff;
         gtk = gtk2.out;
@@ -211,7 +219,7 @@ stdenv.mkDerivation rec {
     homepage    = http://qt-project.org/;
     description = "A cross-platform application framework for C++";
     license     = licenses.lgpl21Plus; # or gpl3
-    maintainers = with maintainers; [ lovek323 phreedom sander urkud ];
+    maintainers = with maintainers; [ lovek323 phreedom sander ];
     platforms   = platforms.unix;
   };
 }

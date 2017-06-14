@@ -9,11 +9,11 @@
   useEncumberedCode ? true,
 }:
 
-with { inherit (stdenv.lib) optional optionals optionalString; };
+let
+  inherit (stdenv.lib) optional optionals optionalString;
+  version = "2.7.1"; name = "freetype-" + version;
 
-let version = "2.7.1"; name = "freetype-" + version; in
-
-stdenv.mkDerivation {
+in stdenv.mkDerivation {
   inherit name;
 
   meta = with stdenv.lib; {
@@ -43,8 +43,16 @@ stdenv.mkDerivation {
     ++ optional (!stdenv.isLinux) gnumake;
 
   patches =
-    [ ./enable-table-validation.patch ]
-    ++ optional useEncumberedCode ./enable-subpixel-rendering.patch;
+    [
+      ./pcf-introduce-driver.patch
+      ./pcf-config-long-family-names.patch
+      ./disable-pcf-long-family-names.patch
+      ./enable-table-validation.patch
+      # remove the two CVE patches after updating to >= 2.8
+      ./cve-2017-8105.patch
+      ./cve-2017-8287.patch
+    ] ++
+    optional useEncumberedCode ./enable-subpixel-rendering.patch;
 
   outputs = [ "out" "dev" ];
 

@@ -2,16 +2,18 @@
 
 stdenv.mkDerivation rec {
   name = "libressl-${version}";
-  version = "2.5.1";
+  version = "2.5.4";
 
   src = fetchurl {
     url    = "mirror://openbsd/LibreSSL/${name}.tar.gz";
-    sha256 = "1kc709scgd76vk7fld4jnb4wb5lxdv1cj8zsgyjb33xp4jlf06pp";
+    sha256 = "1ykf6dqlbafafhbdfmcj19pjj1z6wmsq0rmyqga1i0xv5x95nyhh";
   };
 
   enableParallelBuilding = true;
 
   outputs = [ "bin" "dev" "out" "man" ];
+
+  dontGzipMan = if stdenv.isDarwin then true else null; # not sure what's wrong
 
   meta = with stdenv.lib; {
     description = "Free TLS/SSL implementation";

@@ -20,26 +20,22 @@ let
 
 in stdenv.mkDerivation rec {
   name = "nano-${version}";
-  version = "2.7.5";
-  
+  version = "2.8.3";
+
   src = fetchurl {
     url = "mirror://gnu/nano/${name}.tar.xz";
-    sha256 = "1r37gqx7hppqbgsbclchiis8wzzpb9srm3q3dlvlii2gpkk28kd6";
+    sha256 = "0m8g1f1c09kjmy7w6dxq30yw373nsv1ylj7986xyv4a0jddybf32";
   };
 
   nativeBuildInputs = [ texinfo ] ++ optional enableNls gettext;
   buildInputs = [ ncurses ];
-  
+
   outputs = [ "out" "info" ];
-  
+
   configureFlags = ''
     --sysconfdir=/etc
     ${optionalString (!enableNls) "--disable-nls"}
     ${optionalString enableTiny "--enable-tiny"}
-  '';
-
-  postPatch = optionalString stdenv.isDarwin ''
-    substituteInPlace src/text.c --replace "__time_t" "time_t"
   '';
 
   postInstall = ''
@@ -47,7 +43,7 @@ in stdenv.mkDerivation rec {
   '';
 
   meta = {
-    homepage = http://www.nano-editor.org/;
+    homepage = https://www.nano-editor.org/;
     description = "A small, user-friendly console text editor";
     license = licenses.gpl3Plus;
     maintainers = with maintainers; [

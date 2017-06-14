@@ -10,12 +10,13 @@ let
   baseName = if enableNpm then "nodejs" else "nodejs-slim";
 in
   stdenv.mkDerivation (nodejs // rec {
-    version = "7.7.3";
+    version = "7.10.0";
     name = "${baseName}-${version}";
     src = fetchurl {
       url = "https://nodejs.org/download/release/v${version}/node-v${version}.tar.xz";
-      sha256 = "1pqfrvz06nz88jdp1vsrxfy5z0v8yas1c6pkvl45afvl3zqxlhal";
+      sha256 = "08czj7ssvzgv13zvhg2y9mhy4cc6pvm4bcp7rbzj3a2ba8axsd6w";
     };
 
+    patches = stdenv.lib.optionals stdenv.isDarwin [ ./no-xcode-v7.patch ];
   })
 

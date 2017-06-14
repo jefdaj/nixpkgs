@@ -1,7 +1,8 @@
-{ stdenv, fetchFromGitHub, tzdata, iana_etc, go_bootstrap, runCommand, writeScriptBin
+{ stdenv, fetchFromGitHub, tzdata, iana-etc, go_bootstrap, runCommand, writeScriptBin
 , perl, which, pkgconfig, patch, fetchpatch
-, pcre, cacert
-, Security, Foundation, bash }:
+, pcre, cacert, llvm
+, Security, Foundation, bash
+, makeWrapper, git, subversion, mercurial, bazaar }:
 
 let
 
@@ -24,17 +25,17 @@ in
 
 stdenv.mkDerivation rec {
   name = "go-${version}";
-  version = "1.8";
+  version = "1.8.3";
 
   src = fetchFromGitHub {
     owner = "golang";
     repo = "go";
     rev = "go${version}";
-    sha256 = "0plm11rqrqz7frwz0jjcm13x939yhny755ks1adxjzmsngln9prl";
+    sha256 = "0g83xm9gb872rsqzwqr1zw5szq69xhynljj2nglg4yyfi7dm2r1c";
   };
 
   # perl is used for testing go vet
-  nativeBuildInputs = [ perl which pkgconfig patch ];
+  nativeBuildInputs = [ perl which pkgconfig patch makeWrapper ];
   buildInputs = [ pcre ]
     ++ optionals stdenv.isLinux [ stdenv.glibc.out stdenv.glibc.static ];
   propagatedBuildInputs = optionals stdenv.isDarwin [ Security Foundation ];
@@ -71,14 +72,17 @@ stdenv.mkDerivation rec {
     # Remove the timezone naming test
     sed -i '/TestLoadFixed/areturn' src/time/time_test.go
 
-    sed -i 's,/etc/protocols,${iana_etc}/etc/protocols,' src/net/lookup_unix.go
-    sed -i 's,/etc/services,${iana_etc}/etc/services,' src/net/port_unix.go
+    sed -i 's,/etc/protocols,${iana-etc}/etc/protocols,' src/net/lookup_unix.go
+    sed -i 's,/etc/services,${iana-etc}/etc/services,' src/net/port_unix.go
 
     # Disable cgo lookup tests not works, they depend on resolver
     rm src/net/cgo_unix_test.go
 
   '' + optionalString stdenv.isLinux ''
     sed -i 's,/usr/share/zoneinfo/,${tzdata}/share/zoneinfo/,' src/time/zoneinfo_unix.go
+  '' + optionalString stdenv.isArm ''
+    sed -i '/TestCurrent/areturn' src/os/user/user_test.go
+    echo '#!/usr/bin/env bash' > misc/cgo/testplugin/test.bash
   '' + optionalString stdenv.isDarwin ''
     substituteInPlace src/race.bash --replace \
       "sysctl machdep.cpu.extfeatures | grep -qv EM64T" true
@@ -107,19 +111,17 @@ stdenv.mkDerivation rec {
 
   patches =
     [ ./remove-tools-1.8.patch
-      ./cacert-1.8.patch
+      ./ssl-cert-file.patch
       ./creds-test.patch
       ./remove-test-pie-1.8.patch
-
-      # This test checks for the wrong thing with recent tzdata. It's been fixed in master but the patch
-      # works fine here for now.
-      (fetchpatch {
-        url    = "https://github.com/golang/go/commit/91563ced5897faf729a34be7081568efcfedda31.patch";
-        sha256 = "1ny5l3f8a9dpjjrnjnsplb66308a0x13sa0wwr4j6yrkc8j4qxqi";
-      })
     ];
 
-  SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  postPatch = optionalString stdenv.isDarwin ''
+    echo "substitute hardcoded dsymutil with ${llvm}/bin/llvm-dsymutil"
+    substituteInPlace "src/cmd/link/internal/ld/lib.go" --replace dsymutil ${llvm}/bin/llvm-dsymutil
+  '';
+
+  NIX_SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 
   GOOS = if stdenv.isDarwin then "darwin" else "linux";
   GOARCH = if stdenv.isDarwin then "amd64"
@@ -150,6 +152,9 @@ stdenv.mkDerivation rec {
   installPhase = ''
     cp -r . $GOROOT
     ( cd $GOROOT/src && ./all.bash )
+
+    # (https://github.com/golang/go/wiki/GoGetTools)
+    wrapProgram $out/share/go/bin/go --prefix PATH ":" "${stdenv.lib.makeBinPath [ git subversion mercurial bazaar ]}"
   '';
 
   preFixup = ''

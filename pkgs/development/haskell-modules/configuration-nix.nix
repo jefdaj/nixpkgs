@@ -126,8 +126,7 @@ self: super: builtins.intersectAttrs super {
   glib = disableHardening (addPkgconfigDepend (addBuildTool super.glib self.gtk2hs-buildtools) pkgs.glib) ["fortify"];
   gtk3 = disableHardening (super.gtk3.override { inherit (pkgs) gtk3; }) ["fortify"];
   gtk = disableHardening (addPkgconfigDepend (addBuildTool super.gtk self.gtk2hs-buildtools) pkgs.gtk2) ["fortify"];
-  gtksourceview2 = (addPkgconfigDepend super.gtksourceview2 pkgs.gtk2).override { inherit (pkgs.gnome2) gtksourceview; };
-  gtksourceview3 = super.gtksourceview3.override { inherit (pkgs.gnome3) gtksourceview; };
+  gtksourceview2 = addPkgconfigDepend super.gtksourceview2 pkgs.gtk2;
 
   # Need WebkitGTK, not just webkit.
   webkit = super.webkit.override { webkit = pkgs.webkitgtk2; };
@@ -199,9 +198,6 @@ self: super: builtins.intersectAttrs super {
   # Nix-specific workaround
   xmonad = appendPatch (dontCheck super.xmonad) ./patches/xmonad-nix.patch;
 
-  # https://github.com/ucsd-progsys/liquid-fixpoint/issues/44
-  liquid-fixpoint = overrideCabal super.liquid-fixpoint (drv: { preConfigure = "patchShebangs ."; });
-
   # wxc supports wxGTX >= 3.0, but our current default version points to 2.8.
   # http://hydra.cryp.to/build/1331287/log/raw
   wxc = (addBuildDepend super.wxc self.split).override { wxGTK = pkgs.wxGTK30; };
@@ -238,6 +234,8 @@ self: super: builtins.intersectAttrs super {
         librarySystemDepends = [ pkgs.libcxx ] ++ drv.librarySystemDepends or [];
       }
     );
+
+  llvm-hs = super.llvm-hs.override { llvm-config = pkgs.llvm_4; };
 
   # Needs help finding LLVM.
   spaceprobe = addBuildTool super.spaceprobe self.llvmPackages.llvm;
@@ -432,7 +430,7 @@ self: super: builtins.intersectAttrs super {
   haskell-gi-base = addBuildDepend super.haskell-gi-base pkgs.gobjectIntrospection;
 
   # Requires gi-javascriptcore API version 4
-  gi-webkit2 = super.gi-webkit2.override { gi-javascriptcore = self.gi-javascriptcore_4_0_11; };
+  gi-webkit2 = super.gi-webkit2.override { gi-javascriptcore = self.gi-javascriptcore_4_0_12; };
 
   # requires valid, writeable $HOME
   hatex-guide = overrideCabal super.hatex-guide (drv: {
@@ -453,4 +451,14 @@ self: super: builtins.intersectAttrs super {
       export PATH="$PWD/dist/build/intero:$PATH"
     '';
   });
+
+  # loc and loc-test depend on each other for testing. Break that infinite cycle:
+  loc-test = super.loc-test.override { loc = dontCheck self.loc; };
+
+  # The test suites try to run the "fixpoint" and "liquid" executables built just
+  # before and fail because the library search paths aren't configured properly.
+  # Also needs https://github.com/ucsd-progsys/liquidhaskell/issues/1038 resolved.
+  liquid-fixpoint = disableSharedExecutables super.liquid-fixpoint;
+  liquidhaskell = dontCheck (disableSharedExecutables super.liquidhaskell);
+
 }
