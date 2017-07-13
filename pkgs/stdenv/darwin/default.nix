@@ -65,6 +65,10 @@ in rec {
 
         name = "stdenv-darwin-boot-${toString step}";
 
+        buildPlatform = localSystem;
+        hostPlatform = localSystem;
+        targetPlatform = localSystem;
+
         cc = if isNull last then "/dev/null" else import ../../build-support/cc-wrapper {
           inherit shell;
           inherit (last) stdenv;
@@ -88,9 +92,6 @@ in rec {
         '';
         initialPath  = [ bootstrapTools ];
 
-        hostPlatform = localSystem;
-        targetPlatform = localSystem;
-
         fetchurlBoot = import ../../build-support/fetchurl {
           stdenv = stage0.stdenv;
           curl   = bootstrapTools;
@@ -105,9 +106,6 @@ in rec {
       };
 
     in {
-      buildPlatform = localSystem;
-      hostPlatform = localSystem;
-      targetPlatform = localSystem;
       inherit config overlays;
       stdenv = thisStdenv;
     };
@@ -233,11 +231,11 @@ in rec {
       libcxxabi libcxx ncurses libffi zlib gmp pcre gnugrep
       coreutils findutils diffutils patchutils;
 
-    llvmPackages = let llvmOverride = llvmPackages.llvm.override { inherit libcxxabi; };
-    in super.llvmPackages // {
-      llvm = llvmOverride;
-      clang-unwrapped = llvmPackages.clang-unwrapped.override { llvm = llvmOverride; };
-    };
+     llvmPackages = let llvmOverride = llvmPackages.llvm.override { inherit libcxxabi; };
+     in super.llvmPackages // {
+       llvm = llvmOverride;
+       clang-unwrapped = llvmPackages.clang-unwrapped.override { llvm = llvmOverride; };
+     };
 
     darwin = super.darwin // {
       inherit (darwin) dyld Libsystem libiconv locale;
@@ -277,15 +275,16 @@ in rec {
 
     name = "stdenv-darwin";
 
+    buildPlatform = localSystem;
+    hostPlatform = localSystem;
+    targetPlatform = localSystem;
+
     preHook = commonPreHook + ''
       export PATH_LOCALE=${pkgs.darwin.locale}/share/locale
     '';
 
     stdenvSandboxProfile = binShClosure + libSystemProfile;
     extraSandboxProfile  = binShClosure + libSystemProfile;
-
-    hostPlatform = localSystem;
-    targetPlatform = localSystem;
 
     initialPath = import ../common-path.nix { inherit pkgs; };
     shell       = "${pkgs.bash}/bin/bash";
@@ -313,7 +312,7 @@ in rec {
       xz.out xz.bin libcxx libcxxabi gmp.out gnumake findutils bzip2.out
       bzip2.bin llvmPackages.llvm llvmPackages.llvm.lib zlib.out zlib.dev libffi.out coreutils ed diffutils gnutar
       gzip ncurses.out ncurses.dev ncurses.man gnused bash gawk
-      gnugrep llvmPackages.clang-unwrapped llvmPackages.clang-unwrapped.man patch pcre.out binutils-raw.out
+      gnugrep llvmPackages.clang-unwrapped patch pcre.out binutils-raw.out
       binutils-raw.dev binutils gettext
     ]) ++ (with pkgs.darwin; [
       dyld Libsystem CF cctools ICU libiconv locale
@@ -334,9 +333,6 @@ in rec {
     stage3
     stage4
     (prevStage: {
-      buildPlatform = localSystem;
-      hostPlatform = localSystem;
-      targetPlatform = localSystem;
       inherit config overlays;
       stdenv = stdenvDarwin prevStage;
     })
