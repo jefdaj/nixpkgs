@@ -116,6 +116,7 @@
   ./security/apparmor.nix
   ./security/apparmor-suid.nix
   ./security/audit.nix
+  ./security/auditd.nix
   ./security/ca.nix
   ./security/chromium-suid-sandbox.nix
   ./security/dhparams.nix
@@ -242,6 +243,7 @@
   ./services/logging/graylog.nix
   ./services/logging/heartbeat.nix
   ./services/logging/journalbeat.nix
+  ./services/logging/journalwatch.nix
   ./services/logging/klogd.nix
   ./services/logging/logcheck.nix
   ./services/logging/logrotate.nix
@@ -285,6 +287,7 @@
   ./services/misc/emby.nix
   ./services/misc/errbot.nix
   ./services/misc/etcd.nix
+  ./services/misc/exhibitor.nix
   ./services/misc/felix.nix
   ./services/misc/folding-at-home.nix
   ./services/misc/fstrim.nix
@@ -325,6 +328,7 @@
   ./services/misc/ripple-data-api.nix
   ./services/misc/rogue.nix
   ./services/misc/siproxd.nix
+  ./services/misc/snapper.nix
   ./services/misc/sonarr.nix
   ./services/misc/spice-vdagentd.nix
   ./services/misc/ssm-agent.nix
@@ -352,6 +356,7 @@
   ./services/monitoring/munin.nix
   ./services/monitoring/nagios.nix
   ./services/monitoring/netdata.nix
+  ./services/monitoring/osquery.nix
   ./services/monitoring/prometheus/default.nix
   ./services/monitoring/prometheus/alertmanager.nix
   ./services/monitoring/prometheus/blackbox-exporter.nix
@@ -557,12 +562,14 @@
   ./services/security/tor.nix
   ./services/security/torify.nix
   ./services/security/torsocks.nix
+  ./services/security/vault.nix
   ./services/system/cgmanager.nix
   ./services/system/cloud-init.nix
   ./services/system/dbus.nix
   ./services/system/earlyoom.nix
   ./services/system/kerberos.nix
   ./services/system/nscd.nix
+  ./services/system/saslauthd.nix
   ./services/system/uptimed.nix
   ./services/torrent/deluge.nix
   ./services/torrent/flexget.nix
