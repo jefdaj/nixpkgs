@@ -1,4 +1,4 @@
-{ lib, callPackage, fetchurl, fetchFromGitHub }:
+{ lib, callPackage, stdenv, overrideCC, gcc5, fetchurl, fetchFromGitHub, fetchpatch }:
 
 let common = opts: callPackage (import ./common.nix opts); in
 
@@ -6,11 +6,16 @@ rec {
 
   firefox = common rec {
     pname = "firefox";
-    version = "54.0.1";
+    version = "59.0.1";
     src = fetchurl {
-      url = "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.xz";
-      sha512 = "43607c2c0af995a21dc7f0f68b24b7e5bdb3faa5ee06025901c826bfe4d169256ea1c9eb5fcc604c4d6426ced53e80787c12fc07cda014eca09199ef3df783a2";
+      url = "https://hg.mozilla.org/releases/mozilla-release/archive/3db9e3d52b17563efca181ccbb50deb8660c59ae.tar.bz2";
+      sha512 = "3da3gmfv2aalsbsx15csas4mwnvlliy1q081sd2riz3nvxr7qyrdx1qvxj4gdr97wlmvz7mig9djhh5gwx7ddah5hfhj23cvccmw6jw";
     };
+
+    patches = [
+      ./no-buildconfig.patch
+      ./env_var_for_system_dir.patch
+    ];
 
     meta = {
       description = "A web browser built from Firefox source tree";
@@ -25,11 +30,24 @@ rec {
 
   firefox-esr = common rec {
     pname = "firefox-esr";
-    version = "52.2.1esr";
+    version = "52.7.2esr";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.xz";
-      sha512 = "1d79e6e4625cf7994f6d6bbdf227e483fc407bcdb20e0296ea604969e701f551b5df32f578d4669cf654b65927328c8eb0f717c7a12399bf1b02a6ac7a0cd1d3";
+      sha512 = "e275fd10fd32a0dc237135af3395e3a1ae501844632c973ff3b9bca1456702ee36dbee99fc57300598403c924c0db63bd62a199845c8f4a2e29db5d1e5973395";
     };
+
+    patches = [
+      ./env_var_for_system_dir.patch
+    ]
+    # The following patch is only required on ARM platforms and should be
+    # included for the next ESR release >= 52.7.3esr
+    ++ lib.optional stdenv.isArm
+      (fetchpatch {
+        name = "CVE-2018-5147-tremor.patch";
+        url = https://hg.mozilla.org/releases/mozilla-esr52/rev/5cd5586a2f48;
+        sha256 = "0mdqa9w1p6cmli6976v4wi0sw9r4p5prkj7lzfd1877wk11c9c73";
+      })
+    ;
 
     meta = firefox.meta // {
       description = "A web browser built from Firefox Extended Support Release source tree";
@@ -40,25 +58,14 @@ rec {
     };
   } {};
 
-  tor-browser = common rec {
-    pname = "tor-browser";
-    version = "6.5.2";
-    isTorBrowserLike = true;
+} // (let
 
-    # FIXME: fetchFromGitHub is not ideal, unpacked source is >900Mb
-    src = fetchFromGitHub {
-      owner = "SLNOS";
-      repo  = "tor-browser";
-      rev   = "tor-browser-45.8.0esr-6.5-2";
-      sha256 = "0vbcp1qlxjlph0dqibylsyvb8iah3lnzdxc56hllpvbn51vrp39j";
-    };
-
+  commonAttrs = {
     overrides = {
       unpackPhase = ''
         # fetchFromGitHub produces ro sources, root dir gets a name that
         # is too long for shebangs. fixing
-        cp -a $src .
-        mv *-src tor-browser
+        cp -a $src tor-browser
         chmod -R +w tor-browser
         cd tor-browser
 
@@ -96,8 +103,46 @@ rec {
       homepage = https://www.torproject.org/projects/torbrowser.html;
       platforms = lib.platforms.linux;
     };
-  } {
-    ffmpegSupport = false;
   };
 
-}
+in rec {
+
+  tor-browser-7-0 = common (rec {
+    pname = "tor-browser";
+    version = "7.0.1";
+    isTorBrowserLike = true;
+
+    # FIXME: fetchFromGitHub is not ideal, unpacked source is >900Mb
+    src = fetchFromGitHub {
+      owner = "SLNOS";
+      repo  = "tor-browser";
+      # branch "tor-browser-52.5.0esr-7.0-1-slnos";
+      rev   = "830ff8d622ef20345d83f386174f790b0fc2440d";
+      sha256 = "169mjkr0bp80yv9nzza7kay7y2k03lpnx71h4ybcv9ygxgzdgax5";
+    };
+
+    patches =
+      [ ./env_var_for_system_dir.patch ];
+  } // commonAttrs) {};
+
+  tor-browser-7-5 = common (rec {
+    pname = "tor-browser";
+    version = "7.5.2";
+    isTorBrowserLike = true;
+
+    # FIXME: fetchFromGitHub is not ideal, unpacked source is >900Mb
+    src = fetchFromGitHub {
+      owner = "SLNOS";
+      repo  = "tor-browser";
+      # branch "tor-browser-52.6.2esr-7.5-2-slnos";
+      rev   = "cf1a504aaa26af962ae909a3811c0038db2d2eec";
+      sha256 = "0llbk7skh1n7yj137gv7rnxfasxsnvfjp4ss7h1fbdnw19yba115";
+    };
+
+    patches =
+      [ ./env_var_for_system_dir.patch ];
+  } // commonAttrs) {};
+
+  tor-browser = tor-browser-7-5;
+
+})

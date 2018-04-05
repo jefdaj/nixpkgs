@@ -20,12 +20,12 @@ let
 
       configureFlags = [ "--with-colm=${colm}" ];
 
-      NIX_CFLAGS_COMPILE = "-std=gnu++98";
+      NIX_CFLAGS_COMPILE = stdenv.lib.optional stdenv.cc.isGNU "-std=gnu++98";
 
       doCheck = true;
 
       meta = with stdenv.lib; {
-        homepage = http://www.complang.org/ragel;
+        homepage = https://www.colm.net/open-source/ragel/;
         description = "State machine compiler";
         inherit license;
         platforms = platforms.unix;

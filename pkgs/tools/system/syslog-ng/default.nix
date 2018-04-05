@@ -9,11 +9,11 @@ in
 
 stdenv.mkDerivation rec {
   name = "${pname}-${version}";
-  version = "3.9.1";
+  version = "3.13.2";
 
   src = fetchurl {
     url = "https://github.com/balabit/${pname}/releases/download/${name}/${name}.tar.gz";
-    sha256 = "05qaqw115py5iz55vmc0j1xcwcpr8wa9vpmbixhr1rqaamm8ay2n";
+    sha256 = "1s6kg91sb8h2w4n60v22zis6pl2rggarpjjp00c81039jggk2gcs";
   };
 
   nativeBuildInputs = [ pkgconfig which ];
@@ -53,7 +53,7 @@ stdenv.mkDerivation rec {
   outputs = [ "out" "man" ];
 
   meta = with stdenv.lib; {
-    homepage = "http://www.balabit.com/network-security/syslog-ng/";
+    homepage = http://www.balabit.com/network-security/syslog-ng/;
     description = "Next-generation syslogd with advanced networking and filtering capabilities";
     license = licenses.gpl2;
     maintainers = with maintainers; [ rickynils  fpletz ];

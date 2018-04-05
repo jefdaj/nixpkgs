@@ -1,8 +1,8 @@
 { stdenv, fetchFromGitHub, bc, python, fuse, libarchive }:
 
 stdenv.mkDerivation rec {
-  name = "lkl-2017-06-27";
-  rev  = "0d91d102b046eec535a6d67df9829b80b24e9ce9";
+  name = "lkl-2017-11-10";
+  rev  = "52a6a643c7d1dd3031c0cbec75e1ac7a999f3d57";
 
   outputs = [ "dev" "lib" "out" ];
 
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
     inherit rev;
     owner  = "lkl";
     repo   = "linux";
-    sha256 = "1sc18fik2dm0hnsb5q4srvwbf6wgv27zlf3qa7x39g4vbj1jqgas";
+    sha256 = "1i5ywrfxqpykjjalwh9g4rwd4s186cqk3j806d327a67xb2ivxnp";
   };
 
   # Fix a /usr/bin/env reference in here that breaks sandboxed builds
@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
       overhead
     '';
     homepage    = https://github.com/lkl/linux/;
-    platforms   = [ "x86_64-linux" ]; # Darwin probably works too but I haven't tested it
+    platforms   = [ "x86_64-linux" "aarch64-linux" ]; # Darwin probably works too but I haven't tested it
     license     = licenses.gpl2;
     maintainers = with maintainers; [ copumpkin ];
   };

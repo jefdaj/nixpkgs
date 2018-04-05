@@ -1,10 +1,8 @@
 { stdenv, fetchurl
 , libsysfs, gnutls, openssl
-, libcap, sp, docbook_sgml_dtd_31
+, libcap, opensp, docbook_sgml_dtd_31
 , libidn, nettle
 , SGMLSpm, libgcrypt }:
-
-assert stdenv ? glibc;
 
 let
   time = "20161105";
@@ -18,14 +16,17 @@ stdenv.mkDerivation rec {
   };
 
   prePatch = ''
-    sed -i s/sgmlspl/sgmlspl.pl/ doc/Makefile
+    sed -e s/sgmlspl/sgmlspl.pl/ \
+        -e s/nsgmls/onsgmls/ \
+      -i doc/Makefile
   '';
 
-  makeFlags = "USE_GNUTLS=no";
+  # Disable idn usage w/musl: https://github.com/iputils/iputils/pull/111
+  makeFlags = [ "USE_GNUTLS=no" ] ++ stdenv.lib.optional stdenv.hostPlatform.isMusl "USE_IDN=no";
 
   buildInputs = [
-    libsysfs openssl libcap sp docbook_sgml_dtd_31 SGMLSpm libgcrypt libidn nettle
-  ];
+    libsysfs opensp openssl libcap docbook_sgml_dtd_31 SGMLSpm libgcrypt nettle
+  ] ++ stdenv.lib.optional (!stdenv.hostPlatform.isMusl) libidn;
 
   buildFlags = "man all ninfod";
 

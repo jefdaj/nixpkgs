@@ -12,12 +12,12 @@
 
 buildPythonPackage rec {
   pname = "dask";
-  version = "0.14.3";
+  version = "0.17.0";
   name = "${pname}-${version}";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "9bf007f9cedc08f73089f0621ff65ec0882fc0a834acef56830dfd2872908211";
+    sha256 = "4d2b0754d16ddc3f87026c1fc4fa3b589d7604a41d3f6510268f172abc1d0a5e";
   };
 
   checkInputs = [ pytest ];
@@ -32,7 +32,7 @@ buildPythonPackage rec {
 
   meta = {
     description = "Minimal task scheduling abstraction";
-    homepage = "http://github.com/ContinuumIO/dask/";
+    homepage = https://github.com/ContinuumIO/dask/;
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ fridh ];
   };

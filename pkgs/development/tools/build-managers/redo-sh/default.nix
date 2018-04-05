@@ -17,13 +17,13 @@ stdenv.mkDerivation rec {
     mv man "$out/share"
     mv bin "$out"
     for p in $out/bin/*; do
-      wrapProgram "$p" --set PATH '$PATH:'"$out/bin"
+      wrapProgram "$p" --suffix PATH : "$out/bin"
     done
   '';
 
   meta = with stdenv.lib; {
     description = "Redo implementation in Bourne Shell";
-    homepage = "http://news.dieweltistgarnichtso.net/bin/redo-sh.html";
+    homepage = http://news.dieweltistgarnichtso.net/bin/redo-sh.html;
     license  = licenses.agpl3;
     platforms = platforms.linux;
     maintainers = with maintainers; [ sternenseemann ];

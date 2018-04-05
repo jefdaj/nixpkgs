@@ -1,23 +1,23 @@
 { stdenv, lib, fetchurl, unzip, makeWrapper, setJavaClassPath
-, zulu, glib, libxml2, libav_0_8, ffmpeg, libxslt, mesa_noglu, alsaLib
-, fontconfig, freetype, gnome2, cairo, gdk_pixbuf, atk, xorg
+, zulu, glib, libxml2, libav_0_8, ffmpeg, libxslt, libGL, alsaLib
+, fontconfig, freetype, gnome2, cairo, gdk_pixbuf, atk, xorg, zlib
 , swingSupport ? true }:
 
 let
-  version = "8.21.0.1";
-  openjdk = "8.0.131";
+  version = "10.1+11";
+  openjdk = "10";
 
-  sha256_linux = "0cr1wvk1ifdq69ia8sr6171yzciba8l5x7dszwa5g2v0vmmqq88p";
-  sha256_darwin = "0xq9bdzbdq8wq48gj6j56bw30l2iafz6sy1wdhrf92n9bnz5qmw7";
+  sha256_linux = "0g51n2zc7inal29n5ly3mrrfj15c7vl87zb6b2r1q67n4mnbrgm8";
+  sha256_darwin = "1c5ib136nv6gz7ij31mg15nhzrl6zr7kp8spm17zwm1ib82bc73y";
 
   platform = if stdenv.isDarwin then "macosx" else "linux";
   hash = if stdenv.isDarwin then sha256_darwin else sha256_linux;
   extension = if stdenv.isDarwin then "zip" else "tar.gz";
 
   libraries = [
-    stdenv.cc.libc glib libxml2 libav_0_8 ffmpeg libxslt mesa_noglu
+    stdenv.cc.libc glib libxml2 libav_0_8 ffmpeg libxslt libGL
     xorg.libXxf86vm alsaLib fontconfig freetype gnome2.pango
-    gnome2.gtk cairo gdk_pixbuf atk
+    gnome2.gtk cairo gdk_pixbuf atk zlib
   ] ++ (lib.optionals swingSupport (with xorg; [
     xorg.libX11 xorg.libXext xorg.libXtst xorg.libXi xorg.libXp
     xorg.libXt xorg.libXrender stdenv.cc.cc
@@ -39,12 +39,9 @@ in stdenv.mkDerivation rec {
     mkdir -p $out
     cp -r ./* "$out/"
 
-    jrePath="$out/jre"
-
-    rpath=$rpath''${rpath:+:}$jrePath/lib/amd64/jli
-    rpath=$rpath''${rpath:+:}$jrePath/lib/amd64/server
-    rpath=$rpath''${rpath:+:}$jrePath/lib/amd64/xawt
-    rpath=$rpath''${rpath:+:}$jrePath/lib/amd64
+    rpath=$rpath''${rpath:+:}$out/lib/jli
+    rpath=$rpath''${rpath:+:}$out/lib/server
+    rpath=$rpath''${rpath:+:}$out/lib
 
     # set all the dynamic linkers
     find $out -type f -perm -0100 \
@@ -54,7 +51,7 @@ in stdenv.mkDerivation rec {
     find $out -name "*.so" -exec patchelf --set-rpath "$rpath" {} \;
 
     mkdir -p $out/nix-support
-    echo -n "${setJavaClassPath}" > $out/nix-support/propagated-native-build-inputs
+    printWords ${setJavaClassPath} > $out/nix-support/propagated-build-inputs
 
     # Set JAVA_HOME automatically.
     cat <<EOF >> $out/nix-support/setup-hook

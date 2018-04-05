@@ -3,7 +3,7 @@
 let
   platform =
     if lib.elem stdenv.system lib.platforms.unix then "unix"
-    else abort "Unknown platform for NetHack";
+    else throw "Unknown platform for NetHack: ${stdenv.system}";
   unixHint =
     if stdenv.isLinux then "linux"
     else if stdenv.isDarwin then "macosx10.10"
@@ -90,7 +90,7 @@ in stdenv.mkDerivation {
 
   meta = with stdenv.lib; {
     description = "Rogue-like game";
-    homepage = "http://nethack.org/";
+    homepage = http://nethack.org/;
     license = "nethack";
     platforms = platforms.unix;
     maintainers = with maintainers; [ abbradar ];

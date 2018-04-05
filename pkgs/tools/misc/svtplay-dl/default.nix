@@ -5,13 +5,13 @@ let
   inherit (pythonPackages) python nose pycrypto requests mock;
 in stdenv.mkDerivation rec {
   name = "svtplay-dl-${version}";
-  version = "1.9.4";
+  version = "1.9.9";
 
   src = fetchFromGitHub {
     owner = "spaam";
     repo = "svtplay-dl";
     rev = version;
-    sha256 = "15vjaia1qbs49gplpfi8sj5scl9mb4qg8n2z4zyzjs5461lx5qqv";
+    sha256 = "1iam2pdcrlpcgk2hx3m7zawznp2p939xdv8cpll6sd6n0l4hpdc9";
   };
 
   pythonPaths = [ pycrypto requests ];
@@ -34,7 +34,12 @@ in stdenv.mkDerivation rec {
   '';
 
   doCheck = true;
-  checkPhase = "sh scripts/run-tests.sh -2";
+  checkPhase = ''
+    sed -i "/def test_parse_m3u8/i\\
+        @unittest.skip('requires internet')" lib/svtplay_dl/tests/hls.py
+
+    sh scripts/run-tests.sh -2
+  '';
 
   meta = with stdenv.lib; {
     homepage = https://github.com/spaam/svtplay-dl;

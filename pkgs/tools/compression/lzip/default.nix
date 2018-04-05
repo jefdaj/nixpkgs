@@ -13,10 +13,13 @@ stdenv.mkDerivation rec {
 
   configureFlags = "CPPFLAGS=-DNDEBUG CFLAGS=-O3 CXXFLAGS=-O3";
 
+  setupHook = ./lzip-setup-hook.sh;
+
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = {
-    homepage = "http://www.nongnu.org/lzip/lzip.html";
+    homepage = http://www.nongnu.org/lzip/lzip.html;
     description = "A lossless data compressor based on the LZMA algorithm";
     license = stdenv.lib.licenses.gpl3Plus;
     platforms = stdenv.lib.platforms.unix;

@@ -2,15 +2,18 @@
 
 with pythonPackages;
 buildPythonApplication rec {
-  version = "1.15.1";
+  version = "1.21.0";
   name = "rtv-${version}";
 
   src = fetchFromGitHub {
     owner = "michael-lazar";
     repo = "rtv";
     rev = "v${version}";
-    sha256 = "037dhds1prxj7vsq15dr46wk3pfk3ixr0d60m3h796b6nbc1spya";
+    sha256 = "0srm01nrb23hdmj3ripsa9p8nv2cgss3m6and9rdr875qw5ii130";
   };
+
+  # Tests try to access network
+  doCheck = false;
 
   checkPhase = ''
     py.test

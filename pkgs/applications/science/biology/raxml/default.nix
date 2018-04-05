@@ -1,24 +1,42 @@
-{ stdenv, fetchgit, clang, mpich2 }:
-
-# TODO: metadata (description, license etc.)
+{ stdenv
+, fetchFromGitHub
+, zlib
+, pkgs
+, mpi ? false
+}:
 
 stdenv.mkDerivation rec {
-  name = "raxml-${version}";
-  version = "8.2.9";
-  src = fetchgit {
-    url = "https://github.com/stamatak/standard-RAxML.git";
-    rev = "4881d835222f3dcc3faec5f14d5681cb97de97c5";
-    sha256 = "1bv12bzx7nqkhxp4wdfgl6wg4lx95j7vsg9mcj87b0hkr5zl9p2l";
+  pname = "RAxML";
+  version = "8.2.11";
+  name = "${pname}-${version}";
+
+  src = fetchFromGitHub {
+    owner = "stamatak";
+    repo = "standard-${pname}";
+    rev = "v${version}";
+    sha256 = "08fmqrr7y5a2fmmrgfz2p0hmn4mn71l5yspxfcwwsqbw6vmdfkhg";
   };
-  buildInputs = [ clang mpich2 ];
-  buildPhase = ''
-    for makefile in Makefile.*; do
-      make -f $makefile
-    done
+
+  buildInputs = if mpi then [ pkgs.openmpi ] else [];
+
+  # TODO darwin, AVX and AVX2 makefile targets
+  buildPhase = if mpi then ''
+      make -f Makefile.MPI.gcc
+    '' else ''
+      make -f Makefile.SSE3.PTHREADS.gcc
+    '';
+
+  installPhase = if mpi then ''
+    mkdir -p $out/bin && cp raxmlHPC-MPI $out/bin
+  '' else ''
+    mkdir -p $out/bin && cp raxmlHPC-PTHREADS-SSE3 $out/bin
   '';
-  installPhase = ''
-    mkdir -p  $out/bin
-    cp raxml* $out/bin
-    chmod +x  $out/bin/*
-  '';
+
+  meta = with stdenv.lib; {
+    description = "A tool for Phylogenetic Analysis and Post-Analysis of Large Phylogenies";
+    license = licenses.gpl3;
+    homepage = https://sco.h-its.org/exelixis/web/software/raxml/;
+    maintainers = [ maintainers.unode ];
+    platforms = [ "i686-linux" "x86_64-linux" ];
+  };
 }

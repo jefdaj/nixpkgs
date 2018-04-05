@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, fetchpatch, pkgconfig, audiofile, libcap
-, openglSupport ? false, mesa_noglu, mesa_glu
+{ stdenv, fetchurl, fetchpatch, pkgconfig, audiofile, libcap, libiconv
+, openglSupport ? false, libGL, libGLU
 , alsaSupport ? true, alsaLib
 , x11Support ? hostPlatform == buildPlatform, libXext, libICE, libXrandr
 , pulseaudioSupport ? true, libpulseaudio
@@ -23,6 +23,9 @@ stdenv.mkDerivation rec {
     sha256 = "005d993xcac8236fpvd1iawkz4wqjybkpn8dbwaliqz5jfkidlyn";
   };
 
+  # make: *** No rule to make target 'build/*.lo', needed by 'build/libSDL.la'.  Stop.
+  postPatch = "patchShebangs ./configure";
+
   outputs = [ "out" "dev" ];
   outputBin = "dev"; # sdl-config
 
@@ -33,14 +36,15 @@ stdenv.mkDerivation rec {
     optionals x11Support [ libXext libICE libXrandr ] ++
     optional alsaSupport alsaLib ++
     optional stdenv.isLinux libcap ++
-    optionals openglSupport [ mesa_noglu mesa_glu ] ++
+    optionals openglSupport [ libGL libGLU ] ++
     optional pulseaudioSupport libpulseaudio ++
     optional stdenv.isDarwin Cocoa;
 
   buildInputs = let
     notMingw = !hostPlatform.isMinGW;
   in optional notMingw audiofile
-  ++ optionals stdenv.isDarwin [ OpenGL CoreAudio CoreServices AudioUnit Kernel ];
+  ++ optionals stdenv.isDarwin [ OpenGL CoreAudio CoreServices AudioUnit Kernel ]
+  ++ [ libiconv ];
 
   # XXX: By default, SDL wants to dlopen() PulseAudio, in which case
   # we must arrange to add it to its RPATH; however, `patchelf' seems
@@ -78,7 +82,7 @@ stdenv.mkDerivation rec {
     # Ticket: https://bugs.freedesktop.org/show_bug.cgi?id=27222
     (fetchpatch {
       name = "SDL_SetGamma.patch";
-      url = "http://pkgs.fedoraproject.org/cgit/rpms/SDL.git/plain/SDL-1.2.15-x11-Bypass-SetGammaRamp-when-changing-gamma.patch?id=04a3a7b1bd88c2d5502292fad27e0e02d084698d";
+      url = "http://src.fedoraproject.org/cgit/rpms/SDL.git/plain/SDL-1.2.15-x11-Bypass-SetGammaRamp-when-changing-gamma.patch?id=04a3a7b1bd88c2d5502292fad27e0e02d084698d";
       sha256 = "0x52s4328kilyq43i7psqkqg7chsfwh0aawr50j566nzd7j51dlv";
     })
     # Fix a build failure on OS X Mavericks

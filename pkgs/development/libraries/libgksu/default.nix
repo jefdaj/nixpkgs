@@ -1,6 +1,6 @@
 { stdenv, fetchurl, pkgconfig, wrapGAppsHook, gtk2, gnome2, gnome3,
   libstartup_notification, libgtop, perl, perlXMLParser,
-  autoreconfHook, intltool, gtk_doc, docbook_xsl, xauth, sudo
+  autoreconfHook, intltool, gtk-doc, docbook_xsl, xauth, sudo
 }:
 
 stdenv.mkDerivation rec {
@@ -14,12 +14,12 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [
-    pkgconfig autoreconfHook intltool gtk_doc docbook_xsl wrapGAppsHook
+    pkgconfig autoreconfHook intltool gtk-doc docbook_xsl wrapGAppsHook
   ];
 
   buildInputs = [
     gtk2 gnome2.GConf libstartup_notification
-    gnome3.libgnome_keyring libgtop gnome2.libglade perl perlXMLParser
+    gnome3.libgnome-keyring libgtop gnome2.libglade perl perlXMLParser
   ];
 
   enableParallelBuilding = true;
@@ -75,7 +75,7 @@ stdenv.mkDerivation rec {
       user.  It provides X authentication facilities for running
       programs in an X session.
     '';
-    homepage = "http://www.nongnu.org/gksu/";
+    homepage = http://www.nongnu.org/gksu/;
     license = stdenv.lib.licenses.lgpl2;
     maintainers = [ stdenv.lib.maintainers.romildo ];
     platforms = stdenv.lib.platforms.linux;

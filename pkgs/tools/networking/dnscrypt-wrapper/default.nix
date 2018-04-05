@@ -2,14 +2,16 @@
 
 stdenv.mkDerivation rec {
   name = "dnscrypt-wrapper-${version}";
-  version = "0.2.2";
+  version = "0.4.0";
 
   src = fetchFromGitHub {
     owner = "Cofyc";
     repo = "dnscrypt-wrapper";
     rev = "v${version}";
-    sha256 = "0ip205safbpkmk1z7qf3hshqlc2q2zwhsm3i705m0y7rxc4200ms";
+    sha256 = "121y93sb06qc50fj7vv47r6dpzv77hh7ywl7sgrfp8i4jf4kaspa";
   };
+
+  enableParallelBuilding = true;
 
   nativeBuildInputs = [ pkgconfig autoreconfHook ];
   buildInputs = [ libsodium libevent ];

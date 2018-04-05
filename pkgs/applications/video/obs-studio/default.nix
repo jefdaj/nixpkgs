@@ -4,17 +4,20 @@
 , fdk_aac
 , ffmpeg
 , jansson
+, libjack2
 , libxkbcommon
 , libpthreadstubs
 , libXdmcp
 , qtbase
 , qtx11extras
+, speex
 , libv4l
 , x264
 , curl
 , xorg
 , makeWrapper
 , pkgconfig
+, vlc
 
 , alsaSupport ? false
 , alsaLib
@@ -26,13 +29,13 @@ let
   optional = stdenv.lib.optional;
 in stdenv.mkDerivation rec {
   name = "obs-studio-${version}";
-  version = "19.0.3";
+  version = "21.0.2";
 
   src = fetchFromGitHub {
     owner = "jp9000";
     repo = "obs-studio";
     rev = "${version}";
-    sha256 = "1qh69bw848l61fmh6n5q86yl3djmvzh76ln044ngi2k69a9bl94b";
+    sha256 = "1yyvxqzxy9dz6rmjcrdn90nfaff4f38mfz2gsq535cr59sg3f8jc";
   };
 
   patches = [ ./find-xcb.patch ];
@@ -45,13 +48,16 @@ in stdenv.mkDerivation rec {
                   fdk_aac
                   ffmpeg
                   jansson
+                  libjack2
                   libv4l
                   libxkbcommon
                   libpthreadstubs
                   libXdmcp
                   qtbase
                   qtx11extras
+                  speex
                   x264
+                  vlc
                   makeWrapper
                 ]
                 ++ optional alsaSupport alsaLib
@@ -64,7 +70,7 @@ in stdenv.mkDerivation rec {
 
   postInstall = ''
       wrapProgram $out/bin/obs \
-        --prefix "LD_LIBRARY_PATH" : "${xorg.libX11.out}/lib"
+        --prefix "LD_LIBRARY_PATH" : "${xorg.libX11.out}/lib:${vlc}/lib"
   '';
 
   meta = with stdenv.lib; {
@@ -74,7 +80,7 @@ in stdenv.mkDerivation rec {
       Software", software originally designed for recording and streaming live
       video content, efficiently
     '';
-    homepage = "https://obsproject.com";
+    homepage = https://obsproject.com;
     maintainers = with maintainers; [ jb55 MP2E ];
     license = licenses.gpl2;
     platforms = with platforms; linux;

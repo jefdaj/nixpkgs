@@ -26,6 +26,9 @@ stdenv.mkDerivation rec {
 
     # Fix sepolicy install
     sed -i "s,\(setup.py install\).*,\1 --prefix=$out,g" sepolicy/Makefile
+
+    # Fix setuid install
+    sed -i 's|-m 4755|-m 755|' sandbox/Makefile
   '';
 
   nativeBuildInputs = [ pythonPackages.python gettext ];
@@ -54,7 +57,10 @@ stdenv.mkDerivation rec {
     '')}"
   '';
 
-  NIX_CFLAGS_COMPILE = "-fstack-protector-all";
+  NIX_CFLAGS_COMPILE = [
+    "-fstack-protector-all"
+    "-Wno-error=implicit-fallthrough" "-Wno-error=alloc-size-larger-than=" # gcc7
+  ];
 
   meta = with stdenv.lib; {
     description = "SELinux policy core utilities";
