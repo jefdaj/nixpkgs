@@ -11372,6 +11372,8 @@ with pkgs;
 
   SDL2_ttf = callPackage ../development/libraries/SDL2_ttf { };
 
+  sdx = callPackage ../development/libraries/sdx {};
+
   sblim-sfcc = callPackage ../development/libraries/sblim-sfcc {};
 
   serd = callPackage ../development/libraries/serd {};
@@ -11540,6 +11542,8 @@ with pkgs;
   };
 
   tclap = callPackage ../development/libraries/tclap {};
+
+  tclkit = callPackage ../development/libraries/tclkit { };
 
   tcllib = callPackage ../development/libraries/tcllib { };
 
@@ -19570,6 +19574,8 @@ with pkgs;
   alliance = callPackage ../applications/science/electronics/alliance { };
 
   ants = callPackage ../applications/science/biology/ants { };
+
+  ape = callPackage ../applications/science/biology/ape { };
 
   archimedes = callPackage ../applications/science/electronics/archimedes {
     stdenv = overrideCC stdenv gcc49;
