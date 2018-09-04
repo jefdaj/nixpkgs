@@ -11,6 +11,8 @@ self: pkgs:
 with pkgs;
 
 {
+  treecl = callPackage ../../../treecl-nixpkg/treeCl {};
+  orthofinder = import ../../../orthofinder-nixpkg/orthofinder.nix;
 
   # TODO convert for ghc8
   gitit = haskellPackages.callPackage ../../../gitit/gitit.nix {};
