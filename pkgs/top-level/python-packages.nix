@@ -15544,7 +15544,7 @@ in {
 
 
   sh = buildPythonPackage rec {
-    name = "sh-1.11";
+    name = "sh-1.12.14";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/s/sh/${name}.tar.gz";
