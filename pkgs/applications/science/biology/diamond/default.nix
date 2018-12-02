@@ -1,15 +1,15 @@
-{ stdenv, fetchurl, cmake, gcc, zlib }:
+{ stdenv, fetchurl, cmake, zlib }:
 
 stdenv.mkDerivation rec {
-  name = "diamond-0.8.36";
+  name = "diamond-0.9.22";
 
   src = fetchurl {
-    url = "https://github.com/bbuchfink/diamond/archive/v0.8.36.tar.gz";
-    sha256 = "092smzzjcg51n3x4h84k52ijpz9m40ri838j9k2i463ribc3c8rh";
+    url = "https://github.com/bbuchfink/diamond/archive/v0.9.22.tar.gz";
+    sha256 = "0adp87r9ak63frdrdmrdfhsn6g0jnnyq1lr2wibvqbxcl37iir9m";
   };
 
   patches = [
-    ./diamond-0.8.36-no-warning.patch
+    # ./diamond-0.9.22-no-warning.patch # TODO no longer needed?
   ];
 
   nativeBuildInputs = [ cmake ];

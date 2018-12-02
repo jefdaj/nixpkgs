@@ -1563,6 +1563,11 @@
     github = "igsha";
     name = "Igor Sharonov";
   };
+  iimog = {
+    email = "iimog@iimog.org";
+    github = "iimog";
+    name = "Markus J. Ankenbrand";
+  };
   ikervagyok = {
     email = "ikervagyok@gmail.com";
     github = "ikervagyok";

@@ -3,6 +3,7 @@
 , zlib
 , pkgs
 , mpi ? false
+, avx ? false
 }:
 
 stdenv.mkDerivation rec {
@@ -20,16 +21,18 @@ stdenv.mkDerivation rec {
   buildInputs = if mpi then [ pkgs.openmpi ] else [];
 
   # TODO darwin, AVX and AVX2 makefile targets
-  buildPhase = if mpi then ''
+  buildPhase = (if mpi then ''
       make -f Makefile.MPI.gcc
-    '' else ''
+    '' else "") + ''
       make -f Makefile.SSE3.PTHREADS.gcc
+      make -f Makefile.AVX.gcc
+      make -f Makefile.AVX.PTHREADS.gcc
     '';
 
-  installPhase = if mpi then ''
-    mkdir -p $out/bin && cp raxmlHPC-MPI $out/bin
-  '' else ''
-    mkdir -p $out/bin && cp raxmlHPC-PTHREADS-SSE3 $out/bin
+  # TODO any other files namex raxmlHPC*?
+  installPhase = ''
+    mkdir -p $out/bin && cp raxmlHPC* $out/bin
+    cd $out/bin && ln -s raxmlHPC-PTHREADS-AVX raxmlHPC
   '';
 
   meta = with stdenv.lib; {
