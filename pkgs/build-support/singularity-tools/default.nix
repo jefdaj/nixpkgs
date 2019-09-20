@@ -37,7 +37,10 @@ rec {
     contents ? [],
     diskSize ? 1024,
     runScript ? "#!${stdenv.shell}\nexec /bin/sh",
-    runAsRoot ? null
+    runAsRoot ? null,
+    extraSpace ? 0,
+    extraBindDirs ? [],
+    extraBindFiles ? []
   }:
     let layer = mkLayer {
           inherit name;
@@ -61,6 +64,18 @@ rec {
             mount /dev/${vmTools.hd} disk
             cd disk
             mkdir proc sys dev
+
+            # Add extra bind points for shared filesystems etc
+            for d in ${toString extraBindDirs}; do
+              echo "creating bind directory '/$d'"
+              mkdir -p "$d"
+            done
+            for f in ${toString extraBindFiles}; do
+              echo "creating bind file '/$f'"
+              mkdir -p "$(dirname "$f")"
+              touch "$f"
+            done
+            echo
 
             # Run root script
             ${stdenv.lib.optionalString (runAsRoot != null) ''
