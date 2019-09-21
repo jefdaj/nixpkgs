@@ -75,10 +75,7 @@ rec {
             mkdir -p bin nix/store
             for f in $(cat $layerClosure) ; do
               cp -ar $f ./$f
-            done
-
-            for c in ${toString contents} ; do
-              for f in $c/bin/* ; do
+              for f in $f/bin/* ; do
                 if [ ! -e bin/$(basename $f) ] ; then
                   ln -s $f bin/
                 fi
@@ -90,14 +87,21 @@ rec {
             mkdir -p .singularity.d
             ln -s ${runScriptFile} .singularity.d/runscript
 
-            # Fill out .singularity.d
-            mkdir -p .singularity.d/env
-            touch .singularity.d/env/94-appsbase.sh
-
+            # Size calculation
             cd ..
+            umount disk
+            size=$(resize2fs -P /dev/${vmTools.hd} | awk '{print $NF}')
+            mount /dev/${vmTools.hd} disk
+            cd disk
+
+            export PATH=$PATH:${e2fsprogs}/bin/
+            echo creating
+            singularity image.create -s $((1 + size * 4 / 1024 + ${toString extraSpace})) $out
+            echo importing
             mkdir -p /var/singularity/mnt/{container,final,overlay,session,source}
             echo "root:x:0:0:System administrator:/root:/bin/sh" > /etc/passwd
             TMPDIR=$(pwd -P) singularity build $out ./img
+            # tar -c . | singularity image.import $out
           '');
 
     in result;
