@@ -23558,6 +23558,8 @@ in
   # fastx-toolkit = callPackage ../applications/science/biology/fastx-toolkit { };
   # libgtextutils = callPackage ../development/libraries/libgtextutils { };
 
+  figtree = callPackage ../applications/science/biology/figtree { };
+
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
