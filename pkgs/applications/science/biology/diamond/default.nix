@@ -1,16 +1,13 @@
 { stdenv, fetchurl, cmake, zlib }:
 
-stdenv.mkDerivation {
-  name = "diamond-0.8.36";
+stdenv.mkDerivation rec {
+  name = "diamond-${version}";
+  version = "0.9.29";
 
   src = fetchurl {
-    url = "https://github.com/bbuchfink/diamond/archive/v0.8.36.tar.gz";
-    sha256 = "092smzzjcg51n3x4h84k52ijpz9m40ri838j9k2i463ribc3c8rh";
+    url = "https://github.com/bbuchfink/diamond/archive/v${version}.tar.gz";
+    sha256 = "0dd69c97c4dhfk1yhhg218s62pwy3mmyxnp32vbgqysagd0wdklw";
   };
-
-  patches = [
-    ./diamond-0.8.36-no-warning.patch
-  ];
 
   nativeBuildInputs = [ cmake ];
   buildInputs = [ zlib ];
