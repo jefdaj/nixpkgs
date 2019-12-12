@@ -23666,6 +23666,8 @@ in
 
   varscan = callPackage ../applications/science/biology/varscan { };
 
+  viennarna = callPackage ../applications/science/biology/viennarna { };
+
   hmmer = callPackage ../applications/science/biology/hmmer { };
 
   bwa = callPackage ../applications/science/biology/bwa { };
