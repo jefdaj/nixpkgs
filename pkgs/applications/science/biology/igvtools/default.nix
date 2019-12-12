@@ -3,12 +3,12 @@
 # TODO include this in igv package, or keep separate?
 
 stdenv.mkDerivation rec {
-  version = "2.3.88";
+  version = "2.4.19";
   name = "igvtools-${version}";
 
   src = fetchurl {
     url = "http://www.broadinstitute.org/igv/projects/downloads/igvtools_${version}.zip";
-    sha256 = "00awg17vaih3jn944npk4hfd6v6jmagiysc76lp5xnnqb9vjnn7z";
+    sha256 = "1j2pk6m3rfn3b7fjs8aaq0xa1d2nrri1jvx4kmmh5ybf97g1sdbv";
   };
 
   buildInputs = [ jdk ant unzip ];
