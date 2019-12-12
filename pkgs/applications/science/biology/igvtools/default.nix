@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
   name = "igvtools-${version}";
 
   src = fetchurl {
-    url = "http://www.broadinstitute.org/igv/projects/downloads/igvtools_${version}.zip";
+    url = "http://www.broadinstitute.org/igv/projects/downloads/2.4/igvtools_${version}.zip";
     sha256 = "1j2pk6m3rfn3b7fjs8aaq0xa1d2nrri1jvx4kmmh5ybf97g1sdbv";
   };
 
