@@ -23667,6 +23667,9 @@ in
 
   seaview = callPackage ../applications/science/biology/seaview { };
 
+  # TODO fix libc6 error on launch
+  seqtrace = callPackage ../applications/science/biology/seqtrace { };
+
   SPAdes = callPackage ../applications/science/biology/spades { };
 
   t-coffee = callPackage ../applications/science/biology/t-coffee { };
