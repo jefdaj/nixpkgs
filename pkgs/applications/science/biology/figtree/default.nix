@@ -8,11 +8,10 @@
 
 stdenv.mkDerivation rec {
   name = "figtree-${version}";
-  version = "1.4.2";
+  version = "1.4.4";
   src = fetchurl {
-    url = "http://tree.bio.ed.ac.uk/download.php?id=90&num=3";
-    name = "FigTree_v1.4.2.tgz"; # required since url has invalid characters
-    sha256 = "15m0w56132m1k3788r4m24drflgnqgwarzgqn336kw4cpsgm0r2h";
+    url = "https://github.com/rambaut/figtree/releases/download/v${version}/FigTree_v${version}.tgz";
+    sha256 = "1a1s8805hf7j5n9r2fx6i3a17mvblzk63lqwz2f3d7mjaxv8d6sj";
   };
   buildInputs = [ jre ]; # TODO and makeWrapper?
   inherit jre;
