@@ -1,23 +1,34 @@
 # TODO check if any of the dependencies can be removed
 # TODO archive the tarball in case it goes away?
 
-{ stdenv, fetchurl, cairo, pango, zlib, pythonPackages }:
+{ stdenv, fetchurl, cairo, pango, zlib, python2 }:
 
-stdenv.mkDerivation rec {
-  version = "0.9.0";
-  name = "seqtrace-${version}";
-  src = fetchurl {
-    url = "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/seqtrace/${name}.tar.gz";
-    sha256 = "16lcv7b7shr9byil53y1g1i4pzxlj6fc2z3fsg16iizyyiq86ws8";
-  };
-  buildInputs = with pythonPackages; [
-    # cairocffi cairosvg
+let
+  pythonEnv = python2.withPackages (ps: with ps; [
     cairo
     pango
     pygobject2
     pygtk
     pyperclip
     zlib
+  ]);
+
+in stdenv.mkDerivation rec {
+  version = "0.9.0";
+  name = "seqtrace-${version}";
+  src = fetchurl {
+    url = "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/seqtrace/${name}.tar.gz";
+    sha256 = "16lcv7b7shr9byil53y1g1i4pzxlj6fc2z3fsg16iizyyiq86ws8";
+  };
+  buildInputs = [
+    # cairocffi cairosvg
+    # cairo
+    # pango
+    # pygobject2
+    # pygtk
+    # pyperclip
+    zlib
+    pythonEnv
   ];
   installPhase = ''
     # copy everything into the package as-is
