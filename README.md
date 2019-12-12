@@ -36,6 +36,14 @@ Most of the packages are related to bioinformatics:
 * xlsx2csv
 * FEBA (TODO: package properly)
 * bioperl (TODO: package each part in perl-packages.nix)
+* diamond
+* fastme
+* gitit
+* hmmer
+* muscle
+* psiblast-exb
+* shortcut
+* tnseq-transit
 
 But there are also some random ones:
 
