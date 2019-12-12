@@ -23560,6 +23560,8 @@ in
 
   figtree = callPackage ../applications/science/biology/figtree { };
 
+  gblocks = callPackage ../applications/science/biology/gblocks { };
+
   hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
