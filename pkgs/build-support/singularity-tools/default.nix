@@ -113,10 +113,10 @@ rec {
             echo creating
             singularity image.create -s $((1 + size * 4 / 1024 + ${toString extraSpace})) $out
             echo importing
-            mkdir -p /var/singularity/mnt/{container,final,overlay,session,source}
-            echo "root:x:0:0:System administrator:/root:/bin/sh" > /etc/passwd
-            TMPDIR=$(pwd -P) singularity build $out ./img
-            # tar -c . | singularity image.import $out
+            tar -c . | singularity image.import $out
+            # mkdir -p /var/singularity/mnt/{container,final,overlay,session,source}
+            # echo "root:x:0:0:System administrator:/root:/bin/sh" > /etc/passwd
+            # TMPDIR=$(pwd -P) singularity build $out ./img
           '');
 
     in result;
