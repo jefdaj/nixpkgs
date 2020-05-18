@@ -98,12 +98,12 @@ rec {
             done
 
             # Create runScript and link shell
+            rm -rf bin/sh
             ln -s ${runtimeShell} bin/sh
             mkdir -p .singularity.d
             ln -s ${runScriptFile} .singularity.d/runscript
 
             # Size calculation
-            cd ..
             umount disk
             size=$(resize2fs -P /dev/${vmTools.hd} | awk '{print $NF}')
             mount /dev/${vmTools.hd} disk
@@ -113,10 +113,10 @@ rec {
             echo creating
             singularity image.create -s $((1 + size * 4 / 1024 + ${toString extraSpace})) $out
             echo importing
-            tar -c . | singularity image.import $out
-            # mkdir -p /var/singularity/mnt/{container,final,overlay,session,source}
-            # echo "root:x:0:0:System administrator:/root:/bin/sh" > /etc/passwd
-            # TMPDIR=$(pwd -P) singularity build $out ./img
+            cd ..
+            mkdir -p /var/singularity/mnt/{container,final,overlay,session,source}
+            echo "root:x:0:0:System administrator:/root:/bin/sh" > /etc/passwd
+            TMPDIR=$(pwd -P) singularity build $out ./img
           '');
 
     in result;
